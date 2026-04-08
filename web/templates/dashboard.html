@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        .navbar { background: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .navbar h1 { font-size: 20px; color: #007acc; }
+        .navbar a { color: #666; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        .navbar a:hover { color: #007acc; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .breadcrumb { margin-bottom: 20px; font-size: 14px; color: #666; }
+        .breadcrumb a { color: #007acc; text-decoration: none; }
+        .file-list { background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .file-item { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid #eee; transition: background 0.2s; }
+        .file-item:hover { background: #f0f4f8; }
+        .file-item:last-child { border-bottom: none; }
+        .file-icon { width: 30px; font-size: 18px; }
+        .file-name { flex: 1; }
+        .file-name a { color: #333; text-decoration: none; }
+        .file-name a:hover { color: #007acc; }
+        .file-size { width: 100px; text-align: right; color: #888; font-size: 13px; }
+        .file-date { width: 180px; text-align: right; color: #888; font-size: 13px; }
+        .file-actions { width: 140px; text-align: right; }
+        .file-actions a { color: #007acc; text-decoration: none; font-size: 13px; margin-left: 10px; padding: 4px 10px; border: 1px solid #007acc; border-radius: 4px; }
+        .file-actions a:hover { background: #007acc; color: white; }
+        .file-actions a.ai-btn { border-color: #6f42c1; color: #6f42c1; }
+        .file-actions a.ai-btn:hover { background: #6f42c1; color: white; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>PCSVoIP CMS</h1>
+        <div>
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/admin/dashboard">Root</a>
+            {{if ne .CurrentDir "/"}} &rsaquo; {{.CurrentDir}}{{end}}
+            {{if ne .CurrentDir "/"}} &mdash; <a href="/admin/dashboard?dir={{.ParentDir}}">Up</a>{{end}}
+        </div>
+        <div class="file-list">
+            {{range .Files}}
+            <div class="file-item">
+                <div class="file-icon">{{if .IsDir}}&#128193;{{else}}&#128196;{{end}}</div>
+                <div class="file-name">
+                    {{if .IsDir}}
+                        <a href="/admin/dashboard?dir={{.Path}}">{{.Name}}/</a>
+                    {{else}}
+                        {{.Name}}
+                    {{end}}
+                </div>
+                <div class="file-size">{{if not .IsDir}}{{.Size}} B{{end}}</div>
+                <div class="file-date">{{.ModTime.Format "2006-01-02 15:04"}}</div>
+                <div class="file-actions">
+                    {{if not .IsDir}}
+                        <a href="/admin/edit?file={{.Path}}">Edit</a>
+                        <a href="/admin/ai?file={{.Path}}" class="ai-btn">AI</a>
+                    {{end}}
+                </div>
+            </div>
+            {{else}}
+            <div class="file-item"><div class="file-name" style="color:#aaa;">No files found</div></div>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>

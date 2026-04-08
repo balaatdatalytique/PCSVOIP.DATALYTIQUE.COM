@@ -1,0 +1,1458 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>API Integration - PCS VoIP - The Power of Communications Simplified</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&amp;family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.min.css">
+    <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/css/style2.css">
+	<link rel="stylesheet" href="assets/css/table.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	
+	<style>
+    a.phone-link {
+      color: black;
+      text-decoration: none; /* Optional: Removes underline */
+    }
+
+    a.phone-link:hover {
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle">
+                <i class="fal fa-times"></i>
+            </button>
+            <div class="mobile-logo">
+                <a class="icon-masking" href="index.html">
+                    <span data-mask-src="assets/img/logo.png" class="mask-icon"></span>
+                    <img src="assets/img/logo.png" alt="PCS">
+                </a>
+            </div>
+            <div class="th-mobile-menu">
+                <ul>
+                                    <li class="menu-item-has-children"><a href="#">Product</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="uc-client.html">UC Client</a>
+                                <ul class="sub-menu">
+                                    <li><a href="sms.html">SMS</a></li>
+                                    <li><a href="mobile-application.html">Mobile Application</a></li>
+                                    <li><a href="video-conferencing.html">Video Conferencing - Contact Sharing</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children"><a href="contact-center.html">Contact Center</a>
+                                <ul class="sub-menu">
+                                    <li><a href="workforce-management.html">Workforce Management</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="pbx-sip-trunk.html">PBX-SIP-Trunk</a></li>
+                            <li><a href="e-fax.html">E-fax</a></li>
+							<li><a href="cloud-sms.html">Enterprise Cloud SMS</a></li>
+                        </ul>
+                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">API Integration</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="api-integration.html">API Applications</a>
+                                            </li>
+											<li>
+                                                <a href="api-videos.html">API Videos</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Services</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="voip.html">VoIP Services</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">About Us</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="about.html">PCS VoIP</a>
+                                            </li>
+											<li>
+                                                <a href="clients.html">Our Clients</a>
+                                            </li>
+											<li>
+                                                <a href="testimonials.html">Testimonials</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Support</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Create a Ticket</a>
+                                            </li>
+											<li>
+                                                <a href="terms.html">Terms of Service</a>
+                                            </li>
+											<li>
+                                                <a href="privacy.html">Privacy Policy</a>
+                                            </li>
+											<li>
+                                                <a href="faq.html">FAQ</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+									<li class="menu-item-has-children">
+                                        <a href="#">Resources</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://www.blog.pcsvoip.com/">Blog</a>
+                                            </li>
+											 <li>
+                                                <a href="phones.html">Phones</a>
+                                            </li>
+											 <li>
+                                                <a href="videos.html">Videos</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="contact.html">Contact</a>
+                                    </li>
+                                </ul>
+            </div>
+        </div>
+    </div>
+	<header class="header-layout2">
+	<div class="header-top">
+        <div class="container">
+          <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+            <div class="col-auto d-none d-lg-block">
+              <div class="header-links">
+                <ul>
+				<li>
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+18447278647">844 PCS VOIP</a>
+                  </li>
+                  <li>
+                    <i class="fas fa-map-location"></i>Olathe, KS 66062
+                  </li>
+                  <li>
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:info@pcsusa.com">info@pcsusa.com</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+			
+			<div class="col-auto">
+  <div class="dropdown">
+    <span>LOGIN</span>
+    <div class="dropdown-content">
+       <a href="https://login.pcsvoip.com/login"><p>Premier</p></a>
+       <a href="https://elite.pcsvoiplogin.com/portal/"><p>Elite - API Integration</p></a>
+    </div>
+  </div>
+</div>
+			
+            <div class="col-auto">
+              <div class="header-social">
+               
+                <a href="https://www.facebook.com/PCSVoIP" target="_blank">
+                <img src="assets/img/social/facebook.png" alt="Facebook" style="width: 26px; height: 26px;">
+                </a>
+                <a href="https://x.com/pcsvoip/">
+                  <img src="assets/img/social/twitter.png" alt="Twitter" style="width: 26px; height: 26px;">
+                </a>
+                <a href="https://www.linkedin.com/company/pcs-voip/">
+                  <img src="assets/img/social/linkedin.png" alt="LinkedIn" style="width: 26px; height: 26px;">
+                </a>
+                <a href="https://www.instagram.com/pcsvoip/">
+                  <img src="assets/img/social/instagram.png" alt="Instagram" style="width: 26px; height: 26px;">
+                </a>
+                <a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g">
+                  <img src="assets/img/social/youtube.png" alt="Youtube" style="width: 26px; height: 26px;">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+	  </header>
+    <header class="th-header header-layout3">
+	
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto">
+                            <div class="header-logo">
+                                <a class="icon-masking" href="index.html">
+                                    <span data-mask-src="assets/img/logo.png" class="mask-icon"></span>
+                                    <img src="assets/img/logo.png" alt="PCS">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+						<nav class="main-menu d-none d-lg-inline-block">
+                                <ul>
+                                    <li class="menu-item-has-children"><a href="#">Product</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="uc-client.html">UC Client</a>
+                                <ul class="sub-menu">
+                                    <li><a href="sms.html">SMS</a></li>
+                                    <li><a href="mobile-application.html">Mobile Application</a></li>
+                                    <li><a href="video-conferencing.html">Video Conferencing - Contact Sharing</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children"><a href="contact-center.html">Contact Center</a>
+                                <ul class="sub-menu">
+                                    <li><a href="workforce-management.html">Workforce Management</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="pbx-sip-trunk.html">PBX-SIP-Trunk</a></li>
+                            <li><a href="e-fax.html">E-fax</a></li>
+							<li><a href="cloud-sms.html">Enterprise Cloud SMS</a></li>
+                        </ul>
+                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">API Integration</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="api-integration.html">API Applications</a>
+                                            </li>
+											<li>
+                                                <a href="api-videos.html">API Videos</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Services</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="voip.html">VoIP Services</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">About Us</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="about.html">PCS VoIP</a>
+                                            </li>
+											<li>
+                                                <a href="clients.html">Our Clients</a>
+                                            </li>
+											<li>
+                                                <a href="testimonials.html">Testimonials</a>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Support</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Create a Ticket</a>
+                                            </li>
+											<li>
+                                                <a href="terms.html">Terms of Service</a>
+                                            </li>
+											<li>
+                                                <a href="privacy.html">Privacy Policy</a>
+                                            </li>
+											<li>
+                                                <a href="faq.html">FAQ</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+									<li class="menu-item-has-children">
+                                        <a href="#">Resources</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://www.blog.pcsvoip.com/">Blog</a>
+                                            </li>
+											 <li>
+                                                <a href="phones.html">Phones</a>
+                                            </li>
+											 <li>
+                                                <a href="videos.html">Videos</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="contact.html">Contact</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div class="header-button">
+                                
+                                <button type="button" class="th-menu-toggle d-inline-block d-lg-none">
+                                    <i class="far fa-bars"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <div class="header-button">
+                                <a href="quote.html" class="th-btn shadow-none">Get Quote
+                  </a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+	
+	
+	
+	
+	    <div class="breadcumb-wrapper" data-bg-src="assets/img/bg/api-bg.jpg">
+      <div class="container">
+        <div class="breadcumb-content">
+          <h1 class="breadcumb-title">API Integration</h1>
+
+        </div>
+      </div>
+    </div>
+	
+<div class="space" id="about-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="pe-xl-5 me-xl-3">
+                        <div class="title-area style2 mb-30">
+						<span class="sub-title">
+                <div class="icon-masking me-2">
+                  <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                        <img src="assets/img/voip.png" alt="shape">
+                    </div>API Integration
+                    </span>
+                            <h2 class="sec-title">Seamless API Integration for VoIP Efficiency.</h2></div>
+                        <p class="mt-n2 mb-25">API integration with phone systems and its benefits for your business.</p>
+						<p class="mt-n2 mb-25">Voice over IP is an intriguing technology as it will baffle you with the large number of features it has. If you wish to utilize different useful applications like Microsoft Word, Excel, Outlook, or any other web application, then VoIP lets you use all these applications as well. There are many different plugins that you can use through Voice over IP. Some of these plugins even let you get access to shortcuts like click-to-dial and call logging.
+You can even control your security features by using the auto-operator. 
+API integration is indeed a great means to get access to various application software.</p>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="img-box9">
+                        <div class="img1"><img src="assets/img/normal/about_12_1.jpg" alt="About"></div>
+                        <div class="img2"><img src="assets/img/normal/about_12_2.jpg" alt="About"></div>
+                        <div class="img3"><img src="assets/img/normal/about_12_3.jpg" alt="About"></div>
+                        <div class="th-experience">
+                            <div class="th-experience_content">
+                                <p class="experience-text">
+    Have your own PBX at your facility?<br>
+    Call us at &nbsp;<a href="tel:+1878447278647" class="phone-link">(844)-727-8647</a>
+  </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+<div class="pt-container">
+    <table id="pt-table">
+      <thead>
+        <tr>
+          <th>Application</th>
+          <th>Description</th>
+          <th>OS</th>
+          <th>Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="http://xurrent.com/">
+              <img class="pt-app-logo" src="assets/img/api/4melogo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 2 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.qv.systems/">
+              <img class="pt-app-logo" src="assets/img/api/QV_Systems_Logo.png" alt="QV Systems Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 3 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.theaccessgroup.com/en-gb/">
+              <img class="pt-app-logo" src="assets/img/api/access-group.png" alt="access-group Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 4 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.act.com/">
+              <img class="pt-app-logo" src="assets/img/api/act-1.png" alt="App 4 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 5 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://login.arbor.sc/">
+              <img class="pt-app-logo" src="assets/img/api/Arbor-Logo.png" alt="App 5 Logo">
+            </a>
+          </td>
+          <td>Go Integrator</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 6 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://metier.it/">
+              <img class="pt-app-logo" src="assets/img/api/metier_orig.png" alt="App 6 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 7 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.scienceinsport.com/eu/">
+              <img class="pt-app-logo" src="assets/img/api/SIS-Logo.png" alt="App 7 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 8 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://carerix.com/en/">
+              <img class="pt-app-logo" src="assets/img/api/carerix.png" alt="App 8 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 9 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.codas.com/">
+              <img class="pt-app-logo" src="assets/img/api/CODAS-Logo-New-Big-Square-scaled.png" alt="App 9 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 10 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.connectwise.com/">
+              <img class="pt-app-logo" src="assets/img/api/connectwise.png" alt="App 10 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 11 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://heavyequipment.crmseries.com/Public/Login.aspx">
+              <img class="pt-app-logo" src="assets/img/api/crmSeriesLogo.png" alt="App 11 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Row 12 -->
+        <tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.datev.com/">
+              <img class="pt-app-logo" src="assets/img/api/Logo_Datev.png" alt="App 12 Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Support info 12</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.datto.com/">
+              <img class="pt-app-logo" src="assets/img/api/datto-autotask-logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.dezrez.co.uk/software-login">
+              <img class="pt-app-logo" src="assets/img/api/dezrezlogo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.egroupware.org/en">
+              <img class="pt-app-logo" src="assets/img/api/egroupware_logo_yellow_01.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://taxidispatchsystems.com/">
+              <img class="pt-app-logo" src="assets/img/api/envoy-taxi-system.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.exact.com/us">
+              <img class="pt-app-logo" src="assets/img/api/exactonline.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.kidskonnect.nl/nl/over-ons/flexkids">
+              <img class="pt-app-logo" src="assets/img/api/flexkids-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.fusemetrix.com/">
+              <img class="pt-app-logo" src="assets/img/api/fusemetrix.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.goldmine.com/">
+              <img class="pt-app-logo" src="assets/img/api/goldmine.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.contacts.google.com/">
+              <img class="pt-app-logo" src="assets/img/api/Google-Contacts-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://haloitsm.com/">
+              <img class="pt-app-logo" src="assets/img/api/HALO-ITSM-Logo-RGB-1024x553-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.hubspot.com/">
+              <img class="pt-app-logo" src="assets/img/api/hubspot-logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://in2crm.nl/">
+              <img class="pt-app-logo" src="assets/img/api/in2crm-logo-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.infor.com/">
+              <img class="pt-app-logo" src="assets/img/api/in2crm-logo-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.qgate.co.uk/">
+              <img class="pt-app-logo" src="assets/img/api/qgate-software-ltd.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://jd.jobdiva.com/home/">
+              <img class="pt-app-logo" src="assets/img/api/maxresdefault.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://keap.com/">
+              <img class="pt-app-logo" src="assets/img/api/keap.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://logicaloffice.com/">
+              <img class="pt-app-logo" src="assets/img/api/logical-office.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.max-immo.pro/">
+              <img class="pt-app-logo" src="assets/img/api/max-immo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.maximizer.com/">
+              <img class="pt-app-logo" src="assets/img/api/maximizer.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.pharmapartners.nl/">
+              <img class="pt-app-logo" src="assets/img/api/pharmapartners.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.microsoft.com/en-us/microsoft-365/access">
+              <img class="pt-app-logo" src="assets/img/api/ms-access-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://dynamics.microsoft.com/en-us/">
+              <img class="pt-app-logo" src="assets/img/api/Dynamics-365-Customer-Engagement.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.microsoft.com/en-us/microsoft-365/access">
+              <img class="pt-app-logo" src="assets/img/api/Microsoft-Dynamics-CRM-logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://dynamics.microsoft.com/en-us/nav-overview/">
+              <img class="pt-app-logo" src="assets/img/api/Microsoft-Dynamics-NAV-Logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://docs.microsoft.com/">
+              <img class="pt-app-logo" src="assets/img/api/DynamicsLDAP.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc?view=sql-server-ver16/">
+              <img class="pt-app-logo" src="assets/img/api/odbc-servers_icon-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook/">
+              <img class="pt-app-logo" src="assets/img/api/microsoft-outlook-logo-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://docs.microsoft.com/">
+              <img class="pt-app-logo" src="assets/img/api/Outlook-Web-App-1280x720-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://appexchange.salesforce.com/appxListingDetail?listingId=a0N3u00000PFxNcEAL">
+              <img class="pt-app-logo" src="assets/img/api/mirage.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.1-2-mobile.com/">
+              <img class="pt-app-logo" src="assets/img/api/MobileMax-logo-edited.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://crm.workwisesoftware.com/crm10/">
+              <img class="pt-app-logo" src="assets/img/api/oncontact-crm-logo-360w.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.estatesit.com/news/">
+              <img class="pt-app-logo" src="assets/img/api/estates-it-2.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.perfectviewcrm.com/">
+              <img class="pt-app-logo" src="assets/img/api/Perfectview-CRM-software.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.microdec.com/product/profile/">
+              <img class="pt-app-logo" src="assets/img/api/profile-microdec.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.microdec.com/product/profile/">
+              <img class="pt-app-logo" src="assets/img/api/pvcrm-gmbh.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.reallysimplesystems.com/">
+              <img class="pt-app-logo" src="assets/img/api/Really_Simple_Systems_Company_Logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.ecisolutions.com/">
+              <img class="pt-app-logo" src="assets/img/api/ecisolutions-ridderIQ.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.cm.com/en-us/robinhq/">
+              <img class="pt-app-logo" src="assets/img/api/robinhq.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://cplsoftware.com/">
+              <img class="pt-app-logo" src="assets/img/api/CPL-rpm-software.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.sage.com/en-us/">
+              <img class="pt-app-logo" src="assets/img/api/sage50.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.sage.com/en-us/">
+              <img class="pt-app-logo" src="assets/img/api/sage-CRM.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.salesforce.com/">
+              <img class="pt-app-logo" src="assets/img/api/salesforce-e1608590356883.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/saleslogix-crm-support-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://cswsolutions.com/">
+              <img class="pt-app-logo" src="assets/img/api/csw-software-a-salos-company.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/Simplicate.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/capita-sims.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.sugarcrm.com/">
+              <img class="pt-app-logo" src="assets/img/api/sugarcrm.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.teamleader.eu/">
+              <img class="pt-app-logo" src="assets/img/api/teamleader.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.techmangms.com/">
+              <img class="pt-app-logo" src="assets/img/api/techman-web-seller-pro.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.search.ch/">
+              <img class="pt-app-logo" src="assets/img/api/search-ch.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.crunchbase.com/organization/chittak/">
+              <img class="pt-app-logo" src="assets/img/api/chittak-logo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/SystmOne.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Integrator</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.vtiger.com/">
+              <img class="pt-app-logo" src="assets/img/api/vtiger.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://webcrm.com/uk/">
+              <img class="pt-app-logo" src="assets/img/api/webCRMlogo.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.websolve.com/?lang=en/">
+              <img class="pt-app-logo" src="assets/img/api/websolve.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="http://www.acasystems.co.uk/">
+              <img class="pt-app-logo" src="assets/img/api/aca-systems.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/workbooks-1.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link">
+              <img class="pt-app-logo" src="assets/img/api/logo-yoobi.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.zendesk.com/">
+              <img class="pt-app-logo" src="assets/img/api/zendesk.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.zoho.com/sites/">
+              <img class="pt-app-logo" src="assets/img/api/zoho.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, partnerCRM, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+		<tr>
+          <td>
+            <a class="pt-logo-link" href="https://www.zoho.com/recruit/career-site.html/">
+              <img class="pt-app-logo" src="assets/img/api/zoho-recruit.png" alt="4me Logo">
+            </a>
+          </td>
+          <td>Go Communicator, Go Connect for Panasonic, Go Integrator, Phone-Link, Samsung Xchange, ucplus</td>
+          <td>
+            <img class="pt-os-img" src="assets/img/api/windows.png" alt="Windows">
+            <img class="pt-os-img" src="assets/img/api/ios.png" alt="Mac">
+          </td>
+          <td>Supported by PCSVoIP</td>
+        </tr>
+        <!-- Add more rows here as needed for further pagination -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Container -->
+  <div class="pt-pagination" id="pt-pagination"></div>									
+
+							<br><br><br>
+
+ <section class="position-relative space">
+        <div class="th-bg-img" data-bg-src="assets/img/bg/cta_bg_2.jpg"><img src="assets/img/bg/bg_overlay_1.png" alt="overlay"></div>
+        <div class="container z-index-common">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7 col-md-9 text-center">
+                    <div class="title-area mb-35"><span class="sub-title"><div class="icon-masking me-2"><span class="mask-icon" data-mask-src="assets/img/voip.png"></span><img src="assets/img/voip.png" alt="shape"></div>CONTACT
+                    US</span>
+                    <h2 class="sec-title text-white">Need VoIP Solutions for <span class="text-theme fw-normal"><br>Your Business?</span></h2></div><a href="contact.html" class="th-btn style3">Get In Touch</a></div></div></div></section>
+
+							
+									
+									
+        <footer class="footer-wrapper footer-layout2" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+            <div class="widget-area">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div class="col-md-6 col-xxl-3 col-xl-4">
+                            <div class="widget footer-widget">
+                                <div class="th-widget-about">
+                                    <div class="about-logo"><a href="index.html"><img src="assets/img/logo-footer.png" alt="PCS"></a></div>
+                                    <p class="about-text">PCS VoIP is a communication solutions provider for any business, big or small. PCS VoIP currently supports a wide range of industries, including manufacturing, healthcare, retail, transportation, financial services, and many more.</p>
+                                    <div class="th-social">
+									<a href="https://www.facebook.com/PCSVoIP"><i class="fab fa-facebook-f"></i></a>
+									<a href="https://x.com/pcsvoip"><i class="fab fa-x-twitter"></i></a>
+									<a href="https://www.linkedin.com/company/pcs-voip/"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/pcsvoip/"><i class="fab fa-instagram"></i></a>
+									<a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g"><i class="fab fa-youtube"></i></a>
+									</div></div></div></div>
+                        <div class="col-md-6 col-xl-auto">
+                            <div class="widget widget_nav_menu footer-widget">
+                                <h3 class="widget_title">Quick Links</h3>
+                                <div class="menu-all-pages-container">
+                                    <ul class="menu">
+                                        <li><a href="about.html">About Us</a></li>
+                                        <li><a href="uc-client.html">Products</a></li>
+                                        <li><a href="voip.html">Services</a></li>
+                                        <li><a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Support</a></li>
+                                        <li><a href="contact.html">Contact Us</a></li></ul></div></div></div>
+                        <div class="col-md-6 col-xl-auto">
+                            <div class="widget footer-widget">
+                                <h3 class="widget_title">Contact Us</h3>
+                                <div class="th-widget-contact">
+                                    <div class="contact-feature">
+                                        <div class="icon-btn"><i class="fa-solid fa-phone"></i></div>
+                                        <div class="media-body">
+                                           <a href="tel:+18447278647" class="contact-feature_link">844 PCS VOIP</a></div></div>
+                                    <div class="contact-feature">
+                                        <div class="icon-btn"><i class="fa-solid fa-envelope"></i></div>
+                                        <div class="media-body">
+                                            <a href="mailto:info@pcsusa.com" class="contact-feature_link">info@pcsusa.com</a></div></div>
+                                    <div class="contact-feature">
+                                        <div class="icon-btn"><i class="fa-solid fa-location-dot"></i></div>
+                                        <div class="media-body">
+                                            <a href="https://www.google.com/maps" class="contact-feature_link">Olathe, KS 66062</a></div></div></div></div></div>
+											
+											
+                        <div class="col-md-6 col-xl-3">
+                            <div class="widget footer-widget">
+                                <h3 class="widget_title">Get in touch</h3>
+                                <div class="newsletter-widget">
+                                    <p class="footer-text">Subsrcibe to our newsletter and get all the information about our VoIP service updates</p>
+                                    <form action="#" class="newsletter-form">
+                                        <div class="form-group">
+                                            <input class="form-control" type="email" placeholder="Your email address" required=""></div>
+                                        <button type="submit" class="icon-btn"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></div>
+										
+										</div></div></div>
+            <div class="copyright-wrap bg-theme">
+                <div class="container">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-lg-6">
+                            <p class="copyright-text">Copyright <i class="fal fa-copyright"></i> 2024 PCS VoIP. All Rights Reserved.</p></div>
+                        <div class="col-lg-6 text-end d-none d-lg-block">
+                            <div class="footer-links">
+                                <ul>
+                                    <li><a href="terms.html">Terms & Conditions</a></li>
+                                    <li><a href="privacy.html">Privacy Policy</a></li></ul></div></div></div></div></div></footer>
+        <div class="scroll-top">
+            <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+                <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path></svg></div>
+        <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
+        <script src="assets/js/swiper-bundle.min.js"></script>
+        <script src="assets/js/bootstrap.min.js"></script>
+        <script src="assets/js/jquery.magnific-popup.min.js"></script>
+        <script src="assets/js/jquery.counterup.min.js"></script>
+        <script src="assets/js/circle-progress.js"></script>
+        <script src="assets/js/jquery-ui.min.js"></script>
+        <script src="assets/js/imagesloaded.pkgd.min.js"></script>
+        <script src="assets/js/isotope.pkgd.min.js"></script>
+        <script src="assets/js/tilt.jquery.min.js"></script>
+        <script src="assets/js/gsap.min.js"></script>
+        <script src="assets/js/ScrollTrigger.min.js"></script>
+        <script src="assets/js/smooth-scroll.js"></script>
+        <script src="assets/js/particles.min.js"></script>
+        <script src="assets/js/particles-config.js"></script>
+        <script src="assets/js/main.js"></script>
+		<script src="assets/js/table.js"></script>
+</body>
+
+</html>

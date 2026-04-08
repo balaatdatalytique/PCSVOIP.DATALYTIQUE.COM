@@ -1,0 +1,260 @@
+# 🚨 SYSTEM PROMPT — HARD RULES + IMPLEMENTATION TASKS  
+**Project: Go-based AI-Driven CMS Web Server**
+
+---
+
+## 🔴 HARD RULES (MANDATORY – NO EXCEPTIONS)
+
+1. **BUILD MUST ALWAYS WORK**
+   - The project MUST compile successfully using `make build`.
+   - DO NOT leave incomplete code or placeholders.
+   - DO NOT leave TODOs for core functionality.
+
+2. **BINARY OUTPUT LOCATION**
+   - All compiled binaries MUST be placed in `./bin`.
+   - If `./bin` does not exist → CREATE it.
+
+3. **STATIC SERVER MUST FUNCTION FULLY**
+   - MUST correctly serve:
+     - `.html`, `.css`, `.js`, images, fonts, all static assets
+   - MUST return correct MIME types (especially for `.js`)
+   - MUST NOT break relative paths of the existing website
+
+4. **PORT CONFIGURATION IS MANDATORY**
+   - MUST accept `-port` argument from CLI
+   - MUST run with default port if not provided
+   - Example:
+     ```
+     ./bin/webserver -port 8080
+     ```
+
+5. **ADMIN MODULE SECURITY (NON-NEGOTIABLE)**
+   - `/admin` MUST ALWAYS be protected
+   - NO unauthenticated access allowed
+   - MUST implement:
+     - login
+     - session management
+     - authentication middleware
+
+6. **FILE SYSTEM SAFETY (CRITICAL)**
+   - MUST restrict file edits ONLY to approved content directory
+   - MUST prevent:
+     - path traversal (`../`)
+     - arbitrary file access
+     - system file modification
+   - MUST validate every file operation
+
+7. **NO DIRECT FILE OVERWRITE**
+   - BEFORE saving any file:
+     - MUST create backup
+     - MUST validate content
+   - ONLY THEN allow overwrite
+
+8. **AI OUTPUT CONTROL**
+   - AI-generated content MUST NOT be auto-published
+   - MUST go through:
+     - preview
+     - admin approval
+   - MUST allow rollback
+
+9. **PROVIDER ABSTRACTION (MANDATORY)**
+   - DO NOT hardcode OpenAI / Grok / Anthropic
+   - MUST implement provider interface layer
+   - MUST allow switching providers without code rewrite
+
+10. **PROJECT STRUCTURE DISCIPLINE**
+   - MUST follow modular structure
+   - NO monolithic single-file server
+   - MUST separate:
+     - routing
+     - auth
+     - CMS logic
+     - AI integration
+     - file services
+
+11. **NO ROOT DIRECTORY CLUTTER**
+   - DO NOT dump files in root
+   - Maintain clean structure
+
+12. **PRODUCTION-QUALITY CODE ONLY**
+   - Clean
+   - Readable
+   - Maintainable
+   - No hacks
+
+---
+
+## 🧱 IMPLEMENTATION TASKS (EXECUTE IN ORDER)
+
+### 1️⃣ PROJECT STRUCTURE
+
+```
+/project-root
+  /cmd/server
+  /internal
+      /config
+      /server
+      /routes
+      /middleware
+      /auth
+      /cms
+      /storage
+      /ai
+  /web
+      /static   (points to ../smartcrm*)
+      /templates
+  /bin
+  Makefile
+  go.mod
+  README.md
+```
+
+---
+
+### 2️⃣ STATIC WEB SERVER
+
+- Serve content from:
+  ```
+  ../smartcrm*
+  ```
+- Use efficient file serving
+- Ensure:
+  - correct MIME types
+  - caching headers
+
+---
+
+### 3️⃣ CLI CONFIGURATION
+
+- Implement:
+  - `-port`
+  - optional `-contentDir`
+
+---
+
+### 4️⃣ MAKEFILE (MANDATORY)
+
+```
+make build
+make run
+make clean
+```
+
+---
+
+### 5️⃣ ADMIN MODULE
+
+Routes:
+
+```
+/admin/login
+/admin/dashboard
+/admin/edit
+/admin/preview
+/admin/save
+/admin/ai
+```
+
+Features:
+- Login page
+- Session-based authentication
+- Middleware protection
+
+---
+
+### 6️⃣ CMS CAPABILITIES
+
+- Browse files
+- Edit content
+- Preview changes
+- Save updates
+
+Restrictions:
+- Only `.html`, `.txt`, `.md`, `.json`
+- Block binary/system files
+
+---
+
+### 7️⃣ FILE STORAGE SERVICE
+
+- Read/write/backup
+- Validate paths
+- Enforce base directory
+
+---
+
+### 8️⃣ AI INTEGRATION
+
+```go
+type AIProvider interface {
+    GenerateContent(prompt string, context string) (string, error)
+}
+```
+
+---
+
+### 9️⃣ AI WORKFLOW
+
+1. Admin submits instruction
+2. Load content
+3. Send to AI
+4. Preview result
+5. Admin approves
+6. Save content
+
+---
+
+### 🔟 AUTHENTICATION
+
+- Hashed passwords
+- Session-based auth
+
+---
+
+### 1️⃣1️⃣ MIDDLEWARE
+
+- Auth
+- Logging
+- Recovery
+
+---
+
+### 1️⃣2️⃣ TEMPLATES
+
+- Login
+- Dashboard
+- Editor
+- Preview
+
+---
+
+### 1️⃣3️⃣ README
+
+Must include:
+- build/run steps
+- config
+- AI integration
+- structure explanation
+
+---
+
+## 🚫 PROHIBITIONS
+
+- No incomplete scaffolding
+- No broken builds
+- No unsafe file access
+- No direct overwrite
+- No hardcoded AI provider
+
+---
+
+## ✅ SUCCESS CRITERIA
+
+- Build succeeds
+- Server runs
+- Static site loads
+- Admin secured
+- Content editable
+- AI preview workflow works
+- Modular codebase
+

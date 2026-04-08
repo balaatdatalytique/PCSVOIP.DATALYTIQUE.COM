@@ -1,0 +1,1706 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>PCS VoIP - The Power of Communications Simplified</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&amp;family=Roboto:wght@300;400;500;700;900&amp;display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.min.css">
+    <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/css/style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+        }
+
+        /* Chatbox styles */
+
+        /* Chatbot icon and window style */
+
+
+        #chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            /* WhatsApp green instead of navy blue */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            /* Updated shadow color */
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #chatbot-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            /* Updated shadow color */
+        }
+
+        #chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 700px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            border: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        #chatbot-header {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            /* WhatsApp green gradient */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbot-header .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        #chatbot-header .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #chatbot-body {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #f0f2f5;
+        }
+
+        .topic-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #25D366;
+            /* WhatsApp green instead of navy blue */
+        }
+
+        .topic-item:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-form {
+            display: none;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .user-form input,
+        #chatbot-input {
+            width: calc(100% - 24px);
+            margin: 8px 0;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .user-form input:focus,
+        #chatbot-input:focus {
+            border-color: #25D366;
+            /* WhatsApp green instead of navy blue */
+            outline: none;
+        }
+
+        .user-form button {
+            width: 100%;
+            padding: 12px;
+            background: #25D366;
+            /* WhatsApp green instead of navy blue */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .user-form button:hover {
+            background: #128C7E;
+            /* Darker WhatsApp green */
+        }
+
+        .message {
+            margin: 12px 0;
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background: #e3f2fd;
+            /* Light blue background for user messages */
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            max-width: 85%;
+            width: 100%;
+        }
+
+        #chatbot-footer {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        #chatbot-input {
+            border-radius: 25px;
+            background: #f0f2f5;
+        }
+
+        #welcome-message p {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .chatbot-overlay {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            transition: all 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        #chatbot-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbot-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #chatbot-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        #chatbot-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .phone-btn {
+            padding: 5px 8px;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .time-slot-button {
+            background-color: #f0f2f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            min-width: auto;
+            white-space: normal;
+            overflow: hidden;
+            word-break: break-word;
+        }
+
+        .time-slot-button:hover {
+            background-color: #e3f2fd;
+            border-color: #1a237e;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-slot-buttons {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 5px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* For mobile screens */
+        @media (max-width: 480px) {
+            .time-slot-button {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+
+            .time-slot-buttons {
+                gap: 6px;
+            }
+        }
+
+        /* Typing indicator styles */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border-radius: 15px;
+            max-width: 80%;
+            background: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #1a237e;
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: bounce 1.3s linear infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .time-slot-button:disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+            transform: none;
+            border-color: #ccc;
+            color: #888;
+        }
+
+        .time-slot-button:disabled:hover {
+            background-color: #e0e0e0;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .time-slot-button.selected {
+            background-color: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+
+<body>
+    <header class="header-layout2">
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+                    <div class="col-auto d-none d-lg-block">
+                        <div class="header-links">
+                            <ul>
+                                <li>
+                                    <i class="fas fa-phone"></i>
+                                    <a href="tel:+18447278647">844 PCS VOIP</a>
+                                </li>
+                                <li>
+                                    <i class="fas fa-map-location"></i>Olathe, KS 66062
+                                </li>
+                                <li>
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:info@pcsusa.com">info@pcsusa.com</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="dropdown">
+                            <span>LOGIN</span>
+                            <div class="dropdown-content">
+                                <a href="https://login.pcsvoip.com/login">
+                                    <p>Premier</p>
+                                </a>
+                                <a href="https://elite.pcsvoiplogin.com/portal/">
+                                    <p>Elite - API Integration</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="header-social">
+
+                            <a href="https://www.facebook.com/PCSVoIP" target="_blank">
+                                <img src="assets/img/social/facebook.png" alt="Facebook"
+                                    style="width: 26px; height: 26px;">
+                            </a>
+                            <a href="https://x.com/pcsvoip/">
+                                <img src="assets/img/social/twitter.png" alt="Twitter"
+                                    style="width: 26px; height: 26px;">
+                            </a>
+                            <a href="https://www.linkedin.com/company/pcs-voip/">
+                                <img src="assets/img/social/linkedin.png" alt="LinkedIn"
+                                    style="width: 26px; height: 26px;">
+                            </a>
+                            <a href="https://www.instagram.com/pcsvoip/">
+                                <img src="assets/img/social/instagram.png" alt="Instagram"
+                                    style="width: 26px; height: 26px;">
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g">
+                                <img src="assets/img/social/youtube.png" alt="Youtube"
+                                    style="width: 26px; height: 26px;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle">
+                <i class="fal fa-times"></i>
+            </button>
+            <div class="mobile-logo">
+                <a class="icon-masking" href="index.html">
+                    <span data-mask-src="assets/img/logo.png" class="mask-icon"></span>
+                    <img src="assets/img/logo.png" alt="PCS">
+                </a>
+            </div>
+
+            <div class="th-mobile-menu">
+                <ul>
+                    <li class="menu-item-has-children"><a href="#">Product</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item-has-children"><a href="uc-client.html">UC Client</a>
+                                <ul class="sub-menu">
+                                    <li><a href="sms.html">SMS</a></li>
+                                    <li><a href="mobile-application.html">Mobile Application</a></li>
+                                    <li><a href="video-conferencing.html">Video Conferencing - Contact Sharing</a></li>
+                                </ul>
+                            </li>
+                            <li class="menu-item-has-children"><a href="contact-center.html">Contact Center</a>
+                                <ul class="sub-menu">
+                                    <li><a href="workforce-management.html">Workforce Management</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="pbx-sip-trunk.html">PBX-SIP-Trunk</a></li>
+                            <li><a href="e-fax.html">E-fax</a></li>
+                            <li><a href="cloud-sms.html">Enterprise Cloud SMS</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">API Integration</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="api-integration.html">API Applications</a>
+                            </li>
+                            <li>
+                                <a href="api-videos.html">API Videos</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Services</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="voip.html">VoIP Services</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">About Us</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="about.html">PCS VoIP</a>
+                            </li>
+                            <li>
+                                <a href="clients.html">Our Clients</a>
+                            </li>
+                            <li>
+                                <a href="testimonials.html">Testimonials</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Support</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Create a Ticket</a>
+                            </li>
+                            <li>
+                                <a href="terms.html">Terms of Service</a>
+                            </li>
+                            <li>
+                                <a href="privacy.html">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="faq.html">FAQ</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children">
+                        <a href="#">Resources</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="https://www.blog.pcsvoip.com/">Blog</a>
+                            </li>
+                            <li>
+                                <a href="phones.html">Phones</a>
+                            </li>
+                            <li>
+                                <a href="videos.html">Videos</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <header class="th-header header-layout3">
+
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto">
+                            <div class="header-logo">
+                                <a class="icon-masking" href="index.html">
+                                    <span data-mask-src="assets/img/logo.png" class="mask-icon"></span>
+                                    <img src="assets/img/logo.png" alt="PCS">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+
+                            <nav class="main-menu d-none d-lg-inline-block">
+                                <ul>
+                                    <li class="menu-item-has-children"><a href="#">Product</a>
+                                        <ul class="sub-menu">
+                                            <li class="menu-item-has-children"><a href="uc-client.html">UC Client</a>
+                                                <ul class="sub-menu">
+                                                    <li><a href="sms.html">SMS</a></li>
+                                                    <li><a href="mobile-application.html">Mobile Application</a></li>
+                                                    <li><a href="video-conferencing.html">Video Conferencing - Contact
+                                                            Sharing</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="menu-item-has-children"><a href="contact-center.html">Contact
+                                                    Center</a>
+                                                <ul class="sub-menu">
+                                                    <li><a href="workforce-management.html">Workforce Management</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="pbx-sip-trunk.html">PBX-SIP-Trunk</a></li>
+                                            <li><a href="e-fax.html">E-fax</a></li>
+                                            <li><a href="cloud-sms.html">Enterprise Cloud SMS</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">API Integration</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="api-integration.html">API Applications</a>
+                                            </li>
+                                            <li>
+                                                <a href="api-videos.html">API Videos</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Services</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="voip.html">VoIP Services</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">About Us</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="about.html">PCS VoIP</a>
+                                            </li>
+                                            <li>
+                                                <a href="clients.html">Our Clients</a>
+                                            </li>
+                                            <li>
+                                                <a href="testimonials.html">Testimonials</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Support</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Create a
+                                                    Ticket</a>
+                                            </li>
+                                            <li>
+                                                <a href="terms.html">Terms of Service</a>
+                                            </li>
+                                            <li>
+                                                <a href="privacy.html">Privacy Policy</a>
+                                            </li>
+                                            <li>
+                                                <a href="faq.html">FAQ</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="#">Resources</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="https://www.blog.pcsvoip.com/">Blog</a>
+                                            </li>
+                                            <li>
+                                                <a href="phones.html">Phones</a>
+                                            </li>
+                                            <li>
+                                                <a href="videos.html">Videos</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="contact.html">Contact</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div class="header-button">
+
+                                <button type="button" class="th-menu-toggle d-inline-block d-lg-none">
+                                    <i class="far fa-bars"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <div class="header-button">
+
+
+                                </button>
+                                <a href="quote.html" class="th-btn shadow-none">Get Quote
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="th-hero-wrapper hero-3" id="hero">
+        <div class="hero-img">
+            <img src="assets/img/hero/hero_img_3_1.png" alt="Hero Image">
+            <div class="shape-blur"></div>
+        </div>
+        <div class="hero-img-phone">
+            <img src="assets/img/hero/hero_img_3_phone.png" alt="Hero Image">
+            <div class="shape-blur"></div>
+        </div>
+        <div class="container">
+            <div class="hero-style3">
+                <h1 class="hero-title">PCS VoIP</h1>
+                <h6 class="hero-titlea">Connects Small, Medium &</h6>
+                <h6 class="hero-titlea">Enterprise Companies</h6>
+                <h6 class="hero-title"> Nationwide</h6>
+                <div class="btn-group">
+                    <a href="voip.html" class="th-btn">Learn More
+                    </a>
+                    <div class="call-btn">
+                        <a href="https://www.youtube.com/watch?v=sk_uXO45Jbk" class="play-btn popup-video">
+                            <i class="fas fa-play"></i>
+                        </a>
+                        <div class="media-body">
+                            <a href="https://www.youtube.com/watch?v=sk_uXO45Jbk" class="btn-title popup-video">Watch
+                                Our Video</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-shape1">
+            <img src="assets/img/hero/hero_shape_3_1.png" alt="shape">
+        </div>
+    </div>
+    <div class="space" id="about-sec">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-6 mb-30 mb-xl-0">
+                    <div class="img-box3">
+                        <div class="img1">
+                            <img src="assets/img/normal/about_2_1.jpg" alt="About">
+                        </div>
+                        <div class="img2">
+                            <img src="assets/img/normal/about_2_2.jpg" alt="About">
+                        </div>
+                        <div class="img3">
+                            <img src="assets/img/normal/about_2_3.jpg" alt="About">
+                        </div>
+                        <div class="shape1">
+                            <img src="assets/img/normal/about_2_shape.png" alt="About">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="title-area mb-35">
+                        <span class="sub-title">
+                            <div class="icon-masking me-2">
+                                <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                                <img src="assets/img/voip.png" alt="shape">
+                            </div>About PCS VoIP
+                        </span>
+                        <h2 class="sec-title">Driving Efficiency and Growth Through <span
+                                class="text-theme fw-normal">VoIP Solutions</span>
+                        </h2>
+                    </div>
+                    <p class="mt-n2 mb-25">PCS VoIP is a communication solutions provider for any business, big or
+                        small. PCS VoIP currently supports a wide range of industries, including manufacturing,
+                        healthcare, retail, transportation, financial services, and many more.</p>
+
+                    <p class="mt-n2 mb-25">We thrive on exceeding our customers’ expectations with our flexible features
+                        and custom solutions.</p>
+
+                    <p class="mt-n2 mb-25">In today’s economy, reducing costs while enhancing productivity is the key to
+                        success.</p>
+                    <p class="mt-n2 mb-25">As a nationwide telecommunications provider, PCS VoIP understands that
+                        businesses face increasing budgetary constraints. Our passion is helping our customers to reduce
+                        operating costs while reaching higher standards of productivity through our products and
+                        services.</p>
+
+                    <a href="about.html" class="th-btn">KNOW MORE
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="shape-mockup d-none d-lg-block" data-bottom="0%" data-right="0%">
+            <div class="particle-2 small" id="particle-1"></div>
+        </div>
+    </div>
+    <div class="bg-theme space-extra" data-bg-src="assets/img/bg/counter_bg_1.png">
+        <div class="container py-2">
+            <div class="row gy-40 justify-content-between">
+                <div class="col-6 col-lg-auto">
+                    <div class="counter-card">
+                        <div class="counter-card_icon">
+                            <img src="assets/img/icon/counter_1_4.svg" alt="Icon">
+                        </div>
+                        <div class="media-body">
+                            <h2 class="counter-card_number">
+                                <span class="counter-number">15</span>+
+                            </h2>
+                            <p class="counter-card_text">Years in Business</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-auto">
+                    <div class="counter-card">
+                        <div class="counter-card_icon">
+                            <img src="assets/img/icon/counter_1_2.svg" alt="Icon">
+                        </div>
+                        <div class="media-body">
+                            <h2 class="counter-card_number">
+                                <span class="counter-number">30</span>+
+                            </h2>
+                            <p class="counter-card_text">Happy Clients</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-auto">
+                    <div class="counter-card">
+                        <div class="counter-card_icon">
+                            <img src="assets/img/icon/counter_1_3.svg" alt="Icon">
+                        </div>
+                        <div class="media-body">
+                            <h2 class="counter-card_number">
+                                <span class="counter-number">20</span>+
+                            </h2>
+                            <p class="counter-card_text">Industry Experts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <section class="space" id="service-sec">
+        <div class="container">
+            <div class="row justify-content-lg-between justify-content-center align-items-center">
+                <div class="col-lg-6 col-sm-9 pe-xl-5">
+                    <div class="title-area text-center text-lg-start">
+                        <span class="sub-title">
+                            <div class="icon-masking me-2">
+                                <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                                <img src="assets/img/voip.png" alt="shape">
+                            </div>WHAT WE DO
+                        </span>
+                        <h2 class="sec-title">Comprehensive VoIP Solutions for <span class="text-theme fw-normal">Every
+                                Industry</span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="sec-btn">
+                        <a href="voip.html" class="th-btn">VIEW ALL
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-area">
+                <div class="swiper th-slider has-shadow" id="projectSlider2"
+                    data-slider-options='{"loop":true,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"2"},"992":{"slidesPerView":"3"},"1200":{"slidesPerView":"4"}}}'>
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="service-box">
+                                <div class="service-box_img">
+                                    <img src="assets/img/service/service_box_1.jpg" alt="Icon">
+                                </div>
+                                <div class="service-box_content">
+                                    <div class="service-box_icon">
+                                        <img src="assets/img/icon/service_box_2.svg" alt="Icon">
+                                    </div>
+                                    <h3 class="box-title">
+                                        PCS Unified Communication
+                                    </h3>
+                                    <p class="service-box_text">A software application that integrates voice, video,
+                                        messaging, and collaboration tools into a single interface</p>
+                                    <a href="uc-client.html" class="link-btn">Know More
+                                    </a>
+                                    <div class="bg-shape">
+                                        <img src="assets/img/bg/service_box_bg.png" alt="bg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="service-box">
+                                <div class="service-box_img">
+                                    <img src="assets/img/service/service_box_2.jpg" alt="Icon">
+                                </div>
+                                <div class="service-box_content">
+                                    <div class="service-box_icon">
+                                        <img src="assets/img/icon/service_grid_1.svg" alt="Icon">
+                                    </div>
+                                    <h3 class="box-title">
+                                        Contact Center
+                                    </h3>
+                                    <p class="service-box_text">A VoIP-based system for managing customer interactions
+                                        via phone, email, chat, and social media</p>
+                                    <a href="contact-center.html" class="link-btn">Know More
+                                    </a>
+                                    <div class="bg-shape">
+                                        <img src="assets/img/bg/service_box_bg.png" alt="bg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="service-box">
+                                <div class="service-box_img">
+                                    <img src="assets/img/service/service_box_3.jpg" alt="Icon">
+                                </div>
+                                <div class="service-box_content">
+                                    <div class="service-box_icon">
+                                        <img src="assets/img/icon/service_box_3.svg" alt="Icon">
+                                    </div>
+                                    <h3 class="box-title">
+                                        Communication API
+                                    </h3>
+                                    <p class="service-box_text">Voice over IP is an intriguing technology as it will
+                                        baffle you with the large number of features it has</p>
+                                    <a href="api-integration.html" class="link-btn">Know More
+                                    </a>
+                                    <div class="bg-shape">
+                                        <img src="assets/img/bg/service_box_bg.png" alt="bg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="service-box">
+                                <div class="service-box_img">
+                                    <img src="assets/img/service/service_box_5.jpg" alt="Icon">
+                                </div>
+                                <div class="service-box_content">
+                                    <div class="service-box_icon">
+                                        <img src="assets/img/icon/service_card_6.svg" alt="Icon">
+                                    </div>
+                                    <h3 class="box-title">
+                                        PBX-SIP-Trunk
+                                    </h3>
+                                    <p class="service-box_text">A service that connects a business’s Private Branch
+                                        Exchange (PBX) to the internet using SIP</p>
+                                    <a href="pbx-sip-trunk.html" class="link-btn">Know More
+                                    </a>
+                                    <div class="bg-shape">
+                                        <img src="assets/img/bg/service_box_bg.png" alt="bg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="service-box">
+                                <div class="service-box_img">
+                                    <img src="assets/img/service/service_box_1.jpg" alt="Icon">
+                                </div>
+                                <div class="service-box_content">
+                                    <div class="service-box_icon">
+                                        <img src="assets/img/icon/service_3_7.svg" alt="Icon">
+                                    </div>
+                                    <h3 class="box-title">
+                                        E-FAX
+                                    </h3>
+                                    <p class="service-box_text">A digital faxing solution that allows businesses to send
+                                        and receive faxes via email or a web portal.</p>
+                                    <a href="#" class="link-btn">Know More
+                                    </a>
+                                    <div class="bg-shape">
+                                        <img src="assets/img/bg/service_box_bg.png" alt="bg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </section>
+
+
+    <section class="bg-auto space" data-bg-src="assets/img/bg/blog_bg_11.jpg">
+        <div class="container">
+            <div class="title-area text-center"><span class="sub-title">
+                    <div class="icon-masking me-2"><span class="mask-icon"
+                            data-mask-src="assets/img/voip.png"></span><img src="assets/img/voip.png" alt="shape"></div>
+                    TESTIMONIALS
+                </span>
+                <h2 class="sec-title">What Our Happy Clients Say<br></h2>
+            </div>
+            <div class="slider-area">
+                <div class="swiper th-slider has-shadow" id="testiSlider2"
+                    data-slider-options='{"loop":true,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":"1"},"768":{"slidesPerView":"1"},"992":{"slidesPerView":"1"},"1200":{"slidesPerView":"2"}}}'>
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_2_1.jpg" alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“I thought I would share my transition from Traditional
+                                        landlines to Pegasus (PCS) VOIP for my office and how easy PCS made the
+                                        transition. I had five lines into my one office. 4 lines and 1 fax line. I also
+                                        had one internet line from Century Link, I had to change internet 2 years ago so
+                                        I was under a 24 month contract. I just switched. I cringed every time I wrote
+                                        the check to Century Link. PCS transition went very well. Ported 2 lines and the
+                                        fax. Thanks to my FCA colleagues who provided experience with their transition.
+                                        Make the switch if you have not!”</p>
+
+                                    <h3 class="box-title">David Richards</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_2_2.jpg" alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“Because service to me is #1, I have chosen to honor PCS’s
+                                        integrity, passion, and most importantly, knowledge.”</p>
+
+                                    <h3 class="box-title">Margaret Taylor</h3>
+                                    <p class="testi-box_desig">President ERA-Gillespie Real Estate</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_2_3.jpg" alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“To Whom It May Concern:
+                                        Our transition from an old phone system to VoIP with PCS was well-orchestrated
+                                        by PCS. We had little knowledge of the new protocol and PCS staff was
+                                        understanding and very helpful. I would recommend their services without
+                                        reservation.”</p>
+
+                                    <h3 class="box-title">Barry Gillespie</h3>
+                                    <p class="testi-box_desig">President ERA-Gillespie Real Estate</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_2_1.jpg" alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“ We started our switch this month. We’re going to save
+                                        about $600”.</p>
+
+                                    <h3 class="box-title">Mario Abreu</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_12_2.jpg"
+                                        alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“PCS VOIP is the way to go! I have been using a similar
+                                        service for the past few years and was paying 3 times more than I am paying with
+                                        PCS. Very simple math … $2500 in my pocket and they also now pay for my RS
+                                        Premium Membership… So $3000 saved a year!! No brainier!
+                                        The support staff was amazing during our transition and they reprogrammed all of
+                                        our phones to work with their system. I was skeptical at first but since they
+                                        were at RS Expo I gave them a shot and I am glad I did.”</p>
+
+                                    <h3 class="box-title">Charlie Bournis</h3>
+                                    <p class="testi-box_desig">NY</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testi-box">
+                                <div class="testi-box_img"><img src="assets/img/testimonial/testi_3_3.jpg" alt="Avater">
+                                    <div class="testi-box_quote"><img src="assets/img/icon/quote_left_2.svg"
+                                            alt="quote"></div>
+                                </div>
+                                <div class="testi-box_content">
+                                    <p class="testi-box_text">“It’s about time to have a product replacing AT&T, Spint,
+                                        and Verizon. Not only is it unlimited, but my price doesn’t change from month to
+                                        month. I am increasing my revenue by not missing a call.”</p>
+
+                                    <h3 class="box-title">David Rocci</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button data-slider-prev="#testiSlider2" class="slider-arrow style3 slider-prev"><i
+                            class="far fa-arrow-left"></i></button>
+                    <button data-slider-next="#testiSlider2" class="slider-arrow style3 slider-next"><i
+                            class="far fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div class="shape-mockup moving d-none d-xl-block" data-bottom="0%" data-left="10%"><img
+                    src="assets/img/shape/line_1.png" alt="shape"></div>
+            <div class="shape-mockup jump d-none d-xl-block" data-top="20%" data-right="2%"><img
+                    src="assets/img/shape/line_2.png" alt="shape"></div>
+    </section>
+    <section class="position-relative space">
+        <div class="th-bg-img" data-bg-src="assets/img/bg/cta_bg_2.jpg"><img src="assets/img/bg/bg_overlay_1.png"
+                alt="overlay"></div>
+        <div class="container z-index-common">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7 col-md-9 text-center">
+                    <div class="title-area mb-35"><span class="sub-title">
+                            <div class="icon-masking me-2"><span class="mask-icon"
+                                    data-mask-src="assets/img/voip.png"></span><img src="assets/img/voip.png"
+                                    alt="shape"></div>CONTACT
+                            US
+                        </span>
+                        <h2 class="sec-title text-white">Need VoIP Solutions for <span
+                                class="text-theme fw-normal"><br>Your Business?</span></h2>
+                    </div><a href="contact.html" class="th-btn style3">Get In Touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <div class="shape-mockup jump" data-bottom="0%" data-left="0%"><img src="assets/img/shape/tech_shape_5.png"
+            alt="shape"></div>
+    </div>
+
+
+
+    <footer class="footer-wrapper footer-layout2" data-bg-src="assets/img/bg/footer_bg_1.jpg">
+        <div class="widget-area">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xxl-3 col-xl-4">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <div class="about-logo"><a href="index.html"><img src="assets/img/logo-footer.png"
+                                            alt="PCS"></a></div>
+                                <p class="about-text">PCS VoIP is a communication solutions provider for any business,
+                                    big or small. PCS VoIP currently supports a wide range of industries, including
+                                    manufacturing, healthcare, retail, transportation, financial services, and many
+                                    more.</p>
+                                <div class="th-social">
+                                    <a href="https://www.facebook.com/PCSVoIP"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://x.com/pcsvoip"><i class="fab fa-x-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/company/pcs-voip/"><i
+                                            class="fab fa-linkedin-in"></i></a>
+                                    <a href="https://www.instagram.com/pcsvoip/"><i class="fab fa-instagram"></i></a>
+                                    <a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g"><i
+                                            class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Quick Links</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="about.html">About Us</a></li>
+                                    <li><a href="uc-client.html">Products</a></li>
+                                    <li><a href="voip.html">Services</a></li>
+                                    <li><a href="https://pcsvoip.zendesk.com/hc/en-us/requests/new">Support</a></li>
+                                    <li><a href="contact.html">Contact Us</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Contact Us</h3>
+                            <div class="th-widget-contact">
+                                <div class="contact-feature">
+                                    <div class="icon-btn"><i class="fa-solid fa-phone"></i></div>
+                                    <div class="media-body">
+                                        <a href="tel:+18447278647" class="contact-feature_link">844 PCS VOIP</a>
+                                    </div>
+                                </div>
+                                <div class="contact-feature">
+                                    <div class="icon-btn"><i class="fa-solid fa-envelope"></i></div>
+                                    <div class="media-body">
+                                        <a href="mailto:info@pcsusa.com"
+                                            class="contact-feature_link">info@pcsusa.com</a>
+                                    </div>
+                                </div>
+                                <div class="contact-feature">
+                                    <div class="icon-btn"><i class="fa-solid fa-location-dot"></i></div>
+                                    <div class="media-body">
+                                        <a href="https://www.google.com/maps" class="contact-feature_link">Olathe, KS
+                                            66062</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="widget footer-widget">
+                            <h3 class="widget_title">Get in touch</h3>
+                            <div class="newsletter-widget">
+                                <p class="footer-text">Subsrcibe to our newsletter and get all the information about our
+                                    VoIP service updates</p>
+                                <form action="#" class="newsletter-form">
+                                    <div class="form-group">
+                                        <input class="form-control" type="email" placeholder="Your email address"
+                                            required="">
+                                    </div>
+                                    <button type="submit" class="icon-btn"><i
+                                            class="fa-solid fa-paper-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap bg-theme">
+            <div class="container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-lg-6">
+                        <p class="copyright-text">Copyright <i class="fal fa-copyright"></i> 2024 PCS VoIP. All Rights
+                            Reserved.</p>
+                    </div>
+                    <div class="col-lg-6 text-end d-none d-lg-block">
+                        <div class="footer-links">
+                            <ul>
+                                <li><a href="terms.html">Terms & Conditions</a></li>
+                                <li><a href="privacy.html">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+                style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;">
+            </path>
+        </svg>
+    </div>
+    <script src="assets/js/vendor/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/swiper-bundle.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/jquery.counterup.min.js"></script>
+    <script src="assets/js/circle-progress.js"></script>
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/js/isotope.pkgd.min.js"></script>
+    <script src="assets/js/tilt.jquery.min.js"></script>
+    <script src="assets/js/ScrollTrigger.min.js"></script>
+    <script src="assets/js/smooth-scroll.js"></script>
+    <script src="assets/js/particles.min.js"></script>
+    <script src="assets/js/particles-config.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <div id="chatbot-icon" onclick="toggleChatbot()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Add overlay div -->
+    <div class="chatbot-overlay" id="chatbot-overlay"></div>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <span>Chat with Us</span>
+            <div class="header-buttons">
+                <button class="header-btn phone-btn" onclick="initiateCall()">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <button class="close-btn" onclick="closeChatbot()">End Chat</button>
+            </div>
+        </div>
+        <div id="chatbot-body">
+            <div id="chat-messages"></div>
+            <div id="user-form" class="user-form">
+                <input type="text" id="user-first-name" placeholder="First Name *" required>
+                <input type="text" id="user-last-name" placeholder="Last Name *" required>
+                <input type="tel" id="user-phone" placeholder="Phone Number *" required>
+                <input type="email" id="user-email" placeholder="Email (optional)">
+                <button onclick="startChat()">Start Chat</button>
+            </div>
+        </div>
+        <div id="chatbot-footer">
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)"
+                disabled>
+        </div>
+    </div>
+</body>
+<script>
+    let currentSessionId = null;
+    let selectedTopic = null;
+    let currentUserInfo = null;
+    let topic_id = null;
+    let user_id = "";
+    let chat_id = 'PCSVOIP-SALES';
+    let url = 'https://pcsapi.datalytique.com';
+    const GREETING_MESSAGE = "👋 Hello! I'm your virtual assistant from PCSVoIP. To get started, please provide your information below.";
+
+    let inactivityTimer = null;
+    let inactivityPopupTimer = null;
+    const INACTIVITY_POPUP_DELAY = 1 * 60 * 1000;
+    const INACTIVITY_CLOSE_DELAY = 2 * 60 * 1000;
+
+    function toggleChatbot() {
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const overlay = document.getElementById('chatbot-overlay');
+
+        loadTopic();
+        if (chatbotWindow.style.display === 'none' || !chatbotWindow.style.display) {
+            chatbotWindow.style.display = 'flex';
+            overlay.style.display = 'block';
+            chatbotIcon.style.width = '40px';
+            chatbotIcon.style.height = '40px';
+            if (currentUserInfo) {
+                document.getElementById('user-form').style.display = 'none';
+                document.getElementById('chat-messages').style.display = 'block';
+                document.getElementById('chatbot-footer').style.display = 'block';
+                document.getElementById('chatbot-input').disabled = false;
+
+            } else {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML = `<div class="message bot-message">${GREETING_MESSAGE}</div>`;
+                chatMessages.style.display = 'block';
+                document.getElementById('user-form').style.display = 'block';
+            }
+            resetInactivityTimers();
+        } else {
+            closeChatbot();
+        }
+    }
+
+
+
+    async function startChat() {
+        const firstName = document.getElementById('user-first-name').value.trim();
+        const lastName = document.getElementById('user-last-name').value.trim();
+        const userPhone = document.getElementById('user-phone').value.trim();
+        const userEmail = document.getElementById('user-email').value.trim();
+
+        if (!firstName || !lastName || !userPhone) {
+            alert('Please fill in all required fields (First Name, Last Name, and Phone Number)');
+            return;
+        }
+
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(userPhone.replace(/[-\s]/g, ''))) {
+            alert('Please enter a valid phone number');
+            return;
+        }
+
+        currentUserInfo = { firstName, lastName, userPhone, userEmail };
+
+        document.getElementById('user-form').style.display = 'none';
+        document.getElementById('chat-messages').style.display = 'block';
+        document.getElementById('chatbot-footer').style.display = 'block';
+        document.getElementById('chatbot-input').disabled = false;
+        const chatMessages = document.getElementById('chat-messages');
+        sendMessage("Hi", currentUserInfo);
+        resetInactivityTimers();
+    }
+
+    async function sendMessage(message, userInfo = null) {
+        const chatMessages = document.getElementById('chat-messages');
+        const chatBody = document.getElementById('chatbot-body');
+
+        if (currentSessionId === null) {
+            chatMessages.innerHTML = '';
+        } else {
+            addMessage(message, true);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        chatMessages.appendChild(typingIndicator);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        const requestBody = {
+            session_id: currentSessionId,
+            topic_id: topic_id,
+            message: message,
+            user_id: user_id,
+            first_name: userInfo?.firstName || '',
+            last_name: userInfo?.lastName || '',
+            phone: userInfo?.userPhone || '',
+            email: userInfo?.userEmail || ''
+        };
+
+        try {
+            const response = await fetch(url + '/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            const data = await response.json();
+
+            typingIndicator.remove();
+
+            currentSessionId = data.session_id;
+            addMessage(data.message, false);
+            resetInactivityTimers();
+
+        } catch (error) {
+            typingIndicator.remove();
+
+            console.error('Error sending message:', error);
+            addMessage("Sorry, there was an error processing your request.", false);
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            if (message) {
+                if (currentSessionId === null) {
+                    sendMessage(message, currentUserInfo);
+                }
+                else {
+                    sendMessage(message);
+                }
+
+                input.value = '';
+                resetInactivityTimers();
+            }
+        }
+    }
+
+    function resetChat() {
+        currentSessionId = null;
+        selectedTopic = null;
+
+        document.getElementById('user-form').style.display = 'none';
+        document.getElementById('chat-messages').style.display = 'none';
+        document.getElementById('chatbot-footer').style.display = 'none';
+        document.getElementById('chat-messages').innerHTML = '';
+        document.getElementById('chatbot-input').disabled = true;
+        document.getElementById('chatbot-input').value = '';
+
+        if (currentUserInfo) {
+            document.getElementById('user-first-name').value = currentUserInfo.firstName;
+            document.getElementById('user-last-name').value = currentUserInfo.lastName;
+            document.getElementById('user-phone').value = currentUserInfo.userPhone;
+            document.getElementById('user-email').value = currentUserInfo.userEmail;
+            const chatMessages = document.getElementById('chat-messages');
+            sendMessage("Hi", currentUserInfo);
+        }
+    }
+
+    async function closeChatbot() {
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const overlay = document.getElementById('chatbot-overlay');
+
+        if (currentSessionId) {
+            try {
+                const response = await fetch(url + '/api/chat/close', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to close chat session');
+                }
+            } catch (error) {
+                console.error('Error closing chat session:', error);
+            }
+        }
+
+        chatbotWindow.style.display = 'none';
+        overlay.style.display = 'none';
+        chatbotIcon.style.width = '50px';
+        chatbotIcon.style.height = '50px';
+
+        resetChat();
+    }
+
+    async function initiateCall() {
+        if (currentUserInfo && currentUserInfo.userPhone) {
+            const requestBody = {
+                user_id: user_id,
+                topic_id: topic_id,
+                first_name: currentUserInfo?.firstName || '',
+                last_name: currentUserInfo?.lastName || '',
+                phone_number: currentUserInfo?.userPhone || '',
+                email: currentUserInfo?.userEmail || '',
+                topic_name: "PCS VOIP",
+                description: "PCS VOIP"
+            };
+
+            try {
+                const response = await fetch(url + '/calls/single', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                if (!response.ok) {
+                    console.error('Failed to close chat session');
+                }
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+            console.log('Initiating call with:', currentUserInfo.userPhone);
+
+        } else {
+            alert('Please provide your information first to initiate a call.');
+        }
+    }
+
+    function createTimeSlotButtons(message) {
+        if (message.includes("available slots")) {
+            const [header, timeSlotsPart] = message.split(':\n\n');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.textContent = header + ':';
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'time-slot-buttons';
+
+            let timeSlots = [];
+            if (timeSlotsPart) {
+                timeSlots = timeSlotsPart
+                    .split('\n')
+                    .map(slot => slot.trim())
+                    .filter(slot => slot && slot.match(/\d+:\d+\s*[AaPpMm]{2}/));
+            }
+
+            timeSlots.forEach(slot => {
+                const button = document.createElement('button');
+                button.className = 'time-slot-button';
+                button.textContent = slot;
+                button.onclick = () => selectTimeSlot(slot, buttonContainer);
+                buttonContainer.appendChild(button);
+            });
+
+            messageDiv.appendChild(buttonContainer);
+            return messageDiv;
+        }
+        return null;
+    }
+
+    function selectTimeSlot(slot, buttonContainer) {
+        const buttons = buttonContainer.getElementsByClassName('time-slot-button');
+        Array.from(buttons).forEach(button => {
+            button.disabled = true;
+            if (button.textContent === slot) {
+                button.classList.add('selected');
+            }
+        });
+
+        sendMessage(slot);
+    }
+
+    function addMessage(message, isUser = false) {
+        const chatMessages = document.getElementById('chat-messages');
+        const chatBody = document.getElementById('chatbot-body');
+
+        if (!isUser) {
+            const timeSlotMessage = createTimeSlotButtons(message);
+            if (timeSlotMessage) {
+                chatMessages.appendChild(timeSlotMessage);
+                chatBody.scrollTop = chatBody.scrollHeight;
+                return;
+            }
+        }
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        messageDiv.textContent = message;
+        chatMessages.appendChild(messageDiv);
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function loadTopic() {
+        try {
+            const response = await fetch(url + '/api/chattelebot/persona/' + chat_id, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load topic');
+            }
+
+            const data = await response.json();
+            topic_id = data;
+            console.log('Topic ID loaded:', topic_id);
+        } catch (error) {
+            console.error('Error loading topic:', error);
+        }
+    }
+
+    function resetInactivityTimers() {
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+        if (inactivityPopupTimer) clearTimeout(inactivityPopupTimer);
+
+        const chatbotWindow = document.getElementById('chatbot-window');
+        if (currentSessionId && chatbotWindow.style.display === 'flex') {
+            inactivityPopupTimer = setTimeout(showInactivityPopup, INACTIVITY_POPUP_DELAY);
+            inactivityTimer = setTimeout(handleInactivityTimeout, INACTIVITY_CLOSE_DELAY);
+        }
+    }
+
+    function handleInactivityTimeout() {
+        const chatbotWindow = document.getElementById('chatbot-window');
+        if (currentSessionId && chatbotWindow.style.display === 'flex') {
+            closeChatbot();
+        }
+    }
+
+    function showInactivityPopup() {
+        const chatbotWindow = document.getElementById('chatbot-window');
+        if (!currentSessionId || chatbotWindow.style.display !== 'flex') return;
+
+        const chatMessages = document.getElementById('chat-messages');
+        const inactivityMessage = document.createElement('div');
+        inactivityMessage.className = 'message bot-message';
+        inactivityMessage.innerHTML = `
+        <div style="text-align: center;">
+            <p>Are you still there? This chat will close automatically in 1 minute due to inactivity.</p>
+            <button onclick="continueChat()" style="background: #1a237e; color: white; border: none; padding: 8px 16px; border-radius: 5px; margin: 10px; cursor: pointer;">Continue Chat</button>
+            <button onclick="closeChatbot()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 5px; margin: 10px; cursor: pointer;">End Chat</button>
+        </div>
+    `;
+        chatMessages.appendChild(inactivityMessage);
+        const chatBody = document.getElementById('chatbot-body');
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function continueChat() {
+        const chatMessages = document.getElementById('chat-messages');
+        const messages = chatMessages.getElementsByClassName('message');
+        if (messages.length > 0) {
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage.innerHTML.includes('Are you still there?')) {
+                lastMessage.remove();
+            }
+        }
+
+        resetInactivityTimers();
+
+        const input = document.getElementById('chatbot-input');
+        input.focus();
+    }
+
+    //Only add these if you want toclose the chat when the user navigates away from the page - datalytique
+    //document.addEventListener('visibilitychange', () => {
+    //   const chatbotWindow = document.getElementById('chatbot-window');
+    //   if (document.visibilityState === 'hidden' && currentSessionId && chatbotWindow.style.display === 'flex') {
+    //       closeChatbot();
+    //   }
+    //});
+
+    window.addEventListener('beforeunload', () => {
+        const chatbotWindow = document.getElementById('chatbot-window');
+        if (currentSessionId && chatbotWindow.style.display === 'flex') {
+            closeChatbot();
+        }
+    });
+</script>
+</body>
+
+</html>

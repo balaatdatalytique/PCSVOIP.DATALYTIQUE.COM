@@ -1,0 +1,34 @@
+/* Video Section Styles */
+.video-section {
+  text-align: center;
+  margin: 20px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+/* Responsive Video Container */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;  /* Limits the max size on larger screens */
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Maintain the aspect ratio based on your design (515/960 = ~53.65%) */
+.video-container::before {
+  content: "";
+  display: block;
+  padding-top: 53.65%;
+}
+
+/* Responsive Video Element */
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}

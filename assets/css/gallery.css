@@ -1,0 +1,60 @@
+/* Overall Gallery Section */
+.img-gallery {
+  padding: 80px 30px;
+  background-color: #f9f9f9;
+}
+
+/* Masonry Layout using CSS Columns */
+.gallery {
+  column-count: 3;         /* Adjust number of columns as needed */
+  column-gap: 1em;         /* Space between columns */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Gallery Items as Thumbnails */
+.gallery-item {
+  width: 100%;
+  margin-bottom: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  display: block;
+  border: 4px solid #609bbb;
+}
+
+.gallery-item:hover {
+  transform: scale(1.03);
+}
+
+/* Lightbox (Modal) Styling */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 4px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}

@@ -1,0 +1,54 @@
+/* videogallery.css */
+
+/* Overall Section Styling */
+.vg-section {
+  padding: 80px 20px;
+  background-color: #f9f9f9;
+}
+
+/* Container: 4 columns on large screens */
+.vg-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Video Item (Optional styling for each grid item) */
+.vg-item {
+  /* Additional item styling if needed */
+}
+
+/* Responsive Video Container */
+.vg-video {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;  /* 16:9 aspect ratio */
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+}
+
+/* Video Element Styling */
+.vg-video video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive adjustments: 2 columns on medium screens, 1 column on small screens */
+@media (max-width: 1024px) {
+  .vg-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .vg-container {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,48 @@
+# Binaries
+bin/
+*.exe
+*.out
+
+# Environment & secrets
+.env
+.env.*
+
+# CMS runtime backups
+.cms-backups/
+
+# Video assets (too large for git, deploy via rsync/FTP)
+assets/apivideos/
+assets/videos/
+
+# Node modules & test artifacts
+node_modules/
+test-results/
+
+# IDE & editor
+.vscode/
+.idea/
+*.swp
+*.swatch
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certbot / ACME
+.well-known/
+
+# FTP artifacts
+.ftpquota
+ftpit
+
+# Backup copies
+*- Copy*
+*-copy*
+
+# Claude Code local config
+.claude/
+
+# Temporary files
+*.tmp
+*.log
+/tmp/

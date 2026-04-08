@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Leaflet Map with Interactive Popups</title>
+  <!-- Include Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Include Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map { width: 100%; height: 500px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize the map centered on the US
+      var map = L.map('map').setView([37.0902, -95.7129], 4);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      var pinnedPopup = null;  // Tracks the popup that's been clicked (pinned)
+      var closeTimeout;        // To hold the timeout ID
+
+      // Define locations with phone and email details
+      var locations = [
+        { 
+          name: "New York", 
+          lat: 40.712776, 
+          lng: -74.005974, 
+          address: "New York, NY", 
+          phone: "123-456-7890", 
+          email: "ny@example.com" 
+        },
+        { 
+          name: "Los Angeles", 
+          lat: 34.052235, 
+          lng: -118.243683, 
+          address: "Los Angeles, CA", 
+          phone: "234-567-8901", 
+          email: "la@example.com" 
+        },
+        { 
+          name: "Chicago", 
+          lat: 41.878113, 
+          lng: -87.629799, 
+          address: "Chicago, IL", 
+          phone: "345-678-9012", 
+          email: "chicago@example.com" 
+        },
+        { 
+          name: "Houston", 
+          lat: 29.760427, 
+          lng: -95.369804, 
+          address: "Houston, TX", 
+          phone: "456-789-0123", 
+          email: "houston@example.com" 
+        },
+        { 
+          name: "Phoenix", 
+          lat: 33.448376, 
+          lng: -112.074036, 
+          address: "Phoenix, AZ", 
+          phone: "567-890-1234", 
+          email: "phoenix@example.com" 
+        }
+      ];
+
+      locations.forEach(function(location) {
+        var marker = L.marker([location.lat, location.lng]).addTo(map);
+        // Create popup content with clickable phone and email links
+        var popupContent = `
+          <div>
+            <strong>${location.name}</strong><br>
+            ${location.address}<br>
+            <a href="tel:${location.phone}">${location.phone}</a><br>
+            <a href="mailto:${location.email}">${location.email}</a>
+          </div>
+        `;
+        // Bind a popup to the marker with options that prevent auto-closing
+        marker.bindPopup(popupContent, { autoClose: false, closeOnClick: false });
+
+        // On mouseover, open the popup (if not pinned)
+        marker.on('mouseover', function() {
+          if (!pinnedPopup) {
+            this.openPopup();
+          }
+        });
+
+        // On mouseout, set a delay to close the popup (if not pinned)
+        marker.on('mouseout', function() {
+          if (!pinnedPopup) {
+            closeTimeout = setTimeout(() => {
+              this.closePopup();
+            }, 300);
+          }
+        });
+
+        // On click, pin the popup so it stays open
+        marker.on('click', function() {
+          clearTimeout(closeTimeout);
+          if (pinnedPopup && pinnedPopup !== this.getPopup()) {
+            map.closePopup(pinnedPopup);
+          }
+          pinnedPopup = this.getPopup();
+          this.openPopup();
+        });
+      });
+
+      // When a popup opens, attach events to its container so it stays open on hover
+      map.on('popupopen', function(e) {
+        var popupEl = e.popup.getElement();
+        // Cancel the close timeout if mouse enters the popup
+        popupEl.addEventListener('mouseenter', function() {
+          clearTimeout(closeTimeout);
+        });
+        // Close the popup after a delay if mouse leaves (and it’s not pinned)
+        popupEl.addEventListener('mouseleave', function() {
+          if (pinnedPopup !== e.popup) {
+            closeTimeout = setTimeout(function() {
+              map.closePopup(e.popup);
+            }, 300);
+          }
+        });
+      });
+
+      // Clicking anywhere on the map (outside a marker) will unpin and close the popup
+      map.on('click', function() {
+        if (pinnedPopup) {
+          map.closePopup(pinnedPopup);
+          pinnedPopup = null;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

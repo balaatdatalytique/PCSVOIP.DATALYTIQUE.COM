@@ -1,0 +1,57 @@
+/* pagetable.css */
+
+/* Container for the custom table */
+.pt-container {
+  margin: 20px;
+}
+
+/* Custom Table Styling */
+#pt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+#pt-table th,
+#pt-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+#pt-table th {
+  background-color: #f2f2f2;
+}
+
+/* Application Logo Styling */
+.pt-logo-link img.pt-app-logo {
+  vertical-align: middle;
+  /*height: 30px;*/
+  max-width: 30%;
+}
+
+/* OS Logo Styling */
+.pt-os-img {
+  height: 20px !important;
+  margin: 0 5px;
+}
+
+/* Pagination Styling */
+.pt-pagination {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.pt-pagination .pt-page {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.pt-pagination .pt-page.active {
+  background-color: #67bd4a;
+  color: #fff;
+  border-color: #67bd4a;
+}
