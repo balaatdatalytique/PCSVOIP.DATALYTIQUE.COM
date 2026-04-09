@@ -1,0 +1,224 @@
+/* Pegasi AI Solutions - Glowing Nav Callout & Page Styles */
+
+/* Glowing nav item */
+.pegasi-ai-nav a {
+    background: linear-gradient(135deg, #00f5a0, #00d9f5) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 700 !important;
+    position: relative;
+    animation: pegasi-glow-text 2s ease-in-out infinite;
+}
+
+.pegasi-ai-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #00f5a0, #00d9f5, #a855f7);
+    border-radius: 2px;
+    animation: pegasi-shimmer 2s linear infinite;
+}
+
+@keyframes pegasi-glow-text {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(0,245,160,0.3)); }
+    50% { filter: brightness(1.3) drop-shadow(0 0 8px rgba(0,217,245,0.6)); }
+}
+
+@keyframes pegasi-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Product card styles for AI landing page */
+.ai-product-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e8e8e8;
+    height: 100%;
+}
+
+.ai-product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.ai-product-card .product-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+    color: #fff;
+}
+
+.ai-product-card .product-icon.autoattender { background: linear-gradient(135deg, #667eea, #764ba2); }
+.ai-product-card .product-icon.crm { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.ai-product-card .product-icon.chatbot { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.ai-product-card .product-icon.audiobot { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+.ai-product-card h3 { color: #141D38; margin-bottom: 12px; }
+.ai-product-card p { color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+
+.ai-product-card .product-btn {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 25px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ai-product-card .product-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    color: #fff;
+}
+
+.ai-product-card .product-btn.autoattender { background: linear-gradient(135deg, #667eea, #764ba2); }
+.ai-product-card .product-btn.crm { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.ai-product-card .product-btn.chatbot { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.ai-product-card .product-btn.audiobot { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+/* AI hero gradient */
+.ai-hero-gradient {
+    background: linear-gradient(135deg, #141D38 0%, #1a2744 40%, #0d3320 100%);
+    padding: 80px 0 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-hero-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(0,245,160,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(0,217,245,0.06) 0%, transparent 50%);
+    animation: ai-bg-drift 15s ease-in-out infinite;
+}
+
+@keyframes ai-bg-drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(2%, -1%); }
+}
+
+/* Feature grid for product pages */
+.feature-grid-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 24px;
+    border: 1px solid #eee;
+    transition: box-shadow 0.3s, transform 0.3s;
+    height: 100%;
+}
+
+.feature-grid-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+}
+
+.feature-grid-card .feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #67bd4a, #3d8b2f);
+}
+
+.feature-grid-card h4 { color: #141D38; font-size: 18px; margin-bottom: 10px; }
+.feature-grid-card p { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 0; }
+
+/* Pricing table for autoattender */
+.pricing-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 35px 25px;
+    text-align: center;
+    border: 2px solid #eee;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    height: 100%;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.pricing-card.featured {
+    border-color: #67bd4a;
+}
+
+.pricing-card.featured::before {
+    content: 'Most Popular';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #67bd4a;
+    color: #fff;
+    padding: 4px 20px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.pricing-card .price { font-size: 42px; font-weight: 800; color: #141D38; }
+.pricing-card .price span { font-size: 16px; font-weight: 400; color: #888; }
+
+.pricing-card ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 20px 0;
+}
+
+.pricing-card ul li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.pricing-card ul li i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.pricing-card ul li .fa-check { color: #67bd4a; }
+.pricing-card ul li .fa-times { color: #ccc; }
+
+/* AAIRC subtle badge */
+.aairc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+}
+
+.aairc-badge i { font-size: 10px; color: #bbb; }
