@@ -19,6 +19,7 @@
   </div>
   {{if .Error}}<div class="admin-alert">{{.Error}}</div>{{end}}
   <form method="POST" action="/admin/login" autocomplete="off">
+    <input type="hidden" name="_csrf" value="{{.CSRFToken}}">
     <label>Username</label>
     <input type="text" name="username" required autofocus>
     <label>Password</label>

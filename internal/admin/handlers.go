@@ -92,7 +92,7 @@ var adminFuncs = template.FuncMap{
 // LoginPage renders the login form (and handles POST).
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		h.renderLogin(w, "")
+		h.renderLogin(w, r, "")
 		return
 	}
 	if err := r.ParseForm(); err != nil {
@@ -102,7 +102,7 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	username := strings.TrimSpace(r.PostFormValue("username"))
 	password := r.PostFormValue("password")
 	if !h.Users.VerifyPassword(username, password) {
-		h.renderLogin(w, "Invalid username or password")
+		h.renderLogin(w, r, "Invalid username or password")
 		return
 	}
 	if err := h.Users.UpdateLastLogin(username); err != nil {
@@ -137,9 +137,12 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/admin/login", http.StatusFound)
 }
 
-func (h *Handler) renderLogin(w http.ResponseWriter, errorMsg string) {
+func (h *Handler) renderLogin(w http.ResponseWriter, r *http.Request, errorMsg string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = h.Login.ExecuteTemplate(w, "login.html", map[string]any{"Error": errorMsg})
+	_ = h.Login.ExecuteTemplate(w, "login.html", map[string]any{
+		"Error":     errorMsg,
+		"CSRFToken": middleware.CSRFToken(r),
+	})
 }
 
 // =====================================================================
