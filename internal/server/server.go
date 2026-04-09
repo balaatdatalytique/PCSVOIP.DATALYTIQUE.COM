@@ -66,7 +66,8 @@ func Run(cfg *config.Config) error {
 	}
 
 	// 5. Admin module.
-	visitorRepo := admin.NewVisitorRepo(database)
+	geoService := admin.NewGeoService(database)
+	visitorRepo := admin.NewVisitorRepo(database, geoService)
 	adminHandler, err := admin.New(admin.Handler{
 		Auth:          authMgr,
 		Users:         admin.NewUserRepo(database),

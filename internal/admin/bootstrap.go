@@ -1,8 +1,10 @@
 package admin
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
+	"net"
 	"os"
 	"strings"
 	"time"
@@ -55,7 +57,75 @@ func Bootstrap(database *db.DB, adminUser, adminPassEnv, contextFilePath string)
 	if _, err := settings.Get(); err != nil {
 		return err
 	}
+
+	// Sweep any pre-filter healthcheck / bot noise so the dashboard starts
+	// clean. New events are filtered at write time by the visitor middleware.
+	if err := cleanupNoiseEvents(database); err != nil {
+		log.Printf("admin: cleanup noise: %v", err)
+	}
 	return nil
+}
+
+// cleanupNoiseEvents deletes events whose IP is loopback/private/empty and
+// visitor summaries with the same. Runs once per process start; the cost is
+// O(events) so it's bounded by whatever made it through previously.
+func cleanupNoiseEvents(database *db.DB) error {
+	var (
+		evDel  []string
+		visDel []string
+	)
+	err := database.ForEach(db.BucketEvents, func(key string, raw []byte) error {
+		var ev VisitorEvent
+		if e := json.Unmarshal(raw, &ev); e != nil {
+			return nil
+		}
+		if !isPublicIPBoot(ev.IP) {
+			evDel = append(evDel, key)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	for _, k := range evDel {
+		_ = database.Delete(db.BucketEvents, k)
+	}
+
+	err = database.ForEach(db.BucketVisitors, func(key string, raw []byte) error {
+		var v Visitor
+		if e := json.Unmarshal(raw, &v); e != nil {
+			return nil
+		}
+		if !isPublicIPBoot(v.LastIP) {
+			visDel = append(visDel, key)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	for _, k := range visDel {
+		_ = database.Delete(db.BucketVisitors, k)
+	}
+
+	if len(evDel) > 0 || len(visDel) > 0 {
+		log.Printf("admin: cleanup removed %d noise events and %d visitor summaries", len(evDel), len(visDel))
+	}
+	return nil
+}
+
+func isPublicIPBoot(ip string) bool {
+	if ip == "" {
+		return false
+	}
+	parsed := net.ParseIP(ip)
+	if parsed == nil {
+		return false
+	}
+	if parsed.IsLoopback() || parsed.IsPrivate() || parsed.IsLinkLocalUnicast() || parsed.IsUnspecified() {
+		return false
+	}
+	return true
 }
 
 // normaliseHash accepts either a bcrypt hash or a plaintext password and

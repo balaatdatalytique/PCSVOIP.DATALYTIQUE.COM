@@ -82,7 +82,19 @@ var adminFuncs = template.FuncMap{
 		return s[:n] + "…"
 	},
 	"eventLabel": FormatType,
+	"flag":       FlagEmoji,
 	"add":        func(a, b int) int { return a + b },
+	"sub":        func(a, b int) int { return a - b },
+	"seq": func(start, end int) []int {
+		if end < start {
+			return nil
+		}
+		out := make([]int, 0, end-start+1)
+		for i := start; i <= end; i++ {
+			out = append(out, i)
+		}
+		return out
+	},
 }
 
 // =====================================================================
@@ -437,21 +449,47 @@ func (h *Handler) KBToggle(w http.ResponseWriter, r *http.Request) {
 // =====================================================================
 
 func (h *Handler) VisitorsPage(w http.ResponseWriter, r *http.Request) {
-	limit := 200
-	events, _ := h.Visitors.RecentEvents(limit)
-	visitors, _ := h.Visitors.ListVisitors(50)
-	// summary counts by type
-	counts := map[string]int{"page_view": 0, "bot_chat": 0, "bot_voice": 0}
-	for _, e := range events {
-		counts[e.Type]++
+	page := parsePage(r.URL.Query().Get("page"))
+	vpage := parsePage(r.URL.Query().Get("vpage"))
+	const perPage = 50
+
+	eventsPage, err := h.Visitors.RecentEventsPaged(page, perPage)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	visitorsPage, err := h.Visitors.ListVisitorsPaged(vpage, perPage)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// 24-hour rolling counts by type (independent of pagination).
+	since := time.Now().Add(-24 * time.Hour)
+	pageViews24h, chats24h, voices24h := h.Visitors.CountByTypeSince(since)
+
 	h.render(w, r, "visitors.html", map[string]any{
 		"Title":     "Visitors",
 		"NavActive": "visitors",
-		"Events":    events,
-		"Visitors":  visitors,
-		"Counts":    counts,
+		"Events":    eventsPage,
+		"Visitors":  visitorsPage,
+		"Counts": map[string]int{
+			"page_view": pageViews24h,
+			"bot_chat":  chats24h,
+			"bot_voice": voices24h,
+		},
 	})
+}
+
+func parsePage(s string) int {
+	if s == "" {
+		return 1
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil || n < 1 {
+		return 1
+	}
+	return n
 }
 
 // =====================================================================

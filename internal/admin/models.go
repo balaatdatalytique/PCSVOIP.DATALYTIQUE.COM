@@ -67,13 +67,35 @@ type KBDocument struct {
 
 // Visitor is the rolled-up summary keyed by sha1(ip+ua)[:16].
 type Visitor struct {
-	ID        string    `json:"id"`
-	FirstSeen time.Time `json:"first_seen"`
-	LastSeen  time.Time `json:"last_seen"`
-	PageViews int       `json:"page_views"`
-	BotMsgs   int       `json:"bot_msgs"`
-	UserAgent string    `json:"user_agent"`
-	LastIP    string    `json:"last_ip"`
+	ID          string    `json:"id"`
+	FirstSeen   time.Time `json:"first_seen"`
+	LastSeen    time.Time `json:"last_seen"`
+	PageViews   int       `json:"page_views"`
+	BotMsgs     int       `json:"bot_msgs"`
+	UserAgent   string    `json:"user_agent"`
+	LastIP      string    `json:"last_ip"`
+	City        string    `json:"city,omitempty"`
+	Region      string    `json:"region,omitempty"`
+	Country     string    `json:"country,omitempty"`
+	CountryCode string    `json:"country_code,omitempty"`
+	ISP         string    `json:"isp,omitempty"`
+	Latitude    float64   `json:"latitude,omitempty"`
+	Longitude   float64   `json:"longitude,omitempty"`
+}
+
+// GeoInfo is the cached IP geolocation result. Stored under BucketGeoCache
+// keyed by IP. Refreshed after geoTTL.
+type GeoInfo struct {
+	IP          string    `json:"ip"`
+	City        string    `json:"city,omitempty"`
+	Region      string    `json:"region,omitempty"`
+	Country     string    `json:"country,omitempty"`
+	CountryCode string    `json:"country_code,omitempty"`
+	ISP         string    `json:"isp,omitempty"`
+	Latitude    float64   `json:"lat,omitempty"`
+	Longitude   float64   `json:"lon,omitempty"`
+	Timezone    string    `json:"timezone,omitempty"`
+	FetchedAt   time.Time `json:"fetched_at"`
 }
 
 // VisitorEvent is one row in the chronological event log.
@@ -86,5 +108,6 @@ type VisitorEvent struct {
 	Message   string    `json:"message,omitempty"`
 	Reply     string    `json:"reply,omitempty"`
 	IP        string    `json:"ip"`
+	UserAgent string    `json:"user_agent,omitempty"`
 	Timestamp time.Time `json:"timestamp"`
 }

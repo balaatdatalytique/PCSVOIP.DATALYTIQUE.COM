@@ -5,7 +5,7 @@
       <div class="stat-icon"><i class="fas fa-eye"></i></div>
       <div class="stat-body">
         <div class="stat-num">{{index .Counts "page_view"}}</div>
-        <div class="stat-label">Page views (recent)</div>
+        <div class="stat-label">Page views (24 h)</div>
       </div>
     </div>
   </div>
@@ -14,7 +14,7 @@
       <div class="stat-icon green"><i class="fas fa-comments"></i></div>
       <div class="stat-body">
         <div class="stat-num">{{index .Counts "bot_chat"}}</div>
-        <div class="stat-label">Chat exchanges</div>
+        <div class="stat-label">Chat exchanges (24 h)</div>
       </div>
     </div>
   </div>
@@ -23,62 +23,112 @@
       <div class="stat-icon blue"><i class="fas fa-microphone"></i></div>
       <div class="stat-body">
         <div class="stat-num">{{index .Counts "bot_voice"}}</div>
-        <div class="stat-label">Voice exchanges</div>
+        <div class="stat-label">Voice exchanges (24 h)</div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="row g-3">
-  <div class="col-lg-7">
-    <div class="card admin-card">
-      <div class="card-header"><strong>Recent events</strong></div>
-      <div class="card-body p-0">
-        <table class="table table-sm mb-0 table-events">
-          <thead><tr><th>When</th><th>Type</th><th>Visitor</th><th>Detail</th></tr></thead>
-          <tbody>
-          {{range .Events}}
-            <tr>
-              <td class="text-muted">{{fmtTime .Timestamp}}</td>
-              <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
-              <td class="mono">{{truncate 12 .VisitorID}}</td>
-              <td class="text-truncate" style="max-width:380px">
-                {{if eq .Type "page_view"}}{{.Path}}
-                {{else}}<span class="text-dark">{{truncate 80 .Message}}</span>
-                  {{if .Reply}}<br><span class="text-muted small">→ {{truncate 80 .Reply}}</span>{{end}}
-                {{end}}
-              </td>
-            </tr>
-          {{else}}
-            <tr><td colspan="4" class="text-center text-muted py-4">No events yet.</td></tr>
-          {{end}}
-          </tbody>
-        </table>
-      </div>
-    </div>
+<div class="card admin-card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Recent events</strong>
+    <span class="text-muted small">{{.Events.Total}} total · page {{.Events.Page}} of {{.Events.LastPage}}</span>
   </div>
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 table-events">
+      <thead><tr><th>When</th><th>Type</th><th>IP</th><th>Visitor</th><th>Detail</th></tr></thead>
+      <tbody>
+      {{range .Events.Events}}
+        <tr>
+          <td class="text-muted text-nowrap">{{fmtTime .Timestamp}}</td>
+          <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
+          <td class="mono small">{{.IP}}</td>
+          <td class="mono small">{{truncate 12 .VisitorID}}</td>
+          <td class="text-truncate" style="max-width:340px">
+            {{if eq .Type "page_view"}}{{.Path}}{{if .Referrer}}<div class="text-muted small">← {{truncate 60 .Referrer}}</div>{{end}}
+            {{else}}<span class="text-dark">{{truncate 80 .Message}}</span>
+              {{if .Reply}}<br><span class="text-muted small">→ {{truncate 80 .Reply}}</span>{{end}}
+            {{end}}
+          </td>
+        </tr>
+      {{else}}
+        <tr><td colspan="5" class="text-center text-muted py-4">No events yet — once a visitor lands on a public page, you'll see them here.</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{if gt .Events.LastPage 1}}
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <span class="text-muted small">Showing {{.Events.PerPage}} per page</span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item {{if not .Events.HasPrev}}disabled{{end}}">
+          <a class="page-link" href="?page={{.Events.PrevPage}}#events">‹ Prev</a>
+        </li>
+        <li class="page-item active"><span class="page-link">{{.Events.Page}}</span></li>
+        <li class="page-item disabled"><span class="page-link">/ {{.Events.LastPage}}</span></li>
+        <li class="page-item {{if not .Events.HasNext}}disabled{{end}}">
+          <a class="page-link" href="?page={{.Events.NextPage}}#events">Next ›</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {{end}}
+</div>
 
-  <div class="col-lg-5">
-    <div class="card admin-card">
-      <div class="card-header"><strong>Visitor summary</strong></div>
-      <div class="card-body p-0">
-        <table class="table table-sm mb-0 table-events">
-          <thead><tr><th>Visitor</th><th>Pages</th><th>Bot</th><th>Last seen</th></tr></thead>
-          <tbody>
-          {{range .Visitors}}
-            <tr>
-              <td class="mono">{{truncate 16 .ID}}<div class="text-muted small">{{truncate 24 .UserAgent}}</div></td>
-              <td>{{.PageViews}}</td>
-              <td>{{.BotMsgs}}</td>
-              <td class="text-muted">{{fmtTime .LastSeen}}</td>
-            </tr>
-          {{else}}
-            <tr><td colspan="4" class="text-center text-muted py-4">No visitors recorded.</td></tr>
-          {{end}}
-          </tbody>
-        </table>
-      </div>
-    </div>
+<div class="card admin-card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Visitor summary</strong>
+    <span class="text-muted small">{{.Visitors.Total}} unique · page {{.Visitors.Page}} of {{.Visitors.LastPage}}</span>
   </div>
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 table-events">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>IP</th>
+          <th>Pages</th>
+          <th>Bot</th>
+          <th>Last seen</th>
+          <th>User agent</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{range .Visitors.Visitors}}
+        <tr>
+          <td>
+            {{if .CountryCode}}<span class="flag" title="{{.Country}}">{{flag .CountryCode}}</span>{{end}}
+            <span class="fw-semibold">{{if .City}}{{.City}}{{if .Region}}, {{.Region}}{{end}}{{else}}—{{end}}</span>
+            {{if .Country}}<div class="text-muted small">{{.Country}}{{if .ISP}} · {{.ISP}}{{end}}</div>{{end}}
+          </td>
+          <td class="mono small">{{.LastIP}}</td>
+          <td>{{.PageViews}}</td>
+          <td>{{.BotMsgs}}</td>
+          <td class="text-muted text-nowrap">{{fmtTime .LastSeen}}</td>
+          <td class="text-muted small text-truncate" style="max-width:240px" title="{{.UserAgent}}">{{truncate 60 .UserAgent}}</td>
+        </tr>
+      {{else}}
+        <tr><td colspan="6" class="text-center text-muted py-4">No visitors recorded yet.</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{if gt .Visitors.LastPage 1}}
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <span class="text-muted small">Sorted by most recent visit</span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item {{if not .Visitors.HasPrev}}disabled{{end}}">
+          <a class="page-link" href="?vpage={{.Visitors.PrevPage}}#visitors">‹ Prev</a>
+        </li>
+        <li class="page-item active"><span class="page-link">{{.Visitors.Page}}</span></li>
+        <li class="page-item disabled"><span class="page-link">/ {{.Visitors.LastPage}}</span></li>
+        <li class="page-item {{if not .Visitors.HasNext}}disabled{{end}}">
+          <a class="page-link" href="?vpage={{.Visitors.NextPage}}#visitors">Next ›</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {{end}}
 </div>
 {{end}}
