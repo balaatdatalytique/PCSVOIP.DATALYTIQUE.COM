@@ -39,8 +39,6 @@
     text-decoration: none;
 }
 
-.ai-tile:hover * { color: #000 !important; }
-
 .ai-tile .tile-icon {
     width: 56px;
     height: 56px;
@@ -60,19 +58,33 @@
     color: #67bd4a !important;
 }
 
+a.ai-tile,
+a.ai-tile:hover,
+a.ai-tile:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+a.ai-tile h3,
 .ai-tile h3 {
     font-size: 1.25rem;
-    color: #fff;
+    color: #fff !important;
     margin-bottom: 12px;
     font-weight: 700;
 }
 
+a.ai-tile p,
 .ai-tile p {
-    color: #999;
+    color: #999 !important;
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 16px;
     flex-grow: 1;
+}
+
+a.ai-tile:hover h3,
+a.ai-tile:hover p {
+    color: #000 !important;
 }
 
 .ai-tile .tile-tag {

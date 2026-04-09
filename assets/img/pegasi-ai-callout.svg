@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 110" width="360" height="110">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="50%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#0d1a0d"/>
+    </linearGradient>
+    <linearGradient id="turquoiseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1de9d6"/>
+      <stop offset="25%" stop-color="#40e0d0"/>
+      <stop offset="50%" stop-color="#00ced1"/>
+      <stop offset="75%" stop-color="#48d1cc"/>
+      <stop offset="100%" stop-color="#7fffd4"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer glow ring -->
+  <rect x="2" y="2" width="356" height="106" rx="18" ry="18"
+        fill="none" stroke="#67bd4a" stroke-width="1.5" opacity="0.45"/>
+
+  <!-- Main background -->
+  <rect x="6" y="6" width="348" height="98" rx="14" ry="14" fill="url(#bgGrad)"/>
+
+  <!-- Accent corner triangle -->
+  <path d="M 6 6 L 90 6 L 6 90 Z" fill="#67bd4a" opacity="0.18"/>
+
+  <!-- Centered title: Pegasi AI Solutions -->
+  <text x="180" y="68" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="30" font-weight="800" filter="url(#glow)">
+    <tspan fill="url(#turquoiseGrad)">Pegasi</tspan> <tspan fill="#ffffff">AI Solutions</tspan>
+  </text>
+</svg>
