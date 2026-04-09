@@ -15,7 +15,9 @@ type BotRepo struct{ DB *db.DB }
 
 func NewBotRepo(database *db.DB) *BotRepo { return &BotRepo{DB: database} }
 
-// Get returns the current bot config, defaulting on first call.
+// Get returns the current bot config, defaulting on first call. Also fills in
+// any zero-value fields that were added after the original record was written
+// (forward-compat for schema additions like Voice).
 func (r *BotRepo) Get() (*BotConfig, error) {
 	var b BotConfig
 	err := r.DB.Get(db.BucketBot, botKey, &b)
@@ -28,6 +30,9 @@ func (r *BotRepo) Get() (*BotConfig, error) {
 	}
 	if err != nil {
 		return nil, err
+	}
+	if b.Voice == "" {
+		b.Voice = "ara"
 	}
 	return &b, nil
 }
@@ -49,6 +54,7 @@ func defaultBotConfig() BotConfig {
 		Greeting:     "Hi, I'm Pegasi — how can I help you today?",
 		SystemPrompt: "You help website visitors understand PCS VoIP's products, services, pricing, and guide them toward the right communication solution. Keep answers concise.",
 		Guardrails:   "Never invent prices. If unsure, suggest the visitor call 844-PCS-VOIP. Do not discuss competitors. Do not give legal, financial, or medical advice.",
+		Voice:        "ara",
 		MaxKBBytes:   30000,
 		UpdatedAt:    time.Now().UTC(),
 	}

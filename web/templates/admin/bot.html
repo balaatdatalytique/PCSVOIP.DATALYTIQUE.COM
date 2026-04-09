@@ -25,6 +25,30 @@
         <input type="text" class="form-control" name="greeting" value="{{.Bot.Greeting}}">
       </div>
 
+      <div class="mb-3" style="max-width:340px">
+        <label class="form-label">Voice <span class="text-muted small">(Grok realtime)</span></label>
+        <input type="text" class="form-control" name="voice" list="grok-voices" value="{{.Bot.Voice}}" placeholder="ara" autocomplete="off">
+        <datalist id="grok-voices">
+          <option value="ara">ara — female, default</option>
+          <option value="abby">abby — female</option>
+          <option value="baxter">baxter — male</option>
+          <option value="bree">bree — female</option>
+          <option value="cooper">cooper — male</option>
+          <option value="elinor">elinor — female</option>
+          <option value="eva">eva — female</option>
+          <option value="gail">gail — female</option>
+          <option value="jasper">jasper — male</option>
+          <option value="jennifer">jennifer — female</option>
+          <option value="micah">micah — male</option>
+          <option value="ophelia">ophelia — female</option>
+          <option value="prudence">prudence — female</option>
+          <option value="raul">raul — male</option>
+          <option value="shelly">shelly — female</option>
+          <option value="terran">terran — male</option>
+        </datalist>
+        <div class="form-text">Pick from the suggestions or type any voice name supported by xAI's realtime API. Currently active for the voice bot only — try it on <a href="/pegasi-audiobot.html" target="_blank">pegasi-audiobot</a>.</div>
+      </div>
+
       <div class="mb-3">
         <label class="form-label">System prompt</label>
         <textarea class="form-control mono" name="system_prompt" rows="10">{{.Bot.SystemPrompt}}</textarea>

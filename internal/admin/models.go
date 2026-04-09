@@ -46,6 +46,7 @@ type BotConfig struct {
 	SystemPrompt string    `json:"system_prompt"`
 	Greeting     string    `json:"greeting"`
 	Guardrails   string    `json:"guardrails"`
+	Voice        string    `json:"voice"` // Grok realtime voice id (e.g. "ara")
 	MaxKBBytes   int       `json:"max_kb_bytes"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }

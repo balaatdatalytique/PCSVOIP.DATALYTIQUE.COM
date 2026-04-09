@@ -236,6 +236,10 @@ func (h *Handler) botSave(w http.ResponseWriter, r *http.Request) {
 	cfg.SystemPrompt = strings.TrimSpace(r.PostFormValue("system_prompt"))
 	cfg.Greeting = strings.TrimSpace(r.PostFormValue("greeting"))
 	cfg.Guardrails = strings.TrimSpace(r.PostFormValue("guardrails"))
+	cfg.Voice = strings.TrimSpace(r.PostFormValue("voice"))
+	if cfg.Voice == "" {
+		cfg.Voice = "ara"
+	}
 	if v, err := strconv.Atoi(r.PostFormValue("max_kb_bytes")); err == nil && v > 0 {
 		cfg.MaxKBBytes = v
 	}

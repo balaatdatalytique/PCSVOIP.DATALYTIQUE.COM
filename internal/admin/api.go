@@ -61,6 +61,9 @@ func (a *API) Context(w http.ResponseWriter, r *http.Request) {
 	if cfg.Greeting != "" {
 		w.Header().Set("X-Bot-Greeting", cfg.Greeting)
 	}
+	if cfg.Voice != "" {
+		w.Header().Set("X-Bot-Voice", cfg.Voice)
+	}
 	w.Write([]byte(ctx))
 }
 

@@ -31,10 +31,18 @@ var (
 	internalAPIToken string
 	ctxCache         struct {
 		mu        sync.Mutex
-		text      string
+		data      botCtx
 		fetchedAt time.Time
 	}
 )
+
+// botCtx is what fetchBotContext returns: the system prompt body plus
+// metadata pulled from response headers (voice, greeting). Cached together so
+// every voice session sees the same snapshot.
+type botCtx struct {
+	text  string
+	voice string
+}
 
 const ctxCacheTTL = 60 * time.Second
 
@@ -94,17 +102,17 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
 
-// fetchBotContext returns the latest bot system prompt. When BOT_CONTEXT_URL
-// is configured the result is fetched from the main webserver and cached for
-// ctxCacheTTL. Falls back to the legacy contextPrompt on any error so the
-// bots never become unresponsive due to a control-plane outage.
-func fetchBotContext() string {
+// fetchBotContext returns the latest bot system prompt + voice. When
+// BOT_CONTEXT_URL is configured the result is fetched from the main webserver
+// and cached for ctxCacheTTL. Falls back to the legacy static context on any
+// error so the bots never become unresponsive due to a control-plane outage.
+func fetchBotContext() botCtx {
 	if botContextURL == "" {
-		return contextPrompt
+		return botCtx{text: contextPrompt}
 	}
 	ctxCache.mu.Lock()
-	if !ctxCache.fetchedAt.IsZero() && time.Since(ctxCache.fetchedAt) < ctxCacheTTL && ctxCache.text != "" {
-		out := ctxCache.text
+	if !ctxCache.fetchedAt.IsZero() && time.Since(ctxCache.fetchedAt) < ctxCacheTTL && ctxCache.data.text != "" {
+		out := ctxCache.data
 		ctxCache.mu.Unlock()
 		return out
 	}
@@ -118,26 +126,33 @@ func fetchBotContext() string {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("voice-proxy: fetch context failed: %v (using cached/static)", err)
-		if ctxCache.text != "" {
-			return ctxCache.text
+		ctxCache.mu.Lock()
+		defer ctxCache.mu.Unlock()
+		if ctxCache.data.text != "" {
+			return ctxCache.data
 		}
-		return contextPrompt
+		return botCtx{text: contextPrompt}
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != 200 {
 		log.Printf("voice-proxy: context status %d (using cached/static)", resp.StatusCode)
-		if ctxCache.text != "" {
-			return ctxCache.text
+		ctxCache.mu.Lock()
+		defer ctxCache.mu.Unlock()
+		if ctxCache.data.text != "" {
+			return ctxCache.data
 		}
-		return contextPrompt
+		return botCtx{text: contextPrompt}
 	}
-	text := string(body)
+	bc := botCtx{
+		text:  string(body),
+		voice: resp.Header.Get("X-Bot-Voice"),
+	}
 	ctxCache.mu.Lock()
-	ctxCache.text = text
+	ctxCache.data = bc
 	ctxCache.fetchedAt = time.Now()
 	ctxCache.mu.Unlock()
-	return text
+	return bc
 }
 
 // logVisitorEvent fires-and-forgets a POST to the main webserver. Failures are
@@ -226,9 +241,9 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 	chatSessionsMu.Unlock()
 
 	// Build messages array for Grok using the latest dynamic context.
-	currentContext := fetchBotContext()
+	bc := fetchBotContext()
 	messages := []map[string]string{
-		{"role": "system", "content": currentContext},
+		{"role": "system", "content": bc.text},
 	}
 	// Add user name context if provided
 	if req.FirstName != "" {
@@ -322,7 +337,13 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	defer clientConn.Close()
 
+	// Voice resolution: explicit ?voice= URL param wins (per-session override),
+	// then the admin-configured voice from /api/bot/context, then "ara".
+	bc := fetchBotContext()
 	voice := r.URL.Query().Get("voice")
+	if voice == "" {
+		voice = bc.voice
+	}
 	if voice == "" {
 		voice = "ara"
 	}
@@ -341,12 +362,11 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Voice session started (voice=%s)", voice)
 
-	voiceContext := fetchBotContext()
 	sessionUpdate := map[string]interface{}{
 		"type": "session.update",
 		"session": map[string]interface{}{
 			"voice":        voice,
-			"instructions": voiceContext,
+			"instructions": bc.text,
 			"turn_detection": map[string]interface{}{
 				"type":                "server_vad",
 				"threshold":           0.85,
