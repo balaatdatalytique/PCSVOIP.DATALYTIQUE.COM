@@ -73,108 +73,60 @@ function toggleChatbot() {
     if (chatbotWindow.style.display === 'none' || !chatbotWindow.style.display) {
         chatbotWindow.style.display = 'flex';
         overlay.style.display = 'block';
-        chatbotIcon.style.width = '40px';
-        chatbotIcon.style.height = '40px';
-        chatbotIcon.style.fontSize = '20px';
+        chatbotIcon.style.display = 'none';
 
-        if (currentUserInfo) {
-            // Returning user — go straight to chat
-            document.getElementById('user-form').style.display = 'none';
-            document.getElementById('chat-messages').style.display = 'block';
-            document.getElementById('chatbot-footer').style.display = 'block';
-            document.getElementById('chatbot-input').disabled = false;
-        } else {
-            // New visitor — show Pegasi greeting + typing area
-            var chatMessages = document.getElementById('chat-messages');
+        // Show chat area with Pegasi greeting
+        var chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages.innerHTML.trim()) {
             chatMessages.innerHTML =
                 '<div class="message bot-message">' +
                 'Hi, I\'m <strong>Pegasi</strong> — your PCS VoIP assistant! ' +
-                'Type a question below, or I can connect you with our team.' +
+                'Type a question below, or click <i class="fas fa-microphone"></i> to talk.' +
                 '</div>';
-            chatMessages.style.display = 'block';
-
-            // Hide the user-form initially; show typing input
-            document.getElementById('user-form').style.display = 'none';
-            document.getElementById('chatbot-footer').style.display = 'block';
-            document.getElementById('chatbot-input').disabled = false;
-            document.getElementById('chatbot-input').placeholder = 'Type your message...';
-            document.getElementById('chatbot-input').focus();
         }
+        chatMessages.style.display = 'block';
+        document.getElementById('user-form').style.display = 'none';
+        document.getElementById('chatbot-footer').style.display = 'flex';
+        document.getElementById('chatbot-input').disabled = false;
+        document.getElementById('chatbot-input').focus();
         resetInactivityTimers();
     } else {
         closeChatbot();
     }
 }
 
-// --- Handle user's first message (transition to detail collection) ---
+// --- Handle Enter key or Send button ---
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
-        var input = document.getElementById('chatbot-input');
-        var message = input.value.trim();
-        if (!message) return;
-
-        if (!currentUserInfo) {
-            // First message from a new visitor — show it, then ask for details
-            addMessage(message, true);
-            input.value = '';
-            input.disabled = true;
-            document.getElementById('chatbot-footer').style.display = 'none';
-
-            // Store the first message to send once we have user info
-            window._pegasiFirstMessage = message;
-
-            var chatMessages = document.getElementById('chat-messages');
-            var askDetails = document.createElement('div');
-            askDetails.className = 'message bot-message';
-            askDetails.innerHTML =
-                'Great question! So I can help you better, could you share a few details?';
-            chatMessages.appendChild(askDetails);
-
-            // Show the user-form for detail collection
-            document.getElementById('user-form').style.display = 'block';
-            var chatBody = document.getElementById('chatbot-body');
-            chatBody.scrollTop = chatBody.scrollHeight;
-        } else if (currentSessionId === null) {
-            sendMessage(message, currentUserInfo);
-            input.value = '';
-        } else {
-            sendMessage(message);
-            input.value = '';
-        }
-        resetInactivityTimers();
+        submitChatMessage();
     }
 }
 
-// --- Start chat after user fills in details ---
-async function startChat() {
+function submitChatMessage() {
+    var input = document.getElementById('chatbot-input');
+    var message = input.value.trim();
+    if (!message) return;
+
+    input.value = '';
+    sendMessage(message, currentUserInfo);
+    resetInactivityTimers();
+}
+
+// --- Start chat (legacy form submit — kept for backward compat) ---
+function startChat() {
     var firstName = document.getElementById('user-first-name').value.trim();
     var lastName = document.getElementById('user-last-name').value.trim();
     var userPhone = document.getElementById('user-phone').value.trim();
     var userEmail = document.getElementById('user-email').value.trim();
 
-    if (!firstName || !lastName || !userPhone) {
-        alert('Please fill in all required fields (First Name, Last Name, and Phone Number)');
-        return;
+    if (firstName || lastName) {
+        currentUserInfo = { firstName: firstName, lastName: lastName, userPhone: userPhone, userEmail: userEmail };
     }
-
-    var phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(userPhone.replace(/[-\s]/g, ''))) {
-        alert('Please enter a valid 10-digit phone number');
-        return;
-    }
-
-    currentUserInfo = { firstName: firstName, lastName: lastName, userPhone: userPhone, userEmail: userEmail };
 
     document.getElementById('user-form').style.display = 'none';
     document.getElementById('chatbot-footer').style.display = 'block';
     document.getElementById('chatbot-input').disabled = false;
     document.getElementById('chatbot-input').focus();
-
-    // Send the first message the user typed (or a default greeting)
-    var firstMsg = window._pegasiFirstMessage || 'Hi';
-    window._pegasiFirstMessage = null;
-    sendMessage(firstMsg, currentUserInfo);
-    resetInactivityTimers();
 }
 
 // --- Send message to Grok-backed API ---
@@ -229,9 +181,7 @@ async function closeChatbot() {
 
     chatbotWindow.style.display = 'none';
     overlay.style.display = 'none';
-    chatbotIcon.style.width = '60px';
-    chatbotIcon.style.height = '60px';
-    chatbotIcon.style.fontSize = '28px';
+    chatbotIcon.style.display = 'flex';
 
     resetChat();
 }
@@ -241,10 +191,7 @@ function resetChat() {
     selectedTopic = null;
 
     document.getElementById('user-form').style.display = 'none';
-    document.getElementById('chat-messages').style.display = 'none';
-    document.getElementById('chatbot-footer').style.display = 'none';
     document.getElementById('chat-messages').innerHTML = '';
-    document.getElementById('chatbot-input').disabled = true;
     document.getElementById('chatbot-input').value = '';
 }
 
@@ -420,11 +367,7 @@ async function startVoiceSession() {
     if (chatbotWindow.style.display !== 'flex') {
         chatbotWindow.style.display = 'flex';
         overlay.style.display = 'block';
-        if (icon) {
-            icon.style.width = '40px';
-            icon.style.height = '40px';
-            icon.style.fontSize = '20px';
-        }
+        if (icon) icon.style.display = 'none';
     }
 
     // Hide text chat elements, show voice mode
@@ -682,7 +625,7 @@ function endVoiceSession() {
 
         // Make chat body and footer visible
         if (chatBody) chatBody.style.display = 'block';
-        if (chatFooter) chatFooter.style.display = 'block';
+        if (chatFooter) chatFooter.style.display = 'flex';
 
         // Show chat messages area
         if (chatMessages) chatMessages.style.display = 'block';

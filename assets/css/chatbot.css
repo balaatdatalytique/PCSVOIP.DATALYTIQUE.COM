@@ -236,16 +236,41 @@
 }
 
 #chatbot-footer {
-    padding: 10px 12px;
+    padding: 8px 10px;
     background: white;
     border-top: 1px solid #eee;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 #chatbot-input {
     border-radius: 25px;
     background: #f0f2f5;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 10px 14px;
+}
+
+#send-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: #25D366;
+    color: white;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+#send-btn:hover {
+    background: #128C7E;
 }
 
 #welcome-message p {
@@ -534,12 +559,9 @@
 
 /* Mic button in chat footer */
 #voice-start-btn {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
     border-radius: 50%;
     background: #25D366;
     color: white;
@@ -553,8 +575,4 @@
 }
 #voice-start-btn:hover {
     background: #128C7E;
-}
-
-#chatbot-footer {
-    position: relative;
 }

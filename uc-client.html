@@ -488,8 +488,8 @@
             <button class="voice-end-btn" onclick="endVoiceSession()">End Voice Chat</button>
         </div>
         <div id="chatbot-footer">
-            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)"
-                disabled>
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button id="send-btn" onclick="submitChatMessage()" title="Send"><i class="fas fa-paper-plane"></i></button>
             <button id="voice-start-btn" onclick="startVoiceSession()" title="Talk to Pegasi"><i class="fas fa-microphone"></i></button>
         </div>
     </div>
