@@ -87,14 +87,17 @@
         <tr>
           <th>Location</th>
           <th>IP</th>
+          <th>Top page</th>
           <th>Pages</th>
           <th>Bot</th>
+          <th>Time on site</th>
           <th>Last seen</th>
-          <th>User agent</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
       {{range .Visitors.Visitors}}
+        {{$ps := summaryFor $.PageStats .ID}}
         <tr>
           <td>
             {{if .CountryCode}}<span class="flag" title="{{.Country}}">{{flag .CountryCode}}</span>{{end}}
@@ -102,13 +105,21 @@
             {{if .Country}}<div class="text-muted small">{{.Country}}{{if .ISP}} · {{.ISP}}{{end}}</div>{{end}}
           </td>
           <td class="mono small">{{.LastIP}}</td>
+          <td class="text-truncate" style="max-width:200px" title="{{$ps.TopPath}}">
+            {{if $ps.TopPath}}<span class="mono small">{{$ps.TopPath}}</span>
+            <div class="text-muted small">{{$ps.TopPathVisits}} view{{if gt $ps.TopPathVisits 1}}s{{end}} · {{$ps.UniquePaths}} page{{if gt $ps.UniquePaths 1}}s{{end}}</div>
+            {{else}}<span class="text-muted">—</span>{{end}}
+          </td>
           <td>{{.PageViews}}</td>
           <td>{{.BotMsgs}}</td>
+          <td class="text-muted text-nowrap">{{fmtDuration $ps.TotalDwellSecs}}</td>
           <td class="text-muted text-nowrap">{{fmtTime .LastSeen}}</td>
-          <td class="text-muted small text-truncate" style="max-width:240px" title="{{.UserAgent}}">{{truncate 60 .UserAgent}}</td>
+          <td class="text-end">
+            <a href="/admin/visitors/view?id={{.ID}}" class="btn btn-sm btn-link" title="View details"><i class="fas fa-arrow-right"></i></a>
+          </td>
         </tr>
       {{else}}
-        <tr><td colspan="6" class="text-center text-muted py-4">No visitors recorded yet.</td></tr>
+        <tr><td colspan="8" class="text-center text-muted py-4">No visitors recorded yet.</td></tr>
       {{end}}
       </tbody>
     </table>

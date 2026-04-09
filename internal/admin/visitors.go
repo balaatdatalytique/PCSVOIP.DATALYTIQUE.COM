@@ -330,6 +330,204 @@ func (r *VisitorRepo) CountVisitors() (int, error) {
 	return r.DB.Count(db.BucketVisitors)
 }
 
+// PageVisit is one page view in a visitor's chronological history. DwellSeconds
+// is the gap between this page and the next page view from the same visitor;
+// the last page in a session has DwellSeconds = 0 (unknown).
+type PageVisit struct {
+	Path         string
+	Timestamp    time.Time
+	Referrer     string
+	DwellSeconds int
+}
+
+// PageStat is a single row in a visitor's "where did they spend their time"
+// breakdown — one entry per unique path.
+type PageStat struct {
+	Path        string
+	Visits      int
+	TotalDwell  int // seconds, summed over all visits to this path
+}
+
+// VisitorPageSummary is the compact per-visitor rollup shown in the visitors
+// table. Computed in batch by PageStatsForVisitors.
+type VisitorPageSummary struct {
+	TopPath        string // path with the highest visit count
+	TopPathVisits  int
+	TotalDwellSecs int // sum across the whole session
+	UniquePaths    int
+}
+
+// VisitorDetail is everything needed for the per-visitor drill-down page.
+type VisitorDetail struct {
+	Visitor       Visitor
+	Pages         []PageVisit  // chronological
+	PageStats     []PageStat   // sorted by Visits desc
+	BotEvents     []VisitorEvent // chat + voice
+	TotalDwellSec int
+	UniquePaths   int
+}
+
+// PageStatsForVisitors does ONE pass over the events bucket and returns a
+// summary keyed by visitor id. Used by the visitors table to enrich each row
+// without N+1 queries.
+func (r *VisitorRepo) PageStatsForVisitors(visitorIDs []string) (map[string]VisitorPageSummary, error) {
+	if len(visitorIDs) == 0 {
+		return map[string]VisitorPageSummary{}, nil
+	}
+	target := make(map[string]bool, len(visitorIDs))
+	for _, id := range visitorIDs {
+		target[id] = true
+	}
+	per := make(map[string][]VisitorEvent, len(visitorIDs))
+	err := r.DB.ForEach(db.BucketEvents, func(_ string, raw []byte) error {
+		var ev VisitorEvent
+		if e := json.Unmarshal(raw, &ev); e != nil {
+			return nil
+		}
+		if !target[ev.VisitorID] || ev.Type != "page_view" {
+			return nil
+		}
+		per[ev.VisitorID] = append(per[ev.VisitorID], ev)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	out := make(map[string]VisitorPageSummary, len(per))
+	for id, evs := range per {
+		out[id] = computeSummary(evs)
+	}
+	return out, nil
+}
+
+// computeSummary builds a VisitorPageSummary from a slice of page_view events
+// for a single visitor. Sorts by time, derives top path + dwell.
+func computeSummary(evs []VisitorEvent) VisitorPageSummary {
+	if len(evs) == 0 {
+		return VisitorPageSummary{}
+	}
+	sort.Slice(evs, func(i, j int) bool { return evs[i].Timestamp.Before(evs[j].Timestamp) })
+	counts := make(map[string]int, len(evs))
+	for _, e := range evs {
+		counts[e.Path]++
+	}
+	topPath := ""
+	topVisits := 0
+	for p, n := range counts {
+		if n > topVisits {
+			topPath, topVisits = p, n
+		}
+	}
+	total := 0
+	for i := 0; i < len(evs)-1; i++ {
+		gap := int(evs[i+1].Timestamp.Sub(evs[i].Timestamp).Seconds())
+		// Cap a single dwell at 30 minutes — anything longer is almost
+		// certainly a closed tab and shouldn't pollute the average.
+		if gap < 0 {
+			gap = 0
+		}
+		if gap > 1800 {
+			gap = 1800
+		}
+		total += gap
+	}
+	return VisitorPageSummary{
+		TopPath:        topPath,
+		TopPathVisits:  topVisits,
+		TotalDwellSecs: total,
+		UniquePaths:    len(counts),
+	}
+}
+
+// GetVisitorDetail returns everything needed for the per-visitor drill-down
+// page: the Visitor record, all page visits with dwell times, per-path stats,
+// and the visitor's bot interactions.
+func (r *VisitorRepo) GetVisitorDetail(visitorID string) (*VisitorDetail, error) {
+	var v Visitor
+	if err := r.DB.Get(db.BucketVisitors, visitorID, &v); err != nil {
+		return nil, err
+	}
+
+	var pageEvents []VisitorEvent
+	var botEvents []VisitorEvent
+	err := r.DB.ForEach(db.BucketEvents, func(_ string, raw []byte) error {
+		var ev VisitorEvent
+		if e := json.Unmarshal(raw, &ev); e != nil {
+			return nil
+		}
+		if ev.VisitorID != visitorID {
+			return nil
+		}
+		switch ev.Type {
+		case "page_view":
+			pageEvents = append(pageEvents, ev)
+		case "bot_chat", "bot_voice":
+			botEvents = append(botEvents, ev)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	sort.Slice(pageEvents, func(i, j int) bool { return pageEvents[i].Timestamp.Before(pageEvents[j].Timestamp) })
+	sort.Slice(botEvents, func(i, j int) bool { return botEvents[i].Timestamp.After(botEvents[j].Timestamp) })
+
+	pages := make([]PageVisit, 0, len(pageEvents))
+	pathStats := map[string]*PageStat{}
+	totalDwell := 0
+	for i, e := range pageEvents {
+		dwell := 0
+		if i+1 < len(pageEvents) {
+			gap := int(pageEvents[i+1].Timestamp.Sub(e.Timestamp).Seconds())
+			if gap < 0 {
+				gap = 0
+			}
+			if gap > 1800 {
+				gap = 1800
+			}
+			dwell = gap
+			totalDwell += dwell
+		}
+		pages = append(pages, PageVisit{
+			Path:         e.Path,
+			Timestamp:    e.Timestamp,
+			Referrer:     e.Referrer,
+			DwellSeconds: dwell,
+		})
+		ps, ok := pathStats[e.Path]
+		if !ok {
+			ps = &PageStat{Path: e.Path}
+			pathStats[e.Path] = ps
+		}
+		ps.Visits++
+		ps.TotalDwell += dwell
+	}
+	stats := make([]PageStat, 0, len(pathStats))
+	for _, ps := range pathStats {
+		stats = append(stats, *ps)
+	}
+	sort.Slice(stats, func(i, j int) bool {
+		if stats[i].Visits != stats[j].Visits {
+			return stats[i].Visits > stats[j].Visits
+		}
+		return stats[i].TotalDwell > stats[j].TotalDwell
+	})
+
+	// Show pages newest first in the chronological table.
+	for i, j := 0, len(pages)-1; i < j; i, j = i+1, j-1 {
+		pages[i], pages[j] = pages[j], pages[i]
+	}
+
+	return &VisitorDetail{
+		Visitor:       v,
+		Pages:         pages,
+		PageStats:     stats,
+		BotEvents:     botEvents,
+		TotalDwellSec: totalDwell,
+		UniquePaths:   len(pathStats),
+	}, nil
+}
+
 // FormatType returns a human-friendly label for an event type.
 func FormatType(t string) string {
 	switch t {

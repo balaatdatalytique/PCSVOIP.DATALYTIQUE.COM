@@ -367,8 +367,24 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Record the visitor interaction at session START so the count is captured
+	// even if the connection later hangs, drops, or never sends a transcript.
+	logVisitorEvent("bot_voice", clientIP(r), r.UserAgent(), "voice session started", "")
+
 	var wg sync.WaitGroup
+	var closeOnce sync.Once
 	done := make(chan struct{})
+	// closeAll is the single tear-down path. It closes both WebSocket
+	// connections so any blocked ReadMessage() in either worker goroutine
+	// returns immediately. Guarded by sync.Once so concurrent error paths
+	// don't double-close.
+	closeAll := func() {
+		closeOnce.Do(func() {
+			close(done)
+			grokConn.Close()
+			clientConn.Close()
+		})
+	}
 
 	// Browser → Grok
 	wg.Add(1)
@@ -377,16 +393,15 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		for {
 			msgType, msg, err := clientConn.ReadMessage()
 			if err != nil {
-				select {
-				case <-done:
-					return
-				default:
-					if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+					select {
+					case <-done:
+					default:
 						log.Printf("Client read error: %v", err)
 					}
-					close(done)
-					return
 				}
+				closeAll()
+				return
 			}
 			if msgType == websocket.TextMessage {
 				var envelope map[string]interface{}
@@ -414,16 +429,15 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		for {
 			msgType, msg, err := grokConn.ReadMessage()
 			if err != nil {
-				select {
-				case <-done:
-					return
-				default:
-					if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+					select {
+					case <-done:
+					default:
 						log.Printf("Grok read error: %v", err)
 					}
-					close(done)
-					return
 				}
+				closeAll()
+				return
 			}
 			if msgType == websocket.TextMessage {
 				var envelope map[string]interface{}
@@ -453,7 +467,6 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("Voice session ended")
-	logVisitorEvent("bot_voice", clientIP(r), r.UserAgent(), "voice session", "")
 }
 
 func init() {

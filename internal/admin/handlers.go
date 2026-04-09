@@ -40,7 +40,7 @@ type Handler struct {
 // alongside _layout.html so that they don't clash on the shared "page" block.
 func New(deps Handler, templateDir string) (*Handler, error) {
 	h := deps
-	pages := []string{"dashboard.html", "bot.html", "kb_list.html", "kb_form.html", "visitors.html", "settings.html"}
+	pages := []string{"dashboard.html", "bot.html", "kb_list.html", "kb_form.html", "visitors.html", "visitor_view.html", "settings.html"}
 	layoutPath := filepath.Join(templateDir, "_layout.html")
 	h.Pages = make(map[string]*template.Template, len(pages))
 	for _, p := range pages {
@@ -85,6 +85,21 @@ var adminFuncs = template.FuncMap{
 	"flag":       FlagEmoji,
 	"add":        func(a, b int) int { return a + b },
 	"sub":        func(a, b int) int { return a - b },
+	"fmtDuration": func(secs int) string {
+		if secs <= 0 {
+			return "—"
+		}
+		if secs < 60 {
+			return fmt.Sprintf("%ds", secs)
+		}
+		if secs < 3600 {
+			return fmt.Sprintf("%dm %ds", secs/60, secs%60)
+		}
+		return fmt.Sprintf("%dh %dm", secs/3600, (secs%3600)/60)
+	},
+	"summaryFor": func(stats map[string]VisitorPageSummary, id string) VisitorPageSummary {
+		return stats[id]
+	},
 	"seq": func(start, end int) []int {
 		if end < start {
 			return nil
@@ -464,6 +479,14 @@ func (h *Handler) VisitorsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Enrich the visible visitors with their top page + total dwell in one
+	// pass over the events bucket.
+	ids := make([]string, 0, len(visitorsPage.Visitors))
+	for _, v := range visitorsPage.Visitors {
+		ids = append(ids, v.ID)
+	}
+	pageSummaries, _ := h.Visitors.PageStatsForVisitors(ids)
+
 	// 24-hour rolling counts by type (independent of pagination).
 	since := time.Now().Add(-24 * time.Hour)
 	pageViews24h, chats24h, voices24h := h.Visitors.CountByTypeSince(since)
@@ -473,11 +496,32 @@ func (h *Handler) VisitorsPage(w http.ResponseWriter, r *http.Request) {
 		"NavActive": "visitors",
 		"Events":    eventsPage,
 		"Visitors":  visitorsPage,
+		"PageStats": pageSummaries,
 		"Counts": map[string]int{
 			"page_view": pageViews24h,
 			"bot_chat":  chats24h,
 			"bot_voice": voices24h,
 		},
+	})
+}
+
+// VisitorView renders the per-visitor drill-down page (page history, top
+// pages, dwell times, bot interactions).
+func (h *Handler) VisitorView(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Redirect(w, r, "/admin/visitors", http.StatusFound)
+		return
+	}
+	detail, err := h.Visitors.GetVisitorDetail(id)
+	if err != nil {
+		http.Error(w, "visitor not found", http.StatusNotFound)
+		return
+	}
+	h.render(w, r, "visitor_view.html", map[string]any{
+		"Title":     "Visitor " + id[:12],
+		"NavActive": "visitors",
+		"Detail":    detail,
 	})
 }
 

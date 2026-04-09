@@ -1,0 +1,116 @@
+{{define "page"}}
+{{$v := .Detail.Visitor}}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <a href="/admin/visitors" class="link-muted"><i class="fas fa-arrow-left me-1"></i> Back to all visitors</a>
+</div>
+
+<div class="card admin-card mb-4">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-5">
+        <div class="d-flex align-items-center mb-2">
+          {{if $v.CountryCode}}<span class="flag" style="font-size:28px" title="{{$v.Country}}">{{flag $v.CountryCode}}</span>{{end}}
+          <div class="ms-2">
+            <div class="fw-bold" style="font-size:18px">{{if $v.City}}{{$v.City}}{{if $v.Region}}, {{$v.Region}}{{end}}{{else}}Unknown{{end}}</div>
+            <div class="text-muted">{{$v.Country}}{{if $v.ISP}} · {{$v.ISP}}{{end}}</div>
+          </div>
+        </div>
+        <div class="text-muted small">IP: <span class="mono">{{$v.LastIP}}</span></div>
+        <div class="text-muted small text-truncate" title="{{$v.UserAgent}}">UA: {{truncate 80 $v.UserAgent}}</div>
+      </div>
+      <div class="col-md-7">
+        <div class="row text-center">
+          <div class="col">
+            <div class="fw-bold" style="font-size:22px">{{$v.PageViews}}</div>
+            <div class="text-muted small">Page views</div>
+          </div>
+          <div class="col">
+            <div class="fw-bold" style="font-size:22px">{{.Detail.UniquePaths}}</div>
+            <div class="text-muted small">Unique pages</div>
+          </div>
+          <div class="col">
+            <div class="fw-bold" style="font-size:22px">{{fmtDuration .Detail.TotalDwellSec}}</div>
+            <div class="text-muted small">Time on site</div>
+          </div>
+          <div class="col">
+            <div class="fw-bold" style="font-size:22px">{{$v.BotMsgs}}</div>
+            <div class="text-muted small">Bot exchanges</div>
+          </div>
+        </div>
+        <div class="text-muted small mt-3 text-center">
+          First seen {{fmtTime $v.FirstSeen}} · Last seen {{fmtTime $v.LastSeen}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card admin-card">
+      <div class="card-header"><strong>Where they spent the most time</strong></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0 table-events">
+          <thead><tr><th>Page</th><th class="text-end">Visits</th><th class="text-end">Total time</th></tr></thead>
+          <tbody>
+          {{range .Detail.PageStats}}
+            <tr>
+              <td class="mono small text-truncate" style="max-width:260px" title="{{.Path}}">{{.Path}}</td>
+              <td class="text-end">{{.Visits}}</td>
+              <td class="text-end text-muted">{{fmtDuration .TotalDwell}}</td>
+            </tr>
+          {{else}}
+            <tr><td colspan="3" class="text-center text-muted py-3">No page views.</td></tr>
+          {{end}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card admin-card">
+      <div class="card-header"><strong>Page-by-page history</strong> <span class="text-muted small">— newest first</span></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0 table-events">
+          <thead><tr><th>When</th><th>Path</th><th class="text-end">Dwell</th></tr></thead>
+          <tbody>
+          {{range .Detail.Pages}}
+            <tr>
+              <td class="text-muted text-nowrap">{{fmtTime .Timestamp}}</td>
+              <td class="mono small text-truncate" style="max-width:260px" title="{{.Path}}">{{.Path}}{{if .Referrer}}<div class="text-muted small">← {{truncate 50 .Referrer}}</div>{{end}}</td>
+              <td class="text-end text-muted">{{fmtDuration .DwellSeconds}}</td>
+            </tr>
+          {{else}}
+            <tr><td colspan="3" class="text-center text-muted py-3">No page views recorded.</td></tr>
+          {{end}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{if .Detail.BotEvents}}
+<div class="card admin-card mt-3">
+  <div class="card-header"><strong>Bot interactions</strong></div>
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 table-events">
+      <thead><tr><th>When</th><th>Type</th><th>Detail</th></tr></thead>
+      <tbody>
+      {{range .Detail.BotEvents}}
+        <tr>
+          <td class="text-muted text-nowrap">{{fmtTime .Timestamp}}</td>
+          <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
+          <td>
+            {{if .Message}}<span class="text-dark">{{truncate 200 .Message}}</span>{{end}}
+            {{if .Reply}}<div class="text-muted small mt-1">→ {{truncate 200 .Reply}}</div>{{end}}
+          </td>
+        </tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{end}}
+{{end}}

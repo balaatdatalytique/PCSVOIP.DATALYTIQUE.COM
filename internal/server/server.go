@@ -153,6 +153,7 @@ func registerAdminRoutes(mux *http.ServeMux, h *admin.Handler, cmsH *routes.Hand
 	protected.HandleFunc("/admin/kb/delete", h.KBDelete)
 	protected.HandleFunc("/admin/kb/toggle", h.KBToggle)
 	protected.HandleFunc("/admin/visitors", h.VisitorsPage)
+	protected.HandleFunc("/admin/visitors/view", h.VisitorView)
 	protected.HandleFunc("/admin/settings", h.SettingsPage)
 	protected.HandleFunc("/admin/settings/test-smtp", h.SettingsTestSMTP)
 
