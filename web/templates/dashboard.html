@@ -35,15 +35,15 @@
     <div class="navbar">
         <h1>PCSVoIP CMS</h1>
         <div>
-            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/files">Dashboard</a>
             <a href="/admin/logout">Logout</a>
         </div>
     </div>
     <div class="container">
         <div class="breadcrumb">
-            <a href="/admin/dashboard">Root</a>
+            <a href="/admin/files">Root</a>
             {{if ne .CurrentDir "/"}} &rsaquo; {{.CurrentDir}}{{end}}
-            {{if ne .CurrentDir "/"}} &mdash; <a href="/admin/dashboard?dir={{.ParentDir}}">Up</a>{{end}}
+            {{if ne .CurrentDir "/"}} &mdash; <a href="/admin/files?dir={{.ParentDir}}">Up</a>{{end}}
         </div>
         <div class="file-list">
             {{range .Files}}
@@ -51,7 +51,7 @@
                 <div class="file-icon">{{if .IsDir}}&#128193;{{else}}&#128196;{{end}}</div>
                 <div class="file-name">
                     {{if .IsDir}}
-                        <a href="/admin/dashboard?dir={{.Path}}">{{.Name}}/</a>
+                        <a href="/admin/files?dir={{.Path}}">{{.Name}}/</a>
                     {{else}}
                         {{.Name}}
                     {{end}}
@@ -60,8 +60,8 @@
                 <div class="file-date">{{.ModTime.Format "2006-01-02 15:04"}}</div>
                 <div class="file-actions">
                     {{if not .IsDir}}
-                        <a href="/admin/edit?file={{.Path}}">Edit</a>
-                        <a href="/admin/ai?file={{.Path}}" class="ai-btn">AI</a>
+                        <a href="/admin/files/edit?file={{.Path}}">Edit</a>
+                        <a href="/admin/files/ai?file={{.Path}}" class="ai-btn">AI</a>
                     {{end}}
                 </div>
             </div>

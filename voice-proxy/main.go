@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -23,7 +24,19 @@ var (
 	// Per-session chat history (keyed by session_id)
 	chatSessions   = make(map[string][]chatMsg)
 	chatSessionsMu sync.Mutex
+
+	// Dynamic context fetched from main webserver (BOT_CONTEXT_URL).
+	botContextURL    string
+	visitorLogURL    string
+	internalAPIToken string
+	ctxCache         struct {
+		mu        sync.Mutex
+		text      string
+		fetchedAt time.Time
+	}
 )
+
+const ctxCacheTTL = 60 * time.Second
 
 type chatMsg struct {
 	Role    string `json:"role"`
@@ -36,16 +49,31 @@ func main() {
 		log.Fatal("GROK_API_KEY environment variable is required")
 	}
 
+	// Dynamic admin module integration. When BOT_CONTEXT_URL is set, we fetch
+	// the bot prompt + KB from the main webserver on each request (with a 60 s
+	// in-memory cache). When unset we fall back to the legacy static file.
+	botContextURL = strings.TrimSpace(os.Getenv("BOT_CONTEXT_URL"))
+	visitorLogURL = strings.TrimSpace(os.Getenv("VISITOR_LOG_URL"))
+	internalAPIToken = strings.TrimSpace(os.Getenv("INTERNAL_API_TOKEN"))
+
 	contextPath := os.Getenv("CONTEXT_PATH")
 	if contextPath == "" {
 		contextPath = "/app/assets/data/pcsvoip-context.txt"
 	}
-	data, err := os.ReadFile(contextPath)
-	if err != nil {
-		log.Printf("WARNING: Could not read context file %s: %v", contextPath, err)
+	if data, err := os.ReadFile(contextPath); err != nil {
+		log.Printf("INFO: legacy context file %s not loaded: %v", contextPath, err)
 		contextPrompt = "You are Pegasi, the AI assistant for PCS VoIP."
 	} else {
 		contextPrompt = string(data)
+	}
+
+	if botContextURL != "" {
+		log.Printf("voice-proxy: dynamic bot context enabled (BOT_CONTEXT_URL=%s)", botContextURL)
+	} else {
+		log.Printf("voice-proxy: using static context file %s", contextPath)
+	}
+	if visitorLogURL != "" {
+		log.Printf("voice-proxy: visitor logging enabled (VISITOR_LOG_URL=%s)", visitorLogURL)
 	}
 
 	port := os.Getenv("VOICE_PROXY_PORT")
@@ -64,6 +92,87 @@ func main() {
 
 	log.Printf("Voice proxy listening on :%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
+}
+
+// fetchBotContext returns the latest bot system prompt. When BOT_CONTEXT_URL
+// is configured the result is fetched from the main webserver and cached for
+// ctxCacheTTL. Falls back to the legacy contextPrompt on any error so the
+// bots never become unresponsive due to a control-plane outage.
+func fetchBotContext() string {
+	if botContextURL == "" {
+		return contextPrompt
+	}
+	ctxCache.mu.Lock()
+	if !ctxCache.fetchedAt.IsZero() && time.Since(ctxCache.fetchedAt) < ctxCacheTTL && ctxCache.text != "" {
+		out := ctxCache.text
+		ctxCache.mu.Unlock()
+		return out
+	}
+	ctxCache.mu.Unlock()
+
+	req, _ := http.NewRequest("GET", botContextURL, nil)
+	if internalAPIToken != "" {
+		req.Header.Set("X-Internal-Token", internalAPIToken)
+	}
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("voice-proxy: fetch context failed: %v (using cached/static)", err)
+		if ctxCache.text != "" {
+			return ctxCache.text
+		}
+		return contextPrompt
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		log.Printf("voice-proxy: context status %d (using cached/static)", resp.StatusCode)
+		if ctxCache.text != "" {
+			return ctxCache.text
+		}
+		return contextPrompt
+	}
+	text := string(body)
+	ctxCache.mu.Lock()
+	ctxCache.text = text
+	ctxCache.fetchedAt = time.Now()
+	ctxCache.mu.Unlock()
+	return text
+}
+
+// logVisitorEvent fires-and-forgets a POST to the main webserver. Failures are
+// logged at info level but never block the visitor reply.
+func logVisitorEvent(evType, ip, ua, message, reply string) {
+	if visitorLogURL == "" {
+		return
+	}
+	go func() {
+		body, _ := json.Marshal(map[string]string{
+			"type": evType, "ip": ip, "ua": ua, "message": message, "reply": reply,
+		})
+		req, _ := http.NewRequest("POST", visitorLogURL, bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		if internalAPIToken != "" {
+			req.Header.Set("X-Internal-Token", internalAPIToken)
+		}
+		client := &http.Client{Timeout: 3 * time.Second}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("voice-proxy: visitor log failed: %v", err)
+			return
+		}
+		resp.Body.Close()
+	}()
+}
+
+func clientIP(r *http.Request) string {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		if i := strings.Index(xff, ","); i > 0 {
+			return strings.TrimSpace(xff[:i])
+		}
+		return strings.TrimSpace(xff)
+	}
+	return r.RemoteAddr
 }
 
 // ===================== TEXT CHAT via Grok REST API =====================
@@ -116,9 +225,10 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 	chatSessions[req.SessionID] = history
 	chatSessionsMu.Unlock()
 
-	// Build messages array for Grok
+	// Build messages array for Grok using the latest dynamic context.
+	currentContext := fetchBotContext()
 	messages := []map[string]string{
-		{"role": "system", "content": contextPrompt},
+		{"role": "system", "content": currentContext},
 	}
 	// Add user name context if provided
 	if req.FirstName != "" {
@@ -178,6 +288,9 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 	chatSessions[req.SessionID] = append(chatSessions[req.SessionID], chatMsg{Role: "assistant", Content: reply})
 	chatSessionsMu.Unlock()
 
+	// Log to admin module (best effort).
+	logVisitorEvent("bot_chat", clientIP(r), r.UserAgent(), req.Message, reply)
+
 	writeChat(w, req.SessionID, reply)
 }
 
@@ -228,11 +341,12 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Voice session started (voice=%s)", voice)
 
+	voiceContext := fetchBotContext()
 	sessionUpdate := map[string]interface{}{
 		"type": "session.update",
 		"session": map[string]interface{}{
 			"voice":        voice,
-			"instructions": contextPrompt,
+			"instructions": voiceContext,
 			"turn_detection": map[string]interface{}{
 				"type":                "server_vad",
 				"threshold":           0.85,
@@ -339,6 +453,7 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("Voice session ended")
+	logVisitorEvent("bot_voice", clientIP(r), r.UserAgent(), "voice session", "")
 }
 
 func init() {

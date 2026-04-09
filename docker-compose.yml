@@ -9,8 +9,15 @@ services:
       - "9080:9080"
     env_file:
       - .env
+    environment:
+      - ADMIN_DB_PATH=/app/data/admin.db
+      - ADMIN_MASTER_KEY=${ADMIN_MASTER_KEY:-}
+      - INTERNAL_API_TOKEN=${INTERNAL_API_TOKEN:-}
+      - VOICE_PROXY_URL=http://pcsvoip-voice:9081
+      - BOT_CONTEXT_FILE=/app/assets/data/pcsvoip-context.txt
     volumes:
       - cms-backups:/app/.cms-backups
+      - admin-data:/app/data
       - ./assets/videos:/app/assets/videos:ro
       - ./assets/apivideos:/app/assets/apivideos:ro
     healthcheck:
@@ -37,6 +44,9 @@ services:
       - GROK_API_KEY=${GROK_API_KEY}
       - VOICE_PROXY_PORT=9081
       - CONTEXT_PATH=/app/assets/data/pcsvoip-context.txt
+      - BOT_CONTEXT_URL=http://pcsvoip-web:9080/api/bot/context
+      - VISITOR_LOG_URL=http://pcsvoip-web:9080/api/visitors/log
+      - INTERNAL_API_TOKEN=${INTERNAL_API_TOKEN:-}
     volumes:
       - ./assets/data:/app/assets/data:ro
     healthcheck:
@@ -53,3 +63,4 @@ services:
 
 volumes:
   cms-backups:
+  admin-data:

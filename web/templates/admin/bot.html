@@ -1,0 +1,64 @@
+{{define "page"}}
+{{if .Saved}}<div class="admin-flash success">Bot configuration saved.</div>{{end}}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <form method="POST" action="/admin/bot" class="card admin-card p-4">
+      <input type="hidden" name="_csrf" value="{{.CSRFToken}}">
+      <div class="form-check form-switch mb-4">
+        <input class="form-check-input" type="checkbox" id="enabled" name="enabled" {{if .Bot.Enabled}}checked{{end}}>
+        <label class="form-check-label fw-semibold" for="enabled">Bots enabled</label>
+        <div class="form-text">When off, both the chat and voice bots return a "currently unavailable" message to visitors.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Persona</label>
+        <input type="text" class="form-control" name="persona" value="{{.Bot.Persona}}" placeholder="Pegasi, the AI assistant for PCS VoIP">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tone</label>
+        <input type="text" class="form-control" name="tone" value="{{.Bot.Tone}}" placeholder="warm, professional, knowledgeable">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Greeting (first message the bot sends)</label>
+        <input type="text" class="form-control" name="greeting" value="{{.Bot.Greeting}}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">System prompt</label>
+        <textarea class="form-control mono" name="system_prompt" rows="10">{{.Bot.SystemPrompt}}</textarea>
+        <div class="form-text">Main instructions to the AI. Visible to both bots.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Guardrails</label>
+        <textarea class="form-control mono" name="guardrails" rows="5">{{.Bot.Guardrails}}</textarea>
+        <div class="form-text">Dos and don'ts. Appended to the prompt.</div>
+      </div>
+
+      <div class="mb-3" style="max-width:220px">
+        <label class="form-label">Max KB bytes per request</label>
+        <input type="number" class="form-control" name="max_kb_bytes" value="{{.Bot.MaxKBBytes}}" min="1000" step="1000">
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save changes</button>
+        <span class="text-muted small ms-2 align-self-center">Last saved {{fmtTime .Bot.UpdatedAt}}</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card admin-card p-4">
+      <h6 class="mb-3"><i class="fas fa-vial me-2"></i>Test the bot</h6>
+      <p class="text-muted small">Sends a message through the same path real visitors use. Pulls the latest config and KB you have above (saved or not — saved values are read).</p>
+      <form id="botTestForm">
+        <textarea class="form-control mb-2" id="botTestMessage" rows="3" placeholder="Ask Pegasi a question..."></textarea>
+        <button type="submit" class="btn btn-outline-primary"><i class="fas fa-paper-plane me-1"></i> Send</button>
+      </form>
+      <div id="botTestReply" class="bot-test-reply mt-3"></div>
+    </div>
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,47 @@
+{{define "page"}}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form method="GET" action="/admin/kb" class="d-flex" style="max-width:340px">
+    <input type="search" class="form-control form-control-sm" name="q" value="{{.Query}}" placeholder="Search title or tag…">
+  </form>
+  <a href="/admin/kb/new" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i> Add knowledge</a>
+</div>
+
+<div class="card admin-card">
+  <div class="card-body p-0">
+    <table class="table mb-0 table-kb">
+      <thead><tr><th>Title</th><th>Source</th><th>Tags</th><th>Size</th><th>Updated</th><th class="text-end">Actions</th></tr></thead>
+      <tbody>
+      {{range .Docs}}
+        <tr class="{{if not .Active}}inactive{{end}}">
+          <td>
+            <a href="/admin/kb/edit?id={{.ID}}" class="fw-semibold">{{.Title}}</a>
+            {{if not .Active}}<span class="badge bg-secondary ms-2">inactive</span>{{end}}
+          </td>
+          <td class="text-muted small">{{.Source}}{{if .SourceName}} · {{.SourceName}}{{end}}</td>
+          <td><span class="text-muted small">{{join ", " .Tags}}</span></td>
+          <td>{{fmtBytes .Bytes}}</td>
+          <td class="text-muted">{{fmtTime .UpdatedAt}}</td>
+          <td class="text-end">
+            <form method="POST" action="/admin/kb/toggle" class="d-inline">
+              <input type="hidden" name="_csrf" value="{{$.CSRFToken}}">
+              <input type="hidden" name="id" value="{{.ID}}">
+              <button class="btn btn-sm btn-link" type="submit" title="Toggle active">
+                <i class="fas {{if .Active}}fa-toggle-on text-success{{else}}fa-toggle-off text-muted{{end}}"></i>
+              </button>
+            </form>
+            <a href="/admin/kb/edit?id={{.ID}}" class="btn btn-sm btn-link" title="Edit"><i class="fas fa-pen"></i></a>
+            <form method="POST" action="/admin/kb/delete" class="d-inline" data-confirm="Delete this KB document?">
+              <input type="hidden" name="_csrf" value="{{$.CSRFToken}}">
+              <input type="hidden" name="id" value="{{.ID}}">
+              <button class="btn btn-sm btn-link text-danger" type="submit" title="Delete"><i class="fas fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+      {{else}}
+        <tr><td colspan="6" class="text-center text-muted py-4">No documents yet — add the first one to feed the bots.</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{end}}

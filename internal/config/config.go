@@ -13,11 +13,17 @@ type Config struct {
 	Port       int
 	ContentDir string
 	AdminUser  string
-	AdminPass  string // bcrypt hash
+	AdminPass  string // bcrypt hash OR plaintext (auto-hashed at bootstrap)
 	SessionKey string
 	AIProvider string
 	AIAPIKey   string
 	AIModel    string
+
+	// Admin module additions.
+	DBPath           string // bbolt file path (default /app/data/admin.db)
+	InternalAPIToken string // shared bearer for /api/* endpoints from voice-proxy
+	VoiceProxyURL    string // internal address used by the bot test feature
+	BotContextFile   string // legacy seed for first-run bot prompt
 }
 
 func Load() *Config {
@@ -61,6 +67,12 @@ func Load() *Config {
 		}
 	}
 	cfg.AIModel = envOrDefault("CMS_AI_MODEL", "")
+
+	// Admin module
+	cfg.DBPath = envOrDefault("ADMIN_DB_PATH", "/app/data/admin.db")
+	cfg.InternalAPIToken = envOrDefault("INTERNAL_API_TOKEN", "")
+	cfg.VoiceProxyURL = envOrDefault("VOICE_PROXY_URL", "http://pcsvoip-voice:9081")
+	cfg.BotContextFile = envOrDefault("BOT_CONTEXT_FILE", filepath.Join(cfg.ContentDir, "assets", "data", "pcsvoip-context.txt"))
 
 	return cfg
 }

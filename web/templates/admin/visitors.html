@@ -1,0 +1,84 @@
+{{define "page"}}
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="stat-card sm">
+      <div class="stat-icon"><i class="fas fa-eye"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{index .Counts "page_view"}}</div>
+        <div class="stat-label">Page views (recent)</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="stat-card sm">
+      <div class="stat-icon green"><i class="fas fa-comments"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{index .Counts "bot_chat"}}</div>
+        <div class="stat-label">Chat exchanges</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="stat-card sm">
+      <div class="stat-icon blue"><i class="fas fa-microphone"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{index .Counts "bot_voice"}}</div>
+        <div class="stat-label">Voice exchanges</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card admin-card">
+      <div class="card-header"><strong>Recent events</strong></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0 table-events">
+          <thead><tr><th>When</th><th>Type</th><th>Visitor</th><th>Detail</th></tr></thead>
+          <tbody>
+          {{range .Events}}
+            <tr>
+              <td class="text-muted">{{fmtTime .Timestamp}}</td>
+              <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
+              <td class="mono">{{truncate 12 .VisitorID}}</td>
+              <td class="text-truncate" style="max-width:380px">
+                {{if eq .Type "page_view"}}{{.Path}}
+                {{else}}<span class="text-dark">{{truncate 80 .Message}}</span>
+                  {{if .Reply}}<br><span class="text-muted small">→ {{truncate 80 .Reply}}</span>{{end}}
+                {{end}}
+              </td>
+            </tr>
+          {{else}}
+            <tr><td colspan="4" class="text-center text-muted py-4">No events yet.</td></tr>
+          {{end}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card admin-card">
+      <div class="card-header"><strong>Visitor summary</strong></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0 table-events">
+          <thead><tr><th>Visitor</th><th>Pages</th><th>Bot</th><th>Last seen</th></tr></thead>
+          <tbody>
+          {{range .Visitors}}
+            <tr>
+              <td class="mono">{{truncate 16 .ID}}<div class="text-muted small">{{truncate 24 .UserAgent}}</div></td>
+              <td>{{.PageViews}}</td>
+              <td>{{.BotMsgs}}</td>
+              <td class="text-muted">{{fmtTime .LastSeen}}</td>
+            </tr>
+          {{else}}
+            <tr><td colspan="4" class="text-center text-muted py-4">No visitors recorded.</td></tr>
+          {{end}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

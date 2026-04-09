@@ -41,8 +41,8 @@
     <div class="navbar">
         <h1>AI Content Editor</h1>
         <div>
-            <a href="/admin/edit?file={{.FilePath}}">Manual Edit</a>
-            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/files/edit?file={{.FilePath}}">Manual Edit</a>
+            <a href="/admin/files">Dashboard</a>
             <a href="/admin/logout">Logout</a>
         </div>
     </div>
@@ -57,7 +57,7 @@
             </div>
             <div class="actions">
                 <button class="btn btn-ai" onclick="submitAI()">Generate with AI</button>
-                <a href="/admin/edit?file={{.FilePath}}" class="btn btn-outline">Cancel</a>
+                <a href="/admin/files/edit?file={{.FilePath}}" class="btn btn-outline">Cancel</a>
             </div>
             <div class="spinner" id="spinner">Processing with AI... please wait</div>
         </div>
@@ -75,13 +75,13 @@
                 </div>
             </div>
             <div class="actions">
-                <form method="POST" action="/admin/ai/approve" id="approveForm">
+                <form method="POST" action="/admin/files/ai/approve" id="approveForm">
                     <input type="hidden" name="file" value="{{.FilePath}}">
                     <input type="hidden" name="content" id="approveContent">
                     <button type="submit" class="btn btn-approve">Approve &amp; Save</button>
                 </form>
                 <button class="btn btn-discard" onclick="discardResult()">Discard</button>
-                <a href="/admin/edit?file={{.FilePath}}" class="btn btn-outline">Edit Manually</a>
+                <a href="/admin/files/edit?file={{.FilePath}}" class="btn btn-outline">Edit Manually</a>
             </div>
         </div>
     </div>
@@ -96,7 +96,7 @@
             form.append('file', '{{.FilePath}}');
             form.append('instruction', instruction);
 
-            fetch('/admin/ai', { method: 'POST', body: form })
+            fetch('/admin/files/ai', { method: 'POST', body: form })
                 .then(r => r.json())
                 .then(data => {
                     document.getElementById('spinner').style.display = 'none';

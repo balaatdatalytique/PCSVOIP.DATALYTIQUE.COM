@@ -1,0 +1,66 @@
+{{define "page"}}
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{.TotalVisitors}}</div>
+        <div class="stat-label">Unique visitors</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-bolt"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{.Events24h}}</div>
+        <div class="stat-label">Events (24 h)</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-book"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{.KBActive}} / {{.KBCount}}</div>
+        <div class="stat-label">KB docs (active / total)</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon {{if .BotEnabled}}green{{else}}red{{end}}"><i class="fas fa-robot"></i></div>
+      <div class="stat-body">
+        <div class="stat-num">{{if .BotEnabled}}On{{else}}Off{{end}}</div>
+        <div class="stat-label">Bot status</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card admin-card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Recent activity</strong>
+    <a href="/admin/visitors" class="link-muted">All visitors →</a>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-sm mb-0 table-events">
+      <thead><tr><th>When</th><th>Type</th><th>Visitor</th><th>Detail</th></tr></thead>
+      <tbody>
+      {{range .Recent}}
+        <tr>
+          <td class="text-muted">{{fmtTime .Timestamp}}</td>
+          <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
+          <td class="mono">{{truncate 12 .VisitorID}}</td>
+          <td class="text-truncate" style="max-width:480px">
+            {{if eq .Type "page_view"}}{{.Path}}{{else}}{{truncate 120 .Message}}{{end}}
+          </td>
+        </tr>
+      {{else}}
+        <tr><td colspan="4" class="text-center text-muted py-4">No activity yet — visitors and bot conversations will show up here.</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{end}}

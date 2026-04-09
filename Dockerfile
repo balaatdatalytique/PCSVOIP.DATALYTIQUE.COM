@@ -13,9 +13,9 @@ RUN go mod download
 COPY cmd/ cmd/
 COPY internal/ internal/
 
-# Build a statically-linked binary
+# Build a statically-linked binary (buildvcs disabled — we build from a bind mount with no .git)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o /build/webserver ./cmd/server/
+    go build -buildvcs=false -ldflags="-s -w" -o /build/webserver ./cmd/server/
 
 # ---- Runtime Stage ----
 FROM alpine:3.21
@@ -36,8 +36,8 @@ COPY assets/ /app/assets/
 COPY web/ /app/web/
 COPY mail.php /app/
 
-# Create directories for runtime data
-RUN mkdir -p /app/.cms-backups && chown -R pcsvoip:pcsvoip /app
+# Create directories for runtime data (admin bbolt DB lives in /app/data)
+RUN mkdir -p /app/.cms-backups /app/data && chown -R pcsvoip:pcsvoip /app
 
 USER pcsvoip
 

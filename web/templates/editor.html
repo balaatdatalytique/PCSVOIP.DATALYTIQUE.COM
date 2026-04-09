@@ -32,8 +32,8 @@
     <div class="navbar">
         <h1>Editing: {{.FileName}}</h1>
         <div>
-            <a href="/admin/dashboard">Dashboard</a>
-            <a href="/admin/ai?file={{.FilePath}}">AI Edit</a>
+            <a href="/admin/files">Dashboard</a>
+            <a href="/admin/files/ai?file={{.FilePath}}">AI Edit</a>
             <a href="/admin/logout">Logout</a>
         </div>
     </div>
@@ -50,11 +50,11 @@
         </div>
         <iframe id="previewFrame" class="preview-frame"></iframe>
 
-        <form id="saveForm" method="POST" action="/admin/save" style="display:none;">
+        <form id="saveForm" method="POST" action="/admin/files/save" style="display:none;">
             <input type="hidden" name="file" value="{{.FilePath}}">
             <input type="hidden" name="content" id="saveContent">
         </form>
-        <form id="previewForm" method="POST" action="/admin/preview" target="previewTarget" style="display:none;">
+        <form id="previewForm" method="POST" action="/admin/files/preview" target="previewTarget" style="display:none;">
             <input type="hidden" name="file" value="{{.FilePath}}">
             <input type="hidden" name="content" id="previewContent">
         </form>
