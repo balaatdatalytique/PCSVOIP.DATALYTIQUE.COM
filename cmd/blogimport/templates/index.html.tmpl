@@ -1,0 +1,85 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{.Title}} · PCS VoIP</title>
+    <meta name="description" content="The PCS VoIP blog — VoIP, unified communications, contact centers, and small-business technology insights.">
+    <link rel="icon" type="image/png" href="/assets/img/favicon-pcs.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&amp;family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/assets/css/magnific-popup.min.css">
+    <link rel="stylesheet" href="/assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="/assets/css/style2.css">
+    <link rel="stylesheet" href="/assets/css/pegasi-ai.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/chatbot.css">
+    <style>
+        .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        @media (max-width: 991px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 575px) { .blog-grid { grid-template-columns: 1fr; } }
+        .blog-card { background: #fff; border: 1px solid #e4e8ee; border-radius: 10px; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; display: flex; flex-direction: column; height: 100%; }
+        .blog-card:hover { transform: translateY(-3px); border-color: #67bd4a; box-shadow: 0 14px 32px rgba(20,29,56,0.10); }
+        .blog-card .card-cover { aspect-ratio: 16/9; overflow: hidden; background: #eef1f5; }
+        .blog-card .card-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .blog-card:hover .card-cover img { transform: scale(1.04); }
+        .blog-card .card-cover.empty { display: flex; align-items: center; justify-content: center; color: #9aa3b3; font-size: 2.4rem; }
+        .blog-card .card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+        .blog-card .card-meta { color: #6c7689; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .blog-card h3.card-title { font-family: 'Barlow', sans-serif; font-size: 1.18rem; line-height: 1.3; font-weight: 700; color: #141D38; margin: 0 0 12px; }
+        .blog-card h3.card-title a { color: inherit; text-decoration: none; }
+        .blog-card h3.card-title a:hover { color: #67bd4a; }
+        .blog-card .card-excerpt { color: #4f5666; font-size: 0.92rem; line-height: 1.55; flex: 1; margin-bottom: 14px; }
+        .blog-card .card-readmore { color: #67bd4a; font-weight: 600; font-size: 0.9rem; text-decoration: none; align-self: flex-start; }
+        .blog-card .card-readmore:hover { color: #4a9633; }
+        .blog-pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 48px; flex-wrap: wrap; }
+        .blog-pagination a, .blog-pagination span { padding: 9px 16px; border: 1px solid #e4e8ee; border-radius: 6px; color: #141D38; text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: border-color 0.15s, background 0.15s, color 0.15s; }
+        .blog-pagination a:hover { border-color: #67bd4a; color: #67bd4a; }
+        .blog-pagination span.current { background: #67bd4a; color: #fff; border-color: #67bd4a; }
+        .blog-pagination span.disabled { color: #cfd5e1; cursor: not-allowed; }
+        .blog-summary { color: #6c7689; font-size: 0.95rem; text-align: center; margin-bottom: 28px; }
+    </style>
+</head>
+<body>
+{{template "site_header"}}
+{{template "site_breadcrumb" "Blog"}}
+
+<section class="space-top space-extra-bottom">
+    <div class="container">
+        <p class="blog-summary">{{.Total}} posts · page {{.Page}} of {{.LastPage}}</p>
+        <div class="blog-grid">
+            {{range .Posts}}
+            <article class="blog-card">
+                {{if .Cover}}
+                <a href="./{{.Slug}}.html" class="card-cover"><img src="{{.Cover}}" alt="{{.CoverAlt}}" loading="lazy"></a>
+                {{else}}
+                <div class="card-cover empty"><i class="fas fa-newspaper"></i></div>
+                {{end}}
+                <div class="card-body">
+                    <div class="card-meta"><i class="far fa-calendar me-1"></i><time datetime="{{.DateISO}}">{{.DateText}}</time></div>
+                    <h3 class="card-title"><a href="./{{.Slug}}.html">{{.Title}}</a></h3>
+                    <p class="card-excerpt">{{.Excerpt}}</p>
+                    <a href="./{{.Slug}}.html" class="card-readmore">Read more <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </article>
+            {{end}}
+        </div>
+
+        <nav class="blog-pagination">
+            {{if .HasPrev}}<a href="{{.PrevURL}}"><i class="fas fa-arrow-left me-1"></i>Prev</a>{{else}}<span class="disabled"><i class="fas fa-arrow-left me-1"></i>Prev</span>{{end}}
+            <span class="current">Page {{.Page}}</span>
+            <span>of {{.LastPage}}</span>
+            {{if .HasNext}}<a href="{{.NextURL}}">Next<i class="fas fa-arrow-right ms-1"></i></a>{{else}}<span class="disabled">Next<i class="fas fa-arrow-right ms-1"></i></span>{{end}}
+        </nav>
+    </div>
+</section>
+
+{{template "site_footer"}}
+{{template "site_scripts"}}
+</body>
+</html>

@@ -34,6 +34,7 @@ COPY --from=builder /build/webserver /app/webserver
 COPY *.html /app/
 COPY assets/ /app/assets/
 COPY web/ /app/web/
+COPY blog/ /app/blog/
 COPY mail.php /app/
 
 # Create directories for runtime data (admin bbolt DB lives in /app/data)
