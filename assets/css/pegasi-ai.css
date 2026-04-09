@@ -1,99 +1,145 @@
-/* Pegasi AI Solutions - Glowing Nav Callout & Page Styles */
+/* Pegasi AI Solutions — AAIRC-inspired tile design */
 
-/* Glowing nav item */
-.pegasi-ai-nav a {
-    background: linear-gradient(135deg, #00f5a0, #00d9f5) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    font-weight: 700 !important;
-    position: relative;
-    animation: pegasi-glow-text 2s ease-in-out infinite;
+/* =============================================
+   AAIRC-Style Product Tiles
+   Sharp corners, dark cards, accent-fill hover
+   ============================================= */
+
+.ai-tile-grid {
+    display: grid;
+    gap: 24px;
+}
+.ai-tile-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.ai-tile-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.ai-tile-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 991px) {
+    .ai-tile-grid-3, .ai-tile-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575px) {
+    .ai-tile-grid-2, .ai-tile-grid-3, .ai-tile-grid-4 { grid-template-columns: 1fr; }
 }
 
-.pegasi-ai-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, #00f5a0, #00d9f5, #a855f7);
-    border-radius: 2px;
-    animation: pegasi-shimmer 2s linear infinite;
+/* Core tile */
+.ai-tile {
+    background: #141414;
+    border: 1px solid #3a3a3a;
+    border-radius: 0;
+    padding: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes pegasi-glow-text {
-    0%, 100% { filter: brightness(1) drop-shadow(0 0 2px rgba(0,245,160,0.3)); }
-    50% { filter: brightness(1.3) drop-shadow(0 0 8px rgba(0,217,245,0.6)); }
+.ai-tile:hover {
+    border-color: #67bd4a;
+    background: #67bd4a;
+    transform: translateY(-4px);
+    text-decoration: none;
 }
 
-@keyframes pegasi-shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
+.ai-tile:hover * { color: #000 !important; }
 
-/* Product card styles for AI landing page */
-.ai-product-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 40px 30px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid #e8e8e8;
-    height: 100%;
-}
-
-.ai-product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.ai-product-card .product-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
+.ai-tile .tile-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 0;
+    background: rgba(103, 189, 74, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 36px;
-    color: #fff;
+    color: #67bd4a;
+    font-size: 24px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
 }
 
-.ai-product-card .product-icon.autoattender { background: linear-gradient(135deg, #667eea, #764ba2); }
-.ai-product-card .product-icon.crm { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.ai-product-card .product-icon.chatbot { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.ai-product-card .product-icon.audiobot { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.ai-tile:hover .tile-icon {
+    background: #000;
+    color: #67bd4a !important;
+}
 
-.ai-product-card h3 { color: #141D38; margin-bottom: 12px; }
-.ai-product-card p { color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+.ai-tile h3 {
+    font-size: 1.25rem;
+    color: #fff;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
 
-.ai-product-card .product-btn {
+.ai-tile p {
+    color: #999;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    flex-grow: 1;
+}
+
+.ai-tile .tile-tag {
     display: inline-block;
-    padding: 10px 28px;
-    border-radius: 25px;
-    color: #fff;
+    padding: 4px 12px;
+    background: rgba(103, 189, 74, 0.1);
+    color: #67bd4a;
+    font-size: 0.75rem;
     font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0;
+    margin-top: auto;
+    align-self: flex-start;
+    transition: all 0.3s;
 }
 
-.ai-product-card .product-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    color: #fff;
+.ai-tile:hover .tile-tag {
+    background: rgba(0,0,0,0.2);
+    color: #000 !important;
 }
 
-.ai-product-card .product-btn.autoattender { background: linear-gradient(135deg, #667eea, #764ba2); }
-.ai-product-card .product-btn.crm { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.ai-product-card .product-btn.chatbot { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.ai-product-card .product-btn.audiobot { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+/* Product tile features list */
+.ai-tile .tile-features {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+}
 
-/* AI hero gradient */
+.ai-tile .tile-features li {
+    padding: 3px 10px;
+    background: rgba(103, 189, 74, 0.08);
+    color: #67bd4a;
+    font-size: 0.72rem;
+    font-weight: 500;
+    border-radius: 0;
+    transition: all 0.3s;
+}
+
+.ai-tile:hover .tile-features li {
+    background: rgba(0,0,0,0.15);
+    color: #000 !important;
+}
+
+/* =============================================
+   AI Dark Section (for tile backgrounds)
+   ============================================= */
+
+.ai-dark-section {
+    background: #0a0a0a;
+    padding: 60px 0;
+}
+
+.ai-dark-section .sec-title,
+.ai-dark-section h2 { color: #fff; }
+.ai-dark-section .sub-title { color: #67bd4a; }
+
+/* =============================================
+   Hero gradient (AI landing page)
+   ============================================= */
+
 .ai-hero-gradient {
-    background: linear-gradient(135deg, #141D38 0%, #1a2744 40%, #0d3320 100%);
-    padding: 80px 0 60px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #0d1a0d 100%);
+    padding: 140px 0 70px;
     position: relative;
     overflow: hidden;
 }
@@ -105,27 +151,52 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 50%, rgba(0,245,160,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 50%, rgba(0,217,245,0.06) 0%, transparent 50%);
-    animation: ai-bg-drift 15s ease-in-out infinite;
+    background: radial-gradient(circle at 30% 50%, rgba(103,189,74,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(103,189,74,0.04) 0%, transparent 50%);
 }
 
-@keyframes ai-bg-drift {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(2%, -1%); }
+/* =============================================
+   AAIRC Badge — pill-shaped, subtle
+   ============================================= */
+
+.aairc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 20px;
+    border-radius: 100px;
+    border: 1px solid rgba(103, 189, 74, 0.3);
+    background: rgba(103, 189, 74, 0.06);
+    color: #67bd4a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-/* Feature grid for product pages */
+.aairc-badge i { font-size: 0.75rem; }
+
+/* On dark backgrounds */
+.ai-dark-section .aairc-badge {
+    border-color: rgba(103, 189, 74, 0.3);
+    background: rgba(103, 189, 74, 0.08);
+}
+
+/* =============================================
+   Feature grid cards (product sub-pages)
+   ============================================= */
+
 .feature-grid-card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 0;
     padding: 28px 24px;
-    border: 1px solid #eee;
-    transition: box-shadow 0.3s, transform 0.3s;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 100%;
 }
 
 .feature-grid-card:hover {
+    border-color: #67bd4a;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     transform: translateY(-3px);
 }
@@ -133,27 +204,30 @@
 .feature-grid-card .feature-icon {
     width: 50px;
     height: 50px;
-    border-radius: 12px;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 22px;
-    color: #fff;
+    color: #67bd4a;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, #67bd4a, #3d8b2f);
+    background: rgba(103, 189, 74, 0.1);
 }
 
 .feature-grid-card h4 { color: #141D38; font-size: 18px; margin-bottom: 10px; }
 .feature-grid-card p { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 0; }
 
-/* Pricing table for autoattender */
+/* =============================================
+   Pricing cards
+   ============================================= */
+
 .pricing-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 0;
     padding: 35px 25px;
     text-align: center;
-    border: 2px solid #eee;
-    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s;
     position: relative;
     height: 100%;
 }
@@ -161,6 +235,7 @@
 .pricing-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    border-color: #67bd4a;
 }
 
 .pricing-card.featured {
@@ -176,7 +251,7 @@
     background: #67bd4a;
     color: #fff;
     padding: 4px 20px;
-    border-radius: 12px;
+    border-radius: 0;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
@@ -207,18 +282,25 @@
 .pricing-card ul li .fa-check { color: #67bd4a; }
 .pricing-card ul li .fa-times { color: #ccc; }
 
-/* AAIRC subtle badge */
-.aairc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #999;
-    letter-spacing: 0.5px;
-    padding: 6px 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.05);
+/* =============================================
+   Stats row (dark, accented numbers)
+   ============================================= */
+
+.ai-stats-row {
+    background: #0a0a0a;
+    border-top: 1px solid #3a3a3a;
+    border-bottom: 1px solid #3a3a3a;
+    padding: 40px 0;
 }
 
-.aairc-badge i { font-size: 10px; color: #bbb; }
+.ai-stats-row .stat-number {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #67bd4a;
+}
+
+.ai-stats-row .stat-label {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
