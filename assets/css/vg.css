@@ -15,9 +15,26 @@
   margin: 0 auto;
 }
 
-/* Video Item (Optional styling for each grid item) */
+/* Video Item — card holding the player + title */
 .vg-item {
-  /* Additional item styling if needed */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Video title shown below the player */
+.vg-title {
+  margin: 12px 0 0;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #141D38;
+  line-height: 1.35;
+  /* Limit to 2 lines so cards stay roughly equal height */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
 }
 
 /* Responsive Video Container */
