@@ -341,16 +341,19 @@ var voiceActive = false;
 var voicePlaybackQueue = [];
 var voiceIsPlaying = false;
 
-// Determine the voice proxy WebSocket URL
+// Determine the voice proxy WebSocket URL. We deliberately do NOT include a
+// ?voice= query parameter — the admin panel (/admin/bot) is the single source
+// of truth for which Grok voice is used, and voice-proxy reads it via
+// /api/bot/context on every session start.
 function getVoiceProxyUrl() {
     var loc = window.location;
     var wsProto = loc.protocol === 'https:' ? 'wss:' : 'ws:';
     // In production (HTTPS), Nginx proxies /ws/voice to port 9081
     // In development (HTTP), connect directly to port 9081
     if (loc.protocol === 'https:') {
-        return wsProto + '//' + loc.host + '/ws/voice?voice=ara';
+        return wsProto + '//' + loc.host + '/ws/voice';
     }
-    return wsProto + '//' + loc.hostname + ':9081/ws/voice?voice=ara';
+    return wsProto + '//' + loc.hostname + ':9081/ws/voice';
 }
 
 // Start a voice session — called when user clicks the mic icon

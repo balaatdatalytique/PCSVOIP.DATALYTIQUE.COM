@@ -44,7 +44,7 @@ type botCtx struct {
 	voice string
 }
 
-const ctxCacheTTL = 60 * time.Second
+const ctxCacheTTL = 5 * time.Second
 
 type chatMsg struct {
 	Role    string `json:"role"`
@@ -337,12 +337,14 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	defer clientConn.Close()
 
-	// Voice resolution: explicit ?voice= URL param wins (per-session override),
-	// then the admin-configured voice from /api/bot/context, then "ara".
+	// Voice resolution: the admin-configured voice from /api/bot/context wins,
+	// then the explicit ?voice= URL parameter (only used when the admin hasn't
+	// configured one), then "ara". The admin panel must be the source of truth
+	// — operators expect their setting to take effect immediately.
 	bc := fetchBotContext()
-	voice := r.URL.Query().Get("voice")
+	voice := bc.voice
 	if voice == "" {
-		voice = bc.voice
+		voice = r.URL.Query().Get("voice")
 	}
 	if voice == "" {
 		voice = "ara"
