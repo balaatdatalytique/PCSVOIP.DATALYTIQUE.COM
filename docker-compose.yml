@@ -1,0 +1,55 @@
+services:
+  pcsvoip-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pcsvoip-web
+    restart: unless-stopped
+    ports:
+      - "9080:9080"
+    env_file:
+      - .env
+    volumes:
+      - cms-backups:/app/.cms-backups
+      - ./assets/videos:/app/assets/videos:ro
+      - ./assets/apivideos:/app/assets/apivideos:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  voice-proxy:
+    build:
+      context: ./voice-proxy
+      dockerfile: Dockerfile
+    container_name: pcsvoip-voice
+    restart: unless-stopped
+    ports:
+      - "9081:9081"
+    environment:
+      - GROK_API_KEY=${GROK_API_KEY}
+      - VOICE_PROXY_PORT=9081
+      - CONTEXT_PATH=/app/assets/data/pcsvoip-context.txt
+    volumes:
+      - ./assets/data:/app/assets/data:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9081/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  cms-backups:

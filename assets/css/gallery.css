@@ -4,27 +4,48 @@
   background-color: #f9f9f9;
 }
 
-/* Masonry Layout using CSS Columns */
+/* Grid Layout for uniform sizing */
 .gallery {
-  column-count: 3;         /* Adjust number of columns as needed */
-  column-gap: 1em;         /* Space between columns */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5em;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Gallery Items as Thumbnails */
+/* Gallery Items as uniform blocks */
 .gallery-item {
   width: 100%;
-  margin-bottom: 1em;
-  border-radius: 4px;
+  height: 280px;
+  object-fit: contain;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: block;
-  border: 4px solid #609bbb;
+  border: 3px solid #609bbb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .gallery-item:hover {
   transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 992px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+  .gallery-item {
+    height: 240px;
+  }
 }
 
 /* Lightbox (Modal) Styling */

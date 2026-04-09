@@ -1,0 +1,99 @@
+
+1-On the home page,  We would like to remove the section that says 30+ happy clients, because it makes it look like we only have 30+ clients, when in reality we have many more active customers than that, I would just for now remove it, and we will end up coming up with something to put there.
+2-Also on the home page, when you click on the E-FAX Know More button down under What We Do section halfway down the page, this just takes you back to the main page instead of the E-FAX page like it should.
+3-Also on home page, we notice that the blogs page doesn’t go to our blogs
+
+4-On the Phones page under the Resources tab, can you update these to flow a little better? The pictures/blocks if you could resize these to the same sizes? It looks a little off with all the different sized blocks.
+
+
+6-On the UC Client page underneath the Product page, if we could add a description to the pages SMS, Mobile Application, and Video Conferencing - Contact Sharing, they just look a little bare with just a video. I can give a rough description of what to put under each page. 
+
+6A-Changes to -SMS page -  (Add the following text)
+Standard SMS – Simple, Personal Texting for Your Extension
+Get texting right from your VoIP number – perfect for individual users who need quick, direct communication.
+Our Standard SMS lets you send and receive text messages (SMS) directly using your assigned VoIP phone number or extension. It's straightforward and tied to one user/extension, so all messages go straight to your device or softphone app — just like texting from a regular mobile, but powered by your PCS VoIP system.
+Key Details
+* One-to-one connection — Texts are linked exclusively to a single extension/user (no shared inbox or team access).
+* Send & receive SMS — Basic text messaging (support for MMS/images may vary — check your plan).
+* Works on your devices — Use your desktop app, mobile app, or compatible softphone to text from anywhere with internet.
+* Uses your existing VoIP number — No need for a separate phone or carrier plan; keep everything in one unified VoIP setup.
+* Ideal for — Solo users, field reps, individual agents, or small setups where one person handles their own customer texts (e.g., personal follow-ups, quick replies, or one-on-one support).
+Benefits of Standard SMS
+* Super simple setup — Enable it on your extension and start texting instantly — no extra logins or team configurations.
+* Personal & private — Messages stay with the assigned user, keeping conversations confidential and easy to manage.
+* Cost-effective entry point — Great for getting started with VoIP texting without advanced team features.
+* Seamless with your calls — Text and talk from the same number/extension for a professional, consistent customer experience.
+* Fast & reliable — High open rates (texts get read quickly), helping you respond faster than email or voicemail.
+
+6B-Changes to -Mobile Application page (Add the following text)- 
+Mobile App – Take Your Business Phone System Anywhere
+Your all-in-one VoIP companion for smartphones – make calls, send texts, join video meetings, and stay connected on the go.
+Our mobile application turns your smartphone (iOS or Android) into a full-featured extension of your PCS VoIP business phone system. Download it once, log in with your extension credentials, and access everything you need to run your business from anywhere — whether you're in the office, on the road, at home, or traveling.
+Core Capabilities
+* Make and receive business calls — Use your company phone number for inbound/outbound calls over Wi-Fi or cellular data — crystal-clear VoIP quality, no extra carrier charges.
+* Send and receive messages — Text (SMS/MMS) directly from your business number — share photos, documents, or quick updates without switching apps or revealing personal numbers.
+* Join video meetings — Host or participate in HD video calls and conferences right in the app — perfect for client check-ins, team huddles, or remote demos (supports 1:1 or group sessions).
+* Visual voicemail — Access, play, and manage voicemails on the go — listen, read transcriptions (if enabled), delete, or forward messages easily.
+* Contact directory & history — Sync your business contacts, view call logs, recent activity, and company directories for fast dialing and reference.
+* Additional productivity tools — Features like call transfer, hold, mute, speaker/Bluetooth support, presence status (available/busy), and more!
+Key Benefits
+* True mobility for your team — Work from anywhere without missing calls or messages — field reps, remote workers, and hybrid teams stay fully connected.
+* Seamless business continuity — Calls and texts route to the app even if you're away from your desk phone — never let an opportunity slip away.
+* Professional image on the move — Always present your business number — customers see your company line, not a personal cell.
+* Cost savings & simplicity — No need for separate mobile plans or devices; leverage your existing VoIP subscription for unlimited (or plan-based) calling, texting, and video.
+* Easy setup & secure access — Quick download from App Store/Google Play, secure login (often with QR code for fast setup), and works over any strong internet connection.
+* Boost productivity — Handle calls, texts, and meetings in one app — reduce app-switching and keep everything business-focused.
+
+6C-Changes to -Video Conferencing - Contact Sharing page (Add the following text)- 
+Video Conferencing & Contact Sharing – Collaborate Face-to-Face, Connect Instantly
+Host crystal-clear video meetings and access/share contacts effortlessly – all within your PCS VoIP UC Client.
+Our UC Client's built-in video conferencing turns any device into a powerful collaboration hub. Join or start HD video calls, share screens, and engage your team or clients in real time. Paired with seamless contact sharing, you can quickly find colleagues, dial, chat, or launch a video session directly from your company directory — no switching apps or searching for numbers.
+Video Conferencing Features
+* HD video meetings — Unlimited 1:1 and group calls (up to 100 participants) with no time limits for smooth, professional discussions.
+* Screen sharing — Share your full screen, a specific window, or application — multiple users can share simultaneously for dynamic collaboration (great for demos, training, or reviews).
+* Ad-hoc & scheduled meetings — Start instant video from chat or contacts, or schedule with easy invite links/PINs.
+* Advanced controls — Lock meetings, knock-to-join, mute participants, and more for secure, organized sessions.
+* Virtual rooms — Set up always-on "rooms" for drop-in collaborations — team members can knock and join anytime.
+Key Benefits
+* Boost team productivity — Face-to-face video builds stronger connections than voice alone; quick contact access eliminates delays in hybrid/remote setups.
+* Enhance collaboration — Share screens/documents in video while pulling up contacts on the fly — perfect for sales demos, support troubleshooting, or internal brainstorming.
+* Professional & consistent — Always use your business identity (name, number, company branding) in video and contacts — build trust with clients.
+* Anywhere flexibility — Works on desktop UC Client, browser, or mobile app — stay connected whether in-office or on the go.
+* All-in-one UC power — No separate Zoom/Teams logins; video, voice, messaging, contacts, and more live in your PCS VoIP platform for streamlined workflows.
+
+6D-Changes to -Enterprise Cloud SMS page (Add the following text)- 
+Enterprise Cloud SMS – Cloud Messaging
+Advanced team texting that grows with your business – choose Starter for essentials or Professional for full automation and marketing power.
+Our Enterprise Cloud SMS (via the Cloud Messaging platform) delivers collaborative, cloud-based SMS/MMS on your VoIP numbers. Handle customer conversations, build relationships, and automate outreach — all in one secure dashboard accessible from any device.
+Choose Your Tier
+* Starter → Perfect for teams starting with shared texting and basic tools.
+* Professional → Unlock powerful marketing automation, bulk sending, and reminders for higher engagement and efficiency.
+Core Features Available in Both Tiers
+These foundational tools come standard in Cloud Messaging:
+* Conversations — Shared team inboxes for real-time, multi-user texting from business numbers (send/receive SMS & MMS, view full threads).
+* Contacts — Manage your customer list, add notes/tags, and keep everything organized in one place.
+* Canned Responses — Save time with pre-written templates for common questions, FAQs, or replies — insert with one click for consistent, fast responses.
+* My Profile — Personalize your user settings, view your activity, and manage preferences within the platform.
+Professional Tier – Exclusive Upgrades
+Upgrade to Professional for marketing and automation features that drive results:
+* Blasts — Send bulk/mass messages to lists or segments (promotions, alerts, announcements) — reach hundreds or thousands quickly and compliantly.
+* Drip Campaigns — Set up automated sequences of texts over time (e.g., welcome series, nurture leads, post-purchase follow-ups) to keep customers engaged without manual effort.
+* Reminders — Schedule automated appointment reminders, order confirmations, or follow-up texts — reduce no-shows and boost reliability.
+Why Cloud Messaging Fits Your Business
+* Team collaboration — Multiple users handle the same number seamlessly (no more "missed text" chaos).
+* High engagement — Texts open fast (98%+ rates) — use conversations for support and Professional tools for sales/marketing wins.
+* Scalable & integrated — Starts simple with Starter, grows to full automation with Professional — all tied to your PCS VoIP setup.
+* Professional & compliant — Business numbers, opt-out handling, and tools to meet regulations (10DLC support, etc.).
+* Anywhere access — Cloud-based dashboard works on desktop, mobile, or pagelet for remote/hybrid teams.
+Get Started with Video & Contact Sharing
+Download or access the UC Client today and experience seamless video conferencing powered by your PCS VoIP system. 
+ 
+
+7-On the Services page, if we could have all of the blocks there (UC Client, Contact Center, E-FAX, SMS, ect.) all of these go to their respective pages when clicked on? Is it possible to do this? I know the title itself is clickable, but can you make the whole blocks themselves clickable as a link? It took me a minute to figure out I could even click on the title to go to it, so I just feel it would be better if the whole block you can click and it takes you to the page.
+
+8-Could you add a Solutions page, and within that page/page, highlight the industries we work with? Kind of similar to what Nextivia has on their site, under the solutions page. This would look nice.  We have the information needed to go in to it as well.
+
+9- Maybe some kind of compare with other providers section, where they can select between other voip providers to compare with?
+
+10-Chatbot down below, can we have it pop up after like 20 seconds, or have it like flash so customers can see it better? Also, could we have this on all pages so they don’t have to switch to the homepage to chat with the bot?
+

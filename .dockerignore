@@ -1,0 +1,63 @@
+# Build artifacts
+bin/
+*.exe
+*.out
+
+# Environment & secrets (passed via env_file at runtime)
+.env
+.env.*
+
+# CMS runtime backups
+.cms-backups/
+
+# Large video assets (mount as volume or copy separately)
+assets/apivideos/
+assets/videos/
+
+# Node / test artifacts
+node_modules/
+test-results/
+tests/
+
+# IDE & editor
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certbot / ACME
+.well-known/
+
+# FTP artifacts
+.ftpquota
+ftpit
+
+# Backup copies
+*- Copy*
+*-copy*
+
+# Claude Code
+.claude/
+
+# Temporary
+*.tmp
+*.log
+/tmp/
+
+# Git
+.git/
+.gitignore
+
+# Docker files (don't recurse)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Docs (not needed in image)
+README.md
+CLAUDE.md
+instructs.txt
+changes.txt

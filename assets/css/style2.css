@@ -22,9 +22,9 @@
   --icon-font: "Font Awesome 6 Pro";
   --main-container: 1220px;
   --container-gutters: 24px;
-  --section-space: 120px;
-  --section-space-mobile: 80px;
-  --section-title-space: 60px;
+  --section-space: 70px;
+  --section-space-mobile: 50px;
+  --section-title-space: 40px;
   --ripple-ani-duration: 5s
 }
 
@@ -9563,14 +9563,14 @@ a.text-theme:hover,
 
 .breadcumb-wrapper {
   background-color: var(--title-color);
-  padding: 160px 0;
+  padding: 130px 0 40px;
   overflow: hidden;
   text-align: center
 }
 
 @media (max-width: 1199px) {
   .breadcumb-wrapper {
-    padding: 140px 0
+    padding: 120px 0 35px
   }
 
   .breadcumb-menu {
@@ -9586,13 +9586,13 @@ a.text-theme:hover,
 
 @media (max-width: 991px) {
   .breadcumb-wrapper {
-    padding: 120px 0
+    padding: 110px 0 30px
   }
 }
 
 @media (max-width: 767px) {
   .breadcumb-wrapper {
-    padding: 100px 0
+    padding: 100px 0 25px
   }
 }
 

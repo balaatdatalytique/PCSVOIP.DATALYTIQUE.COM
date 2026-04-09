@@ -1,0 +1,33 @@
+<div id="chatbot-icon" onclick="toggleChatbot()">
+    <i class="fas fa-comments"></i>
+</div>
+
+<!-- Add overlay div -->
+<div class="chatbot-overlay" id="chatbot-overlay"></div>
+
+<!-- Chatbot Window -->
+<div id="chatbot-window">
+    <div id="chatbot-header">
+        <span>Chat with Us</span>
+        <div class="header-buttons">
+            <button class="header-btn phone-btn" onclick="initiateCall()">
+                <i class="fas fa-phone"></i>
+            </button>
+            <button class="close-btn" onclick="closeChatbot()">End Chat</button>
+        </div>
+    </div>
+    <div id="chatbot-body">
+        <div id="chat-messages"></div>
+        <div id="user-form" class="user-form">
+            <input type="text" id="user-first-name" placeholder="First Name *" required>
+            <input type="text" id="user-last-name" placeholder="Last Name *" required>
+            <input type="tel" id="user-phone" placeholder="Phone Number *" required>
+            <input type="email" id="user-email" placeholder="Email (optional)">
+            <button onclick="startChat()">Start Chat</button>
+        </div>
+    </div>
+    <div id="chatbot-footer">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)"
+            disabled>
+    </div>
+</div>

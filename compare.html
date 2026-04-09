@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Our Clients - PCS VoIP - The Power of Communications Simplified</title>
+    <title>Compare VoIP Providers - PCS VoIP - The Power of Communications Simplified</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -15,22 +16,221 @@
     <link rel="stylesheet" href="assets/css/magnific-popup.min.css">
     <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
     <link rel="stylesheet" href="assets/css/style2.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Comparison Table Styles */
+        .compare-section {
+            padding: 0;
+        }
+        .provider-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .provider-filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #141D38;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .provider-filter-btn:hover {
+            border-color: #67bd4a;
+        }
+        .provider-filter-btn.active {
+            border-color: #67bd4a;
+            background: #f0fae9;
+            color: #67bd4a;
+        }
+        .provider-filter-btn .filter-check {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .provider-filter-btn.active .filter-check {
+            border-color: #67bd4a;
+            background: #67bd4a;
+        }
+        .provider-filter-btn.active .filter-check::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #fff;
+            font-size: 11px;
+        }
+        .compare-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+        }
+        .compare-table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+        .compare-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .compare-table thead th {
+            background: #141D38;
+            color: #fff;
+            padding: 18px 16px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        .compare-table thead th:first-child {
+            text-align: left;
+            min-width: 200px;
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            background: #141D38;
+        }
+        .compare-table thead th.pcs-col {
+            background: #67bd4a;
+            font-size: 15px;
+        }
+        .compare-table tbody tr {
+            transition: background 0.2s ease;
+        }
+        .compare-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .compare-table tbody tr:nth-child(odd) {
+            background: #fff;
+        }
+        .compare-table tbody tr:hover {
+            background: #f0fae9;
+        }
+        .compare-table tbody td {
+            padding: 16px;
+            text-align: center;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        .compare-table tbody td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: #141D38;
+            position: sticky;
+            left: 0;
+            background: inherit;
+            z-index: 5;
+        }
+        .compare-table tbody tr:nth-child(even) td:first-child {
+            background: #f8f9fa;
+        }
+        .compare-table tbody tr:nth-child(odd) td:first-child {
+            background: #fff;
+        }
+        .compare-table tbody tr:hover td:first-child {
+            background: #f0fae9;
+        }
+        .compare-table .fa-check-circle {
+            color: #67bd4a;
+            font-size: 22px;
+        }
+        .compare-table .fa-times-circle {
+            color: #dc3545;
+            font-size: 22px;
+        }
+        .compare-table .fa-minus-circle {
+            color: #ffc107;
+            font-size: 22px;
+        }
+        .compare-table .provider-hidden {
+            display: none;
+        }
+
+        /* Why PCS Section */
+        .why-pcs-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            height: 100%;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid #67bd4a;
+        }
+        .why-pcs-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        .why-pcs-card .icon {
+            width: 70px;
+            height: 70px;
+            background: #f0fae9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .why-pcs-card .icon i {
+            font-size: 28px;
+            color: #67bd4a;
+        }
+        .why-pcs-card h4 {
+            color: #141D38;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .why-pcs-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .intro-text {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .provider-filter-btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            .compare-table thead th,
+            .compare-table tbody td {
+                padding: 12px 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
     <link rel="stylesheet" href="assets/css/chatbot.css">
 </head>
 
 <body>
 
-    <div class="popup-search-box d-none d-lg-block">
-        <button class="searchClose">
-            <i class="fal fa-times"></i>
-        </button>
-        <form action="#">
-            <input type="text" placeholder="What are you looking for?">
-            <button type="submit">
-                <i class="fal fa-search"></i>
-            </button>
-        </form>
-    </div>
+
     <div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
             <button class="th-menu-toggle">
@@ -72,7 +272,7 @@
 											<li>
                                                 <a href="api-videos.html">API Videos</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -87,7 +287,7 @@
                                             <li>
                                                 <a href="compare.html">Compare Providers</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -102,7 +302,7 @@
 											<li>
                                                 <a href="testimonials.html">Testimonials</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -164,7 +364,7 @@
                 </ul>
               </div>
             </div>
-			
+
 			<div class="col-auto">
   <div class="dropdown">
     <span>LOGIN</span>
@@ -174,10 +374,10 @@
     </div>
   </div>
 </div>
-			
+
             <div class="col-auto">
               <div class="header-social">
-               
+
                 <a href="https://www.facebook.com/PCSVoIP" target="_blank">
                 <img src="assets/img/social/facebook.png" alt="Facebook" style="width: 26px; height: 26px;">
                 </a>
@@ -200,7 +400,7 @@
       </div>
 	  </header>
     <header class="th-header header-layout3">
-	
+
         <div class="sticky-wrapper">
             <div class="menu-area">
                 <div class="container">
@@ -244,7 +444,7 @@
 											<li>
                                                 <a href="api-videos.html">API Videos</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -259,7 +459,7 @@
                                             <li>
                                                 <a href="compare.html">Compare Providers</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -274,7 +474,7 @@
 											<li>
                                                 <a href="testimonials.html">Testimonials</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -314,7 +514,7 @@
                                 </ul>
                             </nav>
                             <div class="header-button">
-                                
+
                                 <button type="button" class="th-menu-toggle d-inline-block d-lg-none">
                                     <i class="far fa-bars"></i>
                                 </button>
@@ -322,12 +522,9 @@
                         </div>
                         <div class="col-auto d-none d-lg-block">
                             <div class="header-button">
-                                <button type="button" class="icon-btn searchBoxToggler">
-                                    <i class="far fa-search"></i>
-                                </button>
                                 <a href="quote.html" class="th-btn shadow-none">Get Quote
                   </a>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -335,45 +532,270 @@
             </div>
         </div>
     </header>
-	
-	
-<div class="space" id="about-sec">	
-<div class="under-construction">
-    <h1>This page is under construction</h1>
-</div>
 
-<style>
-    .under-construction {
-        text-align: center;
-        padding: 50px;
-        font-family: Arial, sans-serif;
-    }
-    .under-construction h1 {
-        font-size: 32px;
-        color: #333;
-    }
-    .under-construction p {
-        font-size: 18px;
-        color: #666;
-    }
-    .under-construction a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    .under-construction a:hover {
-        text-decoration: underline;
-    }
-</style>
-</div>
-	
-	
-	
 
-					
 
-							
-									
-									
+
+	    <div class="breadcumb-wrapper" data-bg-src="assets/img/bg/services-bg.jpg">
+      <div class="container">
+        <div class="breadcumb-content">
+          <h1 class="breadcumb-title">Compare VoIP Providers</h1>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Intro Section -->
+    <div class="space" id="compare-intro">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8 text-center">
+                    <div class="title-area">
+                        <span class="sub-title">
+                            <div class="icon-masking me-2">
+                                <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                                <img src="assets/img/voip.png" alt="shape">
+                            </div>Compare & Choose
+                        </span>
+                        <h2 class="sec-title">Find the Right VoIP Provider for Your Business</h2>
+                    </div>
+                    <p class="intro-text">Choosing the right VoIP provider is a critical decision for any business. With so many options on the market, it pays to compare features, pricing flexibility, and support quality before committing. See how PCS VoIP stacks up against the industry's biggest names and discover why businesses nationwide trust us for their communication needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Table Section -->
+    <section class="compare-section space" style="padding-top: 0;">
+        <div class="container">
+            <div class="title-area text-center mb-4">
+                <h3 style="color: #141D38;">Select Providers to Compare</h3>
+                <p>Toggle providers on or off to customize your comparison view.</p>
+            </div>
+
+            <!-- Provider Filter Buttons -->
+            <div class="provider-filters" id="providerFilters">
+                <div class="provider-filter-btn active" data-provider="ringcentral" onclick="toggleProvider(this)">
+                    <span class="filter-check"></span> RingCentral
+                </div>
+                <div class="provider-filter-btn active" data-provider="vonage" onclick="toggleProvider(this)">
+                    <span class="filter-check"></span> Vonage
+                </div>
+                <div class="provider-filter-btn active" data-provider="nextiva" onclick="toggleProvider(this)">
+                    <span class="filter-check"></span> Nextiva
+                </div>
+                <div class="provider-filter-btn active" data-provider="eightx8" onclick="toggleProvider(this)">
+                    <span class="filter-check"></span> 8x8
+                </div>
+                <div class="provider-filter-btn active" data-provider="ooma" onclick="toggleProvider(this)">
+                    <span class="filter-check"></span> Ooma
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="compare-table-wrapper">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th class="pcs-col">PCS VoIP</th>
+                            <th class="col-ringcentral">RingCentral</th>
+                            <th class="col-vonage">Vonage</th>
+                            <th class="col-nextiva">Nextiva</th>
+                            <th class="col-eightx8">8x8</th>
+                            <th class="col-ooma">Ooma</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>UC Client (Unified Communications)</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-minus-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Contact Center</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-times-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>PBX / SIP Trunking</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-minus-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>E-Fax</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-minus-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>SMS / Business SMS</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-minus-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Mobile App</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-check-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Video Conferencing</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-minus-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>API Integration</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-times-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>24/7 Support</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-times-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Custom Pricing</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-minus-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-times-circle"></i></td>
+                        </tr>
+                        <tr>
+                            <td>No Long-term Contracts</td>
+                            <td><i class="fas fa-check-circle"></i></td>
+                            <td class="col-ringcentral"><i class="fas fa-times-circle"></i></td>
+                            <td class="col-vonage"><i class="fas fa-times-circle"></i></td>
+                            <td class="col-nextiva"><i class="fas fa-times-circle"></i></td>
+                            <td class="col-eightx8"><i class="fas fa-times-circle"></i></td>
+                            <td class="col-ooma"><i class="fas fa-check-circle"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-4 justify-content-center" style="font-size: 14px; color: #666;">
+                        <span><i class="fas fa-check-circle" style="color: #67bd4a;"></i> Fully Supported</span>
+                        <span><i class="fas fa-minus-circle" style="color: #ffc107;"></i> Limited / Add-on</span>
+                        <span><i class="fas fa-times-circle" style="color: #dc3545;"></i> Not Available</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why PCS VoIP Stands Out -->
+    <section class="space" data-bg-src="assets/img/bg/service_bg_19.jpg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8 text-center">
+                    <div class="title-area">
+                        <span class="sub-title">
+                            <div class="icon-masking me-2">
+                                <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                                <img src="assets/img/voip.png" alt="shape">
+                            </div>Our Advantage
+                        </span>
+                        <h2 class="sec-title">Why PCS VoIP Stands Out</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+                        <h4>Custom, Transparent Pricing</h4>
+                        <p>No one-size-fits-all plans here. We tailor pricing to your business size and needs, so you never pay for features you do not use.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-file-contract"></i></div>
+                        <h4>No Long-term Contracts</h4>
+                        <p>We earn your business every month. No lock-in agreements or early termination fees. Stay because you want to, not because you have to.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-headset"></i></div>
+                        <h4>Dedicated 24/7 Support</h4>
+                        <p>Real people, real solutions. Our U.S.-based support team is available around the clock to keep your communications running smoothly.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <h4>Complete Feature Suite</h4>
+                        <p>From UC Client and Contact Center to E-Fax and API integrations, every feature is included. No costly add-ons or surprise upgrades.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                        <h4>Scalable for Any Business</h4>
+                        <p>Whether you have 5 users or 500, PCS VoIP scales with you. Our platform grows alongside your business without missing a beat.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="why-pcs-card">
+                        <div class="icon"><i class="fas fa-handshake"></i></div>
+                        <h4>Customer-Centric Culture</h4>
+                        <p>With over 15 years in telecommunications, we treat every client like a partner. Your success is our success.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="position-relative space">
+        <div class="th-bg-img" data-bg-src="assets/img/bg/cta_bg_2.jpg"><img src="assets/img/bg/bg_overlay_1.png" alt="overlay"></div>
+        <div class="container z-index-common">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7 col-md-9 text-center">
+                    <div class="title-area mb-35"><span class="sub-title"><div class="icon-masking me-2"><span class="mask-icon" data-mask-src="assets/img/voip.png"></span><img src="assets/img/voip.png" alt="shape"></div>CONTACT
+                    US</span>
+                    <h2 class="sec-title text-white">Need VoIP Solutions for <span class="text-theme fw-normal"><br>Your Business?</span></h2></div><a href="contact.html" class="th-btn style3">Get In Touch</a></div></div></div></section>
+
+
         <footer class="footer-wrapper footer-layout2" data-bg-src="assets/img/bg/footer_bg_1.jpg">
             <div class="widget-area">
                 <div class="container">
@@ -385,7 +807,7 @@
                                     <p class="about-text">PCS VoIP is a communication solutions provider for any business, big or small. PCS VoIP currently supports a wide range of industries, including manufacturing, healthcare, retail, transportation, financial services, and many more.</p>
                                     <div class="th-social">
 									<a href="https://www.facebook.com/PCSVoIP"><i class="fab fa-facebook-f"></i></a>
-									<a href="https://x.com/pcsvoip"><i class="fab fa-twitter"></i></a>
+									<a href="https://x.com/pcsvoip"><i class="fab fa-x-twitter"></i></a>
 									<a href="https://www.linkedin.com/company/pcs-voip/"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="https://www.instagram.com/pcsvoip/"><i class="fab fa-instagram"></i></a>
 									<a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g"><i class="fab fa-youtube"></i></a>
@@ -416,8 +838,8 @@
                                         <div class="icon-btn"><i class="fa-solid fa-location-dot"></i></div>
                                         <div class="media-body">
                                             <a href="https://www.google.com/maps" class="contact-feature_link">12195 S Strang Line Rd, Kansas 66062</a></div></div></div></div></div>
-											
-											
+
+
                         <div class="col-md-6 col-xl-3">
                             <div class="widget footer-widget">
                                 <h3 class="widget_title">Get in touch</h3>
@@ -427,7 +849,7 @@
                                         <div class="form-group">
                                             <input class="form-control" type="email" placeholder="Your email address" required=""></div>
                                         <button type="submit" class="icon-btn"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></div>
-										
+
 										</div></div></div>
             <div class="copyright-wrap bg-theme">
                 <div class="container">
@@ -458,6 +880,22 @@
         <script src="assets/js/particles.min.js"></script>
         <script src="assets/js/particles-config.js"></script>
         <script src="assets/js/main.js"></script>
+
+        <script>
+        function toggleProvider(btn) {
+            btn.classList.toggle('active');
+            var provider = btn.getAttribute('data-provider');
+            var cols = document.querySelectorAll('.col-' + provider);
+            var isActive = btn.classList.contains('active');
+            for (var i = 0; i < cols.length; i++) {
+                if (isActive) {
+                    cols[i].style.display = '';
+                } else {
+                    cols[i].style.display = 'none';
+                }
+            }
+        }
+        </script>
 
     <div id="chatbot-icon" onclick="toggleChatbot()">
         <i class="fas fa-comments"></i>

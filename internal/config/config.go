@@ -1,9 +1,12 @@
 package config
 
 import (
+	"bufio"
 	"flag"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Config struct {
@@ -23,6 +26,9 @@ func Load() *Config {
 	flag.IntVar(&cfg.Port, "port", 8080, "Server port")
 	flag.StringVar(&cfg.ContentDir, "contentDir", "", "Content directory to serve and manage")
 	flag.Parse()
+
+	// Load .env file (does not override existing env vars)
+	loadEnvFile(".env")
 
 	if cfg.ContentDir == "" {
 		wd, err := os.Getwd()
@@ -64,4 +70,34 @@ func envOrDefault(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+// loadEnvFile reads a .env file and sets env vars that are not already set.
+func loadEnvFile(path string) {
+	f, err := os.Open(path)
+	if err != nil {
+		return // .env is optional
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		key := strings.TrimSpace(parts[0])
+		val := strings.TrimSpace(parts[1])
+		// Only set if not already in environment
+		if os.Getenv(key) == "" {
+			os.Setenv(key, val)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Printf("WARNING: error reading .env: %v", err)
+	}
 }

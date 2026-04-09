@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Our Clients - PCS VoIP - The Power of Communications Simplified</title>
+    <title>Solutions - PCS VoIP - The Power of Communications Simplified</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -15,22 +16,80 @@
     <link rel="stylesheet" href="assets/css/magnific-popup.min.css">
     <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
     <link rel="stylesheet" href="assets/css/style2.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+.industry-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px 25px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    height: 100%;
+}
+.industry-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.industry-card .industry-icon {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    background: rgba(103, 189, 74, 0.1);
+    color: #67bd4a;
+    font-size: 32px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.industry-card .box-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #141D38;
+    margin-bottom: 12px;
+}
+.industry-card .industry-text {
+    font-family: 'Roboto', sans-serif;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+.why-choose-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.why-choose-list li {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    font-family: 'Roboto', sans-serif;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.7;
+}
+.why-choose-list li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: #67bd4a;
+    font-size: 16px;
+}
+</style>
     <link rel="stylesheet" href="assets/css/chatbot.css">
 </head>
 
 <body>
 
-    <div class="popup-search-box d-none d-lg-block">
-        <button class="searchClose">
-            <i class="fal fa-times"></i>
-        </button>
-        <form action="#">
-            <input type="text" placeholder="What are you looking for?">
-            <button type="submit">
-                <i class="fal fa-search"></i>
-            </button>
-        </form>
-    </div>
+
     <div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
             <button class="th-menu-toggle">
@@ -72,7 +131,7 @@
 											<li>
                                                 <a href="api-videos.html">API Videos</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -87,7 +146,6 @@
                                             <li>
                                                 <a href="compare.html">Compare Providers</a>
                                             </li>
-                                           
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -102,7 +160,7 @@
 											<li>
                                                 <a href="testimonials.html">Testimonials</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -164,7 +222,7 @@
                 </ul>
               </div>
             </div>
-			
+
 			<div class="col-auto">
   <div class="dropdown">
     <span>LOGIN</span>
@@ -174,10 +232,10 @@
     </div>
   </div>
 </div>
-			
+
             <div class="col-auto">
               <div class="header-social">
-               
+
                 <a href="https://www.facebook.com/PCSVoIP" target="_blank">
                 <img src="assets/img/social/facebook.png" alt="Facebook" style="width: 26px; height: 26px;">
                 </a>
@@ -200,7 +258,7 @@
       </div>
 	  </header>
     <header class="th-header header-layout3">
-	
+
         <div class="sticky-wrapper">
             <div class="menu-area">
                 <div class="container">
@@ -244,7 +302,7 @@
 											<li>
                                                 <a href="api-videos.html">API Videos</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -259,7 +317,6 @@
                                             <li>
                                                 <a href="compare.html">Compare Providers</a>
                                             </li>
-                                           
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -274,7 +331,7 @@
 											<li>
                                                 <a href="testimonials.html">Testimonials</a>
                                             </li>
-                                           
+
                                         </ul>
                                     </li>
                                     <li class="menu-item-has-children">
@@ -314,7 +371,7 @@
                                 </ul>
                             </nav>
                             <div class="header-button">
-                                
+
                                 <button type="button" class="th-menu-toggle d-inline-block d-lg-none">
                                     <i class="far fa-bars"></i>
                                 </button>
@@ -322,12 +379,9 @@
                         </div>
                         <div class="col-auto d-none d-lg-block">
                             <div class="header-button">
-                                <button type="button" class="icon-btn searchBoxToggler">
-                                    <i class="far fa-search"></i>
-                                </button>
                                 <a href="quote.html" class="th-btn shadow-none">Get Quote
                   </a>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -335,45 +389,221 @@
             </div>
         </div>
     </header>
-	
-	
-<div class="space" id="about-sec">	
-<div class="under-construction">
-    <h1>This page is under construction</h1>
-</div>
 
-<style>
-    .under-construction {
-        text-align: center;
-        padding: 50px;
-        font-family: Arial, sans-serif;
-    }
-    .under-construction h1 {
-        font-size: 32px;
-        color: #333;
-    }
-    .under-construction p {
-        font-size: 18px;
-        color: #666;
-    }
-    .under-construction a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    .under-construction a:hover {
-        text-decoration: underline;
-    }
-</style>
-</div>
-	
-	
-	
 
-					
 
-							
-									
-									
+
+	    <div class="breadcumb-wrapper" data-bg-src="assets/img/bg/services-bg.jpg">
+      <div class="container">
+        <div class="breadcumb-content">
+          <h1 class="breadcumb-title">Solutions</h1>
+
+        </div>
+      </div>
+    </div>
+
+
+<!-- Intro Section -->
+<section class="space" id="solutions-intro">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 text-center">
+                <div class="title-area mb-30">
+                    <span class="sub-title">
+                        <div class="icon-masking me-2">
+                            <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                            <img src="assets/img/voip.png" alt="shape">
+                        </div>Industry Solutions
+                    </span>
+                    <h2 class="sec-title">VoIP Solutions for Every Industry</h2>
+                </div>
+                <p class="mb-25" style="font-size: 17px; color: #555;">PCS VoIP proudly serves businesses across a wide range of industries, delivering customized communication solutions that address the unique challenges each sector faces. Whether you need HIPAA-compliant phone systems, high-volume call routing, or multi-location connectivity, our team designs solutions tailored to your operational needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Industry Cards Section -->
+<section class="space pt-0" id="industries-sec">
+    <div class="container">
+        <div class="row gy-4">
+
+            <!-- Healthcare -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3 class="box-title">Healthcare</h3>
+                    <p class="industry-text">PCS VoIP provides HIPAA-compliant communication systems for hospitals, clinics, and medical offices. Our solutions enable seamless coordination between care teams, secure patient communications, and reliable connectivity for telehealth services.</p>
+                </div>
+            </div>
+
+            <!-- Manufacturing -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3 class="box-title">Manufacturing</h3>
+                    <p class="industry-text">Keep production floors connected with rugged, scalable VoIP systems designed for manufacturing environments. PCS VoIP helps streamline operations across multiple facilities with unified communications and reliable uptime.</p>
+                </div>
+            </div>
+
+            <!-- Retail -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="box-title">Retail</h3>
+                    <p class="industry-text">From single storefronts to multi-location chains, PCS VoIP delivers cost-effective phone solutions that enhance customer service. Our systems support call queuing, auto-attendants, and centralized management across all your locations.</p>
+                </div>
+            </div>
+
+            <!-- Transportation & Logistics -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="box-title">Transportation & Logistics</h3>
+                    <p class="industry-text">PCS VoIP keeps dispatchers, drivers, and warehouse teams connected with mobile-ready communication tools. Our solutions support real-time coordination, route management calls, and multi-site logistics operations.</p>
+                </div>
+            </div>
+
+            <!-- Financial Services -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3 class="box-title">Financial Services</h3>
+                    <p class="industry-text">Secure, compliant VoIP solutions for banks, credit unions, and financial advisors. PCS VoIP provides encrypted communications, call recording for compliance, and professional-grade phone systems that instill client confidence.</p>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="box-title">Education</h3>
+                    <p class="industry-text">Schools, colleges, and universities rely on PCS VoIP for campus-wide communication, emergency notification systems, and affordable multi-extension setups. Our solutions scale easily as your institution grows.</p>
+                </div>
+            </div>
+
+            <!-- Hospitality -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h3 class="box-title">Hospitality</h3>
+                    <p class="industry-text">Deliver exceptional guest experiences with PCS VoIP phone systems built for hotels, resorts, and restaurants. Features include front-desk call management, room-to-room dialing, and integration with property management systems.</p>
+                </div>
+            </div>
+
+            <!-- Legal -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3 class="box-title">Legal</h3>
+                    <p class="industry-text">Law firms and legal practices benefit from secure, confidential communication systems with call recording, voicemail-to-email, and mobile integration. PCS VoIP ensures attorneys stay connected whether in court or at the office.</p>
+                </div>
+            </div>
+
+            <!-- Real Estate -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="box-title">Real Estate</h3>
+                    <p class="industry-text">PCS VoIP empowers brokerages and agents with mobile-friendly phone systems, call forwarding to the field, and professional auto-attendants. Manage calls across offices and remote agents from a single platform.</p>
+                </div>
+            </div>
+
+            <!-- Government -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="box-title">Government</h3>
+                    <p class="industry-text">Government agencies trust PCS VoIP for secure, reliable communication infrastructure. Our solutions support multi-department routing, public-facing call centers, and compliance with government communication standards.</p>
+                </div>
+            </div>
+
+            <!-- Non-Profit -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3 class="box-title">Non-Profit</h3>
+                    <p class="industry-text">Non-profit organizations maximize their budgets with PCS VoIP's affordable communication plans. Our scalable solutions support donor outreach, volunteer coordination, and multi-office connectivity at a fraction of traditional costs.</p>
+                </div>
+            </div>
+
+            <!-- Technology -->
+            <div class="col-md-6 col-xl-4">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3 class="box-title">Technology</h3>
+                    <p class="industry-text">Tech companies rely on PCS VoIP for API-driven integrations, advanced call analytics, and unified communication platforms. Our solutions seamlessly connect distributed teams with video, voice, and messaging tools.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Why Choose Section -->
+<section class="space" data-bg-src="assets/img/bg/service_bg_19.jpg">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="title-area text-center mb-40">
+                    <span class="sub-title">
+                        <div class="icon-masking me-2">
+                            <span class="mask-icon" data-mask-src="assets/img/voip.png"></span>
+                            <img src="assets/img/voip.png" alt="shape">
+                        </div>Why PCS VoIP
+                    </span>
+                    <h2 class="sec-title">Why Choose PCS VoIP for Your Industry?</h2>
+                </div>
+                <ul class="why-choose-list">
+                    <li><strong>Tailored Solutions:</strong> We design communication systems around your industry's specific requirements, workflows, and compliance needs rather than offering one-size-fits-all packages.</li>
+                    <li><strong>Nationwide Coverage:</strong> With service across all 50 states, PCS VoIP supports single-location businesses and multi-site enterprises alike with consistent quality and reliability.</li>
+                    <li><strong>Cost Savings:</strong> Our customers save up to 60% compared to traditional phone systems, freeing up budget for what matters most to your organization.</li>
+                    <li><strong>24/7 Support:</strong> Our dedicated support team is available around the clock to resolve issues quickly, minimizing downtime and keeping your business running smoothly.</li>
+                    <li><strong>Scalable Technology:</strong> Whether you have 5 extensions or 500, PCS VoIP grows with your business without requiring costly hardware upgrades or infrastructure overhauls.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- CTA Section -->
+<section class="position-relative space">
+    <div class="th-bg-img" data-bg-src="assets/img/bg/cta_bg_2.jpg"><img src="assets/img/bg/bg_overlay_1.png" alt="overlay"></div>
+    <div class="container z-index-common">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-7 col-md-9 text-center">
+                <div class="title-area mb-35"><span class="sub-title"><div class="icon-masking me-2"><span class="mask-icon" data-mask-src="assets/img/voip.png"></span><img src="assets/img/voip.png" alt="shape"></div>CONTACT
+                US</span>
+                <h2 class="sec-title text-white">Need VoIP Solutions for <span class="text-theme fw-normal"><br>Your Business?</span></h2></div><a href="contact.html" class="th-btn style3">Get In Touch</a></div></div></div></section>
+
+
         <footer class="footer-wrapper footer-layout2" data-bg-src="assets/img/bg/footer_bg_1.jpg">
             <div class="widget-area">
                 <div class="container">
@@ -385,7 +615,7 @@
                                     <p class="about-text">PCS VoIP is a communication solutions provider for any business, big or small. PCS VoIP currently supports a wide range of industries, including manufacturing, healthcare, retail, transportation, financial services, and many more.</p>
                                     <div class="th-social">
 									<a href="https://www.facebook.com/PCSVoIP"><i class="fab fa-facebook-f"></i></a>
-									<a href="https://x.com/pcsvoip"><i class="fab fa-twitter"></i></a>
+									<a href="https://x.com/pcsvoip"><i class="fab fa-x-twitter"></i></a>
 									<a href="https://www.linkedin.com/company/pcs-voip/"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="https://www.instagram.com/pcsvoip/"><i class="fab fa-instagram"></i></a>
 									<a href="https://www.youtube.com/channel/UCBIxvGG4dthiubB48bW-I6g"><i class="fab fa-youtube"></i></a>
@@ -416,8 +646,8 @@
                                         <div class="icon-btn"><i class="fa-solid fa-location-dot"></i></div>
                                         <div class="media-body">
                                             <a href="https://www.google.com/maps" class="contact-feature_link">12195 S Strang Line Rd, Kansas 66062</a></div></div></div></div></div>
-											
-											
+
+
                         <div class="col-md-6 col-xl-3">
                             <div class="widget footer-widget">
                                 <h3 class="widget_title">Get in touch</h3>
@@ -427,7 +657,7 @@
                                         <div class="form-group">
                                             <input class="form-control" type="email" placeholder="Your email address" required=""></div>
                                         <button type="submit" class="icon-btn"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></div>
-										
+
 										</div></div></div>
             <div class="copyright-wrap bg-theme">
                 <div class="container">

@@ -35,355 +35,8 @@
             height: 80vh;
             border: none;
         }
-
-        /* Chatbox styles */
-
-        /* Chatbot icon and window style */
-
-
-        #chatbot-icon {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: #25D366;
-            /* WhatsApp green instead of navy blue */
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            /* Updated shadow color */
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        #chatbot-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-            /* Updated shadow color */
-        }
-
-        #chatbot-window {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 380px;
-            height: 700px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            display: none;
-            flex-direction: column;
-            border: none;
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        #chatbot-header {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            /* WhatsApp green gradient */
-            color: white;
-            padding: 15px 20px;
-            border-radius: 15px 15px 0 0;
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #chatbot-header .close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        #chatbot-header .close-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        #chatbot-body {
-            padding: 20px;
-            flex-grow: 1;
-            overflow-y: auto;
-            background-color: #f0f2f5;
-        }
-
-        .topic-item {
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #25D366;
-            /* WhatsApp green instead of navy blue */
-        }
-
-        .topic-item:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-form {
-            display: none;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .user-form input,
-        #chatbot-input {
-            width: calc(100% - 24px);
-            margin: 8px 0;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        .user-form input:focus,
-        #chatbot-input:focus {
-            border-color: #25D366;
-            /* WhatsApp green instead of navy blue */
-            outline: none;
-        }
-
-        .user-form button {
-            width: 100%;
-            padding: 12px;
-            background: #25D366;
-            /* WhatsApp green instead of navy blue */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .user-form button:hover {
-            background: #128C7E;
-            /* Darker WhatsApp green */
-        }
-
-        .message {
-            margin: 12px 0;
-            padding: 12px 15px;
-            border-radius: 15px;
-            max-width: 80%;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .user-message {
-            background: #e3f2fd;
-            /* Light blue background for user messages */
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message {
-            background: white;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-            max-width: 85%;
-            width: 100%;
-        }
-
-        #chatbot-footer {
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-        }
-
-        #chatbot-input {
-            border-radius: 25px;
-            background: #f0f2f5;
-        }
-
-        #welcome-message p {
-            color: #666;
-            font-size: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .chatbot-overlay {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(2px);
-            transition: all 0.3s ease;
-        }
-
-        /* Custom scrollbar */
-        #chatbot-body::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #chatbot-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        #chatbot-body::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 3px;
-        }
-
-        #chatbot-body::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .header-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .phone-btn {
-            padding: 5px 8px;
-        }
-
-        .header-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .time-slot-button {
-            background-color: #f0f2f5;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            width: 100%;
-            min-width: auto;
-            white-space: normal;
-            overflow: hidden;
-            word-break: break-word;
-        }
-
-        .time-slot-button:hover {
-            background-color: #e3f2fd;
-            border-color: #1a237e;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .time-slot-buttons {
-            margin-top: 10px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            padding: 5px;
-            max-width: 100%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* For mobile screens */
-        @media (max-width: 480px) {
-            .time-slot-button {
-                font-size: 12px;
-                padding: 6px 8px;
-            }
-
-            .time-slot-buttons {
-                gap: 6px;
-            }
-        }
-
-        /* Typing indicator styles */
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin: 12px 0;
-            border-radius: 15px;
-            max-width: 80%;
-            background: white;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-
-        .typing-indicator span {
-            height: 8px;
-            width: 8px;
-            background: #1a237e;
-            border-radius: 50%;
-            margin: 0 2px;
-            display: inline-block;
-            animation: bounce 1.3s linear infinite;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.15s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-            }
-
-            30% {
-                transform: translateY(-4px);
-            }
-        }
-
-        .time-slot-button:disabled {
-            background-color: #e0e0e0;
-            cursor: not-allowed;
-            transform: none;
-            border-color: #ccc;
-            color: #888;
-        }
-
-        .time-slot-button:disabled:hover {
-            background-color: #e0e0e0;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .time-slot-button.selected {
-            background-color: #1a237e;
-            color: white;
-            border-color: #1a237e;
-        }
     </style>
+    <link rel="stylesheet" href="assets/css/chatbot.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
@@ -401,7 +54,7 @@
                                     <a href="tel:+18447278647">844 PCS VOIP</a>
                                 </li>
                                 <li>
-                                    <i class="fas fa-map-location"></i>Olathe, KS 66062
+                                    <i class="fas fa-map-location"></i>12195 S Strang Line Rd, Kansas 66062
                                 </li>
                                 <li>
                                     <i class="fas fa-envelope"></i>
@@ -506,6 +159,12 @@
                         <ul class="sub-menu">
                             <li>
                                 <a href="voip.html">VoIP Services</a>
+                            </li>
+                            <li>
+                                <a href="solutions.html">Solutions</a>
+                            </li>
+                            <li>
+                                <a href="compare.html">Compare Providers</a>
                             </li>
 
                         </ul>
@@ -626,6 +285,12 @@
                                         <ul class="sub-menu">
                                             <li>
                                                 <a href="voip.html">VoIP Services</a>
+                                            </li>
+                                            <li>
+                                                <a href="solutions.html">Solutions</a>
+                                            </li>
+                                            <li>
+                                                <a href="compare.html">Compare Providers</a>
                                             </li>
 
                                         </ul>
@@ -815,10 +480,10 @@
                             <img src="assets/img/icon/counter_1_2.svg" alt="Icon">
                         </div>
                         <div class="media-body">
-                            <h2 class="counter-card_number">
-                                <span class="counter-number">30</span>+
+                            <h2 class="counter-card_number" style="font-size: 1.4rem;">
+                                Countless
                             </h2>
-                            <p class="counter-card_text">Happy Clients</p>
+                            <p class="counter-card_text">Happy Clients &amp; Counting</p>
                         </div>
                     </div>
                 </div>
@@ -970,7 +635,7 @@
                                     </h3>
                                     <p class="service-box_text">A digital faxing solution that allows businesses to send
                                         and receive faxes via email or a web portal.</p>
-                                    <a href="#" class="link-btn">Know More
+                                    <a href="e-fax.html" class="link-btn">Know More
                                     </a>
                                     <div class="bg-shape">
                                         <img src="assets/img/bg/service_box_bg.png" alt="bg">
@@ -1207,8 +872,7 @@
                                 <div class="contact-feature">
                                     <div class="icon-btn"><i class="fa-solid fa-location-dot"></i></div>
                                     <div class="media-body">
-                                        <a href="https://www.google.com/maps" class="contact-feature_link">Olathe, KS
-                                            66062</a>
+                                        <a href="https://www.google.com/maps" class="contact-feature_link">12195 S Strang Line Rd, Kansas 66062</a>
                                     </div>
                                 </div>
                             </div>
@@ -1289,7 +953,7 @@
     <!-- Chatbot Window -->
     <div id="chatbot-window">
         <div id="chatbot-header">
-            <span>Chat with Us</span>
+            <span>Pegasi</span>
             <div class="header-buttons">
                 <button class="header-btn phone-btn" onclick="initiateCall()">
                     <i class="fas fa-phone"></i>
@@ -1307,400 +971,20 @@
                 <button onclick="startChat()">Start Chat</button>
             </div>
         </div>
+                <div id="voice-mode">
+            <div class="voice-orb" onclick="startVoiceSession()"><i class="fas fa-microphone"></i></div>
+            <div class="voice-status" id="voice-status">Click to start</div>
+            <div class="voice-transcript" id="voice-transcript"></div>
+            <button class="voice-end-btn" onclick="endVoiceSession()">End Voice Chat</button>
+        </div>
         <div id="chatbot-footer">
             <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)"
                 disabled>
+            <button id="voice-start-btn" onclick="startVoiceSession()" title="Talk to Pegasi"><i class="fas fa-microphone"></i></button>
         </div>
     </div>
-</body>
-<script>
-    let currentSessionId = null;
-    let selectedTopic = null;
-    let currentUserInfo = null;
-    let topic_id = null;
-    let user_id = "";
-    let chat_id = 'PCSVOIP-SALES';
-    let url = 'https://pcsapi.datalytique.com';
-    const GREETING_MESSAGE = "👋 Hello! I'm your virtual assistant from PCSVoIP. To get started, please provide your information below.";
 
-    let inactivityTimer = null;
-    let inactivityPopupTimer = null;
-    const INACTIVITY_POPUP_DELAY = 1 * 60 * 1000;
-    const INACTIVITY_CLOSE_DELAY = 2 * 60 * 1000;
-
-    function toggleChatbot() {
-        const chatbotWindow = document.getElementById('chatbot-window');
-        const chatbotIcon = document.getElementById('chatbot-icon');
-        const overlay = document.getElementById('chatbot-overlay');
-
-        loadTopic();
-        if (chatbotWindow.style.display === 'none' || !chatbotWindow.style.display) {
-            chatbotWindow.style.display = 'flex';
-            overlay.style.display = 'block';
-            chatbotIcon.style.width = '40px';
-            chatbotIcon.style.height = '40px';
-            if (currentUserInfo) {
-                document.getElementById('user-form').style.display = 'none';
-                document.getElementById('chat-messages').style.display = 'block';
-                document.getElementById('chatbot-footer').style.display = 'block';
-                document.getElementById('chatbot-input').disabled = false;
-
-            } else {
-                const chatMessages = document.getElementById('chat-messages');
-                chatMessages.innerHTML = `<div class="message bot-message">${GREETING_MESSAGE}</div>`;
-                chatMessages.style.display = 'block';
-                document.getElementById('user-form').style.display = 'block';
-            }
-            resetInactivityTimers();
-        } else {
-            closeChatbot();
-        }
-    }
-
-
-
-    async function startChat() {
-        const firstName = document.getElementById('user-first-name').value.trim();
-        const lastName = document.getElementById('user-last-name').value.trim();
-        const userPhone = document.getElementById('user-phone').value.trim();
-        const userEmail = document.getElementById('user-email').value.trim();
-
-        if (!firstName || !lastName || !userPhone) {
-            alert('Please fill in all required fields (First Name, Last Name, and Phone Number)');
-            return;
-        }
-
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(userPhone.replace(/[-\s]/g, ''))) {
-            alert('Please enter a valid phone number');
-            return;
-        }
-
-        currentUserInfo = { firstName, lastName, userPhone, userEmail };
-
-        document.getElementById('user-form').style.display = 'none';
-        document.getElementById('chat-messages').style.display = 'block';
-        document.getElementById('chatbot-footer').style.display = 'block';
-        document.getElementById('chatbot-input').disabled = false;
-        const chatMessages = document.getElementById('chat-messages');
-        sendMessage("Hi", currentUserInfo);
-        resetInactivityTimers();
-    }
-
-    async function sendMessage(message, userInfo = null) {
-        const chatMessages = document.getElementById('chat-messages');
-        const chatBody = document.getElementById('chatbot-body');
-
-        if (currentSessionId === null) {
-            chatMessages.innerHTML = '';
-        } else {
-            addMessage(message, true);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        const typingIndicator = document.createElement('div');
-        typingIndicator.className = 'typing-indicator';
-        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
-        chatMessages.appendChild(typingIndicator);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        const requestBody = {
-            session_id: currentSessionId,
-            topic_id: topic_id,
-            message: message,
-            user_id: user_id,
-            first_name: userInfo?.firstName || '',
-            last_name: userInfo?.lastName || '',
-            phone: userInfo?.userPhone || '',
-            email: userInfo?.userEmail || ''
-        };
-
-        try {
-            const response = await fetch(url + '/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-            });
-            const data = await response.json();
-
-            typingIndicator.remove();
-
-            currentSessionId = data.session_id;
-            addMessage(data.message, false);
-            resetInactivityTimers();
-
-        } catch (error) {
-            typingIndicator.remove();
-
-            console.error('Error sending message:', error);
-            addMessage("Sorry, there was an error processing your request.", false);
-        }
-    }
-
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            const input = document.getElementById('chatbot-input');
-            const message = input.value.trim();
-            if (message) {
-                if (currentSessionId === null) {
-                    sendMessage(message, currentUserInfo);
-                }
-                else {
-                    sendMessage(message);
-                }
-
-                input.value = '';
-                resetInactivityTimers();
-            }
-        }
-    }
-
-    function resetChat() {
-        currentSessionId = null;
-        selectedTopic = null;
-
-        document.getElementById('user-form').style.display = 'none';
-        document.getElementById('chat-messages').style.display = 'none';
-        document.getElementById('chatbot-footer').style.display = 'none';
-        document.getElementById('chat-messages').innerHTML = '';
-        document.getElementById('chatbot-input').disabled = true;
-        document.getElementById('chatbot-input').value = '';
-
-        if (currentUserInfo) {
-            document.getElementById('user-first-name').value = currentUserInfo.firstName;
-            document.getElementById('user-last-name').value = currentUserInfo.lastName;
-            document.getElementById('user-phone').value = currentUserInfo.userPhone;
-            document.getElementById('user-email').value = currentUserInfo.userEmail;
-            const chatMessages = document.getElementById('chat-messages');
-            sendMessage("Hi", currentUserInfo);
-        }
-    }
-
-    async function closeChatbot() {
-        const chatbotWindow = document.getElementById('chatbot-window');
-        const chatbotIcon = document.getElementById('chatbot-icon');
-        const overlay = document.getElementById('chatbot-overlay');
-
-        if (currentSessionId) {
-            try {
-                const response = await fetch(url + '/api/chat/close', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        session_id: currentSessionId
-                    })
-                });
-
-                if (!response.ok) {
-                    console.error('Failed to close chat session');
-                }
-            } catch (error) {
-                console.error('Error closing chat session:', error);
-            }
-        }
-
-        chatbotWindow.style.display = 'none';
-        overlay.style.display = 'none';
-        chatbotIcon.style.width = '50px';
-        chatbotIcon.style.height = '50px';
-
-        resetChat();
-    }
-
-    async function initiateCall() {
-        if (currentUserInfo && currentUserInfo.userPhone) {
-            const requestBody = {
-                user_id: user_id,
-                topic_id: topic_id,
-                first_name: currentUserInfo?.firstName || '',
-                last_name: currentUserInfo?.lastName || '',
-                phone_number: currentUserInfo?.userPhone || '',
-                email: currentUserInfo?.userEmail || '',
-                topic_name: "PCS VOIP",
-                description: "PCS VOIP"
-            };
-
-            try {
-                const response = await fetch(url + '/calls/single', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-                if (!response.ok) {
-                    console.error('Failed to close chat session');
-                }
-
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
-            console.log('Initiating call with:', currentUserInfo.userPhone);
-
-        } else {
-            alert('Please provide your information first to initiate a call.');
-        }
-    }
-
-    function createTimeSlotButtons(message) {
-        if (message.includes("available slots")) {
-            const [header, timeSlotsPart] = message.split(':\n\n');
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message bot-message';
-            messageDiv.textContent = header + ':';
-
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'time-slot-buttons';
-
-            let timeSlots = [];
-            if (timeSlotsPart) {
-                timeSlots = timeSlotsPart
-                    .split('\n')
-                    .map(slot => slot.trim())
-                    .filter(slot => slot && slot.match(/\d+:\d+\s*[AaPpMm]{2}/));
-            }
-
-            timeSlots.forEach(slot => {
-                const button = document.createElement('button');
-                button.className = 'time-slot-button';
-                button.textContent = slot;
-                button.onclick = () => selectTimeSlot(slot, buttonContainer);
-                buttonContainer.appendChild(button);
-            });
-
-            messageDiv.appendChild(buttonContainer);
-            return messageDiv;
-        }
-        return null;
-    }
-
-    function selectTimeSlot(slot, buttonContainer) {
-        const buttons = buttonContainer.getElementsByClassName('time-slot-button');
-        Array.from(buttons).forEach(button => {
-            button.disabled = true;
-            if (button.textContent === slot) {
-                button.classList.add('selected');
-            }
-        });
-
-        sendMessage(slot);
-    }
-
-    function addMessage(message, isUser = false) {
-        const chatMessages = document.getElementById('chat-messages');
-        const chatBody = document.getElementById('chatbot-body');
-
-        if (!isUser) {
-            const timeSlotMessage = createTimeSlotButtons(message);
-            if (timeSlotMessage) {
-                chatMessages.appendChild(timeSlotMessage);
-                chatBody.scrollTop = chatBody.scrollHeight;
-                return;
-            }
-        }
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-        messageDiv.textContent = message;
-        chatMessages.appendChild(messageDiv);
-
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    async function loadTopic() {
-        try {
-            const response = await fetch(url + '/api/chattelebot/persona/' + chat_id, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to load topic');
-            }
-
-            const data = await response.json();
-            topic_id = data;
-            console.log('Topic ID loaded:', topic_id);
-        } catch (error) {
-            console.error('Error loading topic:', error);
-        }
-    }
-
-    function resetInactivityTimers() {
-        if (inactivityTimer) clearTimeout(inactivityTimer);
-        if (inactivityPopupTimer) clearTimeout(inactivityPopupTimer);
-
-        const chatbotWindow = document.getElementById('chatbot-window');
-        if (currentSessionId && chatbotWindow.style.display === 'flex') {
-            inactivityPopupTimer = setTimeout(showInactivityPopup, INACTIVITY_POPUP_DELAY);
-            inactivityTimer = setTimeout(handleInactivityTimeout, INACTIVITY_CLOSE_DELAY);
-        }
-    }
-
-    function handleInactivityTimeout() {
-        const chatbotWindow = document.getElementById('chatbot-window');
-        if (currentSessionId && chatbotWindow.style.display === 'flex') {
-            closeChatbot();
-        }
-    }
-
-    function showInactivityPopup() {
-        const chatbotWindow = document.getElementById('chatbot-window');
-        if (!currentSessionId || chatbotWindow.style.display !== 'flex') return;
-
-        const chatMessages = document.getElementById('chat-messages');
-        const inactivityMessage = document.createElement('div');
-        inactivityMessage.className = 'message bot-message';
-        inactivityMessage.innerHTML = `
-        <div style="text-align: center;">
-            <p>Are you still there? This chat will close automatically in 1 minute due to inactivity.</p>
-            <button onclick="continueChat()" style="background: #1a237e; color: white; border: none; padding: 8px 16px; border-radius: 5px; margin: 10px; cursor: pointer;">Continue Chat</button>
-            <button onclick="closeChatbot()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 5px; margin: 10px; cursor: pointer;">End Chat</button>
-        </div>
-    `;
-        chatMessages.appendChild(inactivityMessage);
-        const chatBody = document.getElementById('chatbot-body');
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    function continueChat() {
-        const chatMessages = document.getElementById('chat-messages');
-        const messages = chatMessages.getElementsByClassName('message');
-        if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1];
-            if (lastMessage.innerHTML.includes('Are you still there?')) {
-                lastMessage.remove();
-            }
-        }
-
-        resetInactivityTimers();
-
-        const input = document.getElementById('chatbot-input');
-        input.focus();
-    }
-
-    //Only add these if you want toclose the chat when the user navigates away from the page - datalytique
-    //document.addEventListener('visibilitychange', () => {
-    //   const chatbotWindow = document.getElementById('chatbot-window');
-    //   if (document.visibilityState === 'hidden' && currentSessionId && chatbotWindow.style.display === 'flex') {
-    //       closeChatbot();
-    //   }
-    //});
-
-    window.addEventListener('beforeunload', () => {
-        const chatbotWindow = document.getElementById('chatbot-window');
-        if (currentSessionId && chatbotWindow.style.display === 'flex') {
-            closeChatbot();
-        }
-    });
-</script>
+    <script src="assets/js/chatbot.js"></script>
 </body>
 
 </html>
