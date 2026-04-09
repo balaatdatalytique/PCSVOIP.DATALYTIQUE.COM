@@ -37,7 +37,9 @@
         .blog-card .card-excerpt { color: #4f5666; font-size: 0.92rem; line-height: 1.55; flex: 1; margin-bottom: 14px; }
         .blog-card .card-readmore { color: #67bd4a; font-weight: 600; font-size: 0.9rem; text-decoration: none; align-self: flex-start; }
         .blog-card .card-readmore:hover { color: #4a9633; }
-        .blog-pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 48px; flex-wrap: wrap; }
+        .blog-pagination { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .blog-pagination.top { margin-bottom: 24px; }
+        .blog-pagination.bottom { margin-top: 48px; }
         .blog-pagination a, .blog-pagination span { padding: 9px 16px; border: 1px solid #e4e8ee; border-radius: 6px; color: #141D38; text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: border-color 0.15s, background 0.15s, color 0.15s; }
         .blog-pagination a:hover { border-color: #67bd4a; color: #67bd4a; }
         .blog-pagination span.current { background: #67bd4a; color: #fff; border-color: #67bd4a; }
@@ -215,6 +217,16 @@
 <section class="space-top space-extra-bottom">
     <div class="container">
         <p class="blog-summary">123 posts · page 12 of 14</p>
+
+        
+        <nav class="blog-pagination top" aria-label="Blog pagination (top)">
+            <a href="./page-11.html"><i class="fas fa-arrow-left me-1"></i>Prev</a>
+            <span class="current">Page 12</span>
+            <span>of 14</span>
+            <a href="./page-13.html">Next<i class="fas fa-arrow-right ms-1"></i></a>
+        </nav>
+        
+
         <div class="blog-grid">
             
             <article class="blog-card">
@@ -327,12 +339,14 @@
             
         </div>
 
-        <nav class="blog-pagination">
+        
+        <nav class="blog-pagination bottom" aria-label="Blog pagination (bottom)">
             <a href="./page-11.html"><i class="fas fa-arrow-left me-1"></i>Prev</a>
             <span class="current">Page 12</span>
             <span>of 14</span>
             <a href="./page-13.html">Next<i class="fas fa-arrow-right ms-1"></i></a>
         </nav>
+        
     </div>
 </section>
 
