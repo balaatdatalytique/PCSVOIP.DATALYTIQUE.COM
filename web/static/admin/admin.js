@@ -50,6 +50,71 @@
     });
   }
 
+  // System prompt: load from local file into the textarea.
+  var sysPromptFile = document.getElementById('sysPromptFile');
+  if (sysPromptFile) {
+    sysPromptFile.addEventListener('change', function () {
+      var f = sysPromptFile.files && sysPromptFile.files[0];
+      if (!f) return;
+      if (f.size > 1024 * 1024) {
+        alert('File too large (max 1 MB)');
+        sysPromptFile.value = '';
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function () {
+        var ta = document.getElementById('sysPromptArea');
+        if (ta) {
+          ta.value = String(reader.result || '').trim();
+          ta.focus();
+        }
+      };
+      reader.onerror = function () {
+        alert('Failed to read file');
+      };
+      reader.readAsText(f);
+      sysPromptFile.value = '';
+    });
+  }
+
+  // Voice selector: real <select> with an "Other (custom)" option that
+  // reveals a free-form text input. The hidden #voiceField carries whatever
+  // ends up being submitted.
+  var voiceSelect = document.getElementById('voiceSelect');
+  var voiceField = document.getElementById('voiceField');
+  var voiceCustom = document.getElementById('voiceCustom');
+  if (voiceSelect && voiceField && voiceCustom) {
+    var initial = (voiceField.value || 'ara').trim();
+    var optionExists = false;
+    for (var i = 0; i < voiceSelect.options.length; i++) {
+      if (voiceSelect.options[i].value === initial) {
+        optionExists = true;
+        break;
+      }
+    }
+    if (optionExists) {
+      voiceSelect.value = initial;
+      voiceCustom.classList.add('d-none');
+    } else if (initial) {
+      voiceSelect.value = '__custom__';
+      voiceCustom.classList.remove('d-none');
+      voiceCustom.value = initial;
+    }
+    voiceSelect.addEventListener('change', function () {
+      if (voiceSelect.value === '__custom__') {
+        voiceCustom.classList.remove('d-none');
+        voiceCustom.focus();
+        voiceField.value = voiceCustom.value.trim();
+      } else {
+        voiceCustom.classList.add('d-none');
+        voiceField.value = voiceSelect.value;
+      }
+    });
+    voiceCustom.addEventListener('input', function () {
+      voiceField.value = voiceCustom.value.trim();
+    });
+  }
+
   // SMTP test button.
   var smtpBtn = document.getElementById('testSmtpBtn');
   if (smtpBtn) {

@@ -25,10 +25,9 @@
         <input type="text" class="form-control" name="greeting" value="{{.Bot.Greeting}}">
       </div>
 
-      <div class="mb-3" style="max-width:340px">
+      <div class="mb-3" style="max-width:420px">
         <label class="form-label">Voice <span class="text-muted small">(Grok realtime)</span></label>
-        <input type="text" class="form-control" name="voice" list="grok-voices" value="{{.Bot.Voice}}" placeholder="ara" autocomplete="off">
-        <datalist id="grok-voices">
+        <select class="form-select" id="voiceSelect">
           <option value="ara">ara — female, default</option>
           <option value="abby">abby — female</option>
           <option value="baxter">baxter — male</option>
@@ -45,14 +44,23 @@
           <option value="raul">raul — male</option>
           <option value="shelly">shelly — female</option>
           <option value="terran">terran — male</option>
-        </datalist>
-        <div class="form-text">Pick from the suggestions or type any voice name supported by xAI's realtime API. Currently active for the voice bot only — try it on <a href="/pegasi-audiobot.html" target="_blank">pegasi-audiobot</a>.</div>
+          <option value="__custom__">Other (custom)…</option>
+        </select>
+        <input type="text" class="form-control mt-2 d-none" id="voiceCustom" placeholder="enter a custom voice name">
+        <input type="hidden" name="voice" id="voiceField" value="{{.Bot.Voice}}">
+        <div class="form-text">Pick from the suggestions or choose <em>Other (custom)…</em> to enter any voice name supported by xAI's realtime API. Active on the voice bot — try it at <a href="/pegasi-audiobot.html" target="_blank">pegasi-audiobot</a>.</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">System prompt</label>
-        <textarea class="form-control mono" name="system_prompt" rows="10">{{.Bot.SystemPrompt}}</textarea>
-        <div class="form-text">Main instructions to the AI. Visible to both bots.</div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label mb-0">System prompt</label>
+          <label class="btn btn-sm btn-outline-secondary mb-0" style="cursor:pointer">
+            <i class="fas fa-file-upload me-1"></i> Load from file
+            <input type="file" id="sysPromptFile" accept=".txt,.md,.csv,.text" hidden>
+          </label>
+        </div>
+        <textarea class="form-control mono" name="system_prompt" id="sysPromptArea" rows="14">{{.Bot.SystemPrompt}}</textarea>
+        <div class="form-text">Main instructions to the AI. Visible to both bots. Use the upload button to replace this with a .txt or .md file from your computer.</div>
       </div>
 
       <div class="mb-3">
