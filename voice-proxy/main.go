@@ -40,8 +40,9 @@ var (
 // metadata pulled from response headers (voice, greeting). Cached together so
 // every voice session sees the same snapshot.
 type botCtx struct {
-	text  string
-	voice string
+	text     string
+	voice    string
+	greeting string
 }
 
 const ctxCacheTTL = 5 * time.Second
@@ -145,8 +146,9 @@ func fetchBotContext() botCtx {
 		return botCtx{text: contextPrompt}
 	}
 	bc := botCtx{
-		text:  string(body),
-		voice: resp.Header.Get("X-Bot-Voice"),
+		text:     string(body),
+		voice:    resp.Header.Get("X-Bot-Voice"),
+		greeting: resp.Header.Get("X-Bot-Greeting"),
 	}
 	ctxCache.mu.Lock()
 	ctxCache.data = bc
@@ -350,7 +352,11 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		voice = "ara"
 	}
 
-	grokURL := "wss://api.x.ai/v1/realtime?model=grok-4-1-fast-non-reasoning"
+	// The xAI realtime API uses the format "human_Xxxx" for voice names
+	// (e.g., "human_Baxter", "human_Eva"). Our admin stores lowercase ("baxter"),
+	// so normalize before sending.
+	grokVoice := normalizeVoice(voice)
+	grokURL := "wss://api.x.ai/v1/realtime?model=grok-4-1-fast-non-reasoning&voice=" + grokVoice
 	headers := http.Header{}
 	headers.Set("Authorization", "Bearer "+grokAPIKey)
 
@@ -362,12 +368,12 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	defer grokConn.Close()
 
-	log.Printf("Voice session started (voice=%s)", voice)
+	log.Printf("Voice session started (admin=%s, grok=%s)", voice, grokVoice)
 
 	sessionUpdate := map[string]interface{}{
 		"type": "session.update",
 		"session": map[string]interface{}{
-			"voice":        voice,
+			"voice":        grokVoice,
 			"instructions": bc.text,
 			"turn_detection": map[string]interface{}{
 				"type":                "server_vad",
@@ -388,6 +394,27 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to send session.update: %v", err)
 		return
 	}
+
+	// Make the bot speak the greeting immediately so the visitor doesn't have
+	// to talk first. We inject a user-role message asking for the greeting,
+	// then trigger a response so Grok speaks it aloud in the configured voice.
+	greeting := bc.greeting
+	if greeting == "" {
+		greeting = "Hi, I'm Pegasi — how can I help you today?"
+	}
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "conversation.item.create",
+		"item": map[string]interface{}{
+			"type": "message",
+			"role": "user",
+			"content": []map[string]interface{}{
+				{"type": "input_text", "text": "Greet the visitor. Say exactly: " + greeting},
+			},
+		},
+	})
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "response.create",
+	})
 
 	// Record the visitor interaction at session START so the count is captured
 	// even if the connection later hangs, drops, or never sends a transcript.
@@ -467,9 +494,13 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 					t, _ := envelope["type"].(string)
 					switch {
 					case t == "session.created",
-						t == "session.updated",
-						t == "conversation.created",
-						t == "error",
+						t == "session.updated":
+						log.Printf("Grok %s: %s", t, string(msg))
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+					case t == "error":
+						log.Printf("Grok error: %s", string(msg))
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+					case t == "conversation.created",
 						t == "response.output_audio.delta",
 						t == "response.output_audio.done",
 						t == "response.output_audio_transcript.delta",
@@ -489,6 +520,19 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("Voice session ended")
+}
+
+// normalizeVoice converts an admin-friendly lowercase voice name into the
+// format the xAI realtime API expects: "human_Xxxx" (e.g., "baxter" → "human_Baxter").
+// If the voice already has the prefix or is empty, it is returned as-is.
+func normalizeVoice(v string) string {
+	if v == "" {
+		return "human_Ara"
+	}
+	if strings.HasPrefix(v, "human_") {
+		return v
+	}
+	return "human_" + strings.ToUpper(v[:1]) + v[1:]
 }
 
 func init() {

@@ -449,34 +449,7 @@
             !isNaN(s) && s > 1 && a.val(s - 1)
         }))
     }));
-    var f = e(".cursor"),
-        g = e(".cursor2"),
-        v = 0,
-        b = 0,
-        y = 0,
-        w = 0;
-    TweenMax.to({}, .016, {
-        repeat: -1,
-        onRepeat: function() {
-            v += (y - v) / 9, b += (w - b) / 9, TweenMax.set(g, {
-                css: {
-                    left: v - 12,
-                    top: b - 12
-                }
-            }), TweenMax.set(f, {
-                css: {
-                    left: y,
-                    top: w
-                }
-            })
-        }
-    }), e(document).on("mousemove", (function(e) {
-        y = e.clientX, w = e.clientY
-    })), e(".btn").on("mouseenter", (function() {
-        f.addClass("active"), g.addClass("active")
-    })), e(".btn").on("mouseleave", (function() {
-        f.removeClass("active"), g.removeClass("active")
-    })), window.gsap.registerPlugin(window.TweenMax), e(".color-switch-btns button").each((function() {
+    e(".color-switch-btns button").each((function() {
         const t = e(this),
             a = t.data("color");
         t.css("--theme-color", a), t.on("click", (function() {

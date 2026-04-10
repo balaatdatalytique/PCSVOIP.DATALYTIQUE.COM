@@ -29,10 +29,26 @@
   </div>
 </div>
 
-<div class="card admin-card mb-4">
+<div class="card admin-card mb-4" id="events">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <strong>Recent events</strong>
-    <span class="text-muted small">{{.Events.Total}} total · page {{.Events.Page}} of {{.Events.LastPage}}</span>
+    <div>
+      <strong>Recent events</strong>
+      <span class="text-muted small ms-2">{{.Events.Total}} total · page {{.Events.Page}} of {{.Events.LastPage}}</span>
+    </div>
+    <form class="d-flex align-items-center gap-2 mb-0" method="get" action="/admin/visitors">
+      <label class="text-muted small mb-0" for="epp">Show</label>
+      <select id="epp" name="epp" class="form-select form-select-sm" style="width:auto"
+              onchange="var f=this.form;f.action='/admin/visitors#events';f.submit();">
+        {{$ep := .Events.PerPage}}
+        <option value="10" {{if eq $ep 10}}selected{{end}}>10</option>
+        <option value="25" {{if eq $ep 25}}selected{{end}}>25</option>
+        <option value="50" {{if eq $ep 50}}selected{{end}}>50</option>
+        <option value="100" {{if eq $ep 100}}selected{{end}}>100</option>
+        <option value="200" {{if eq $ep 200}}selected{{end}}>200</option>
+      </select>
+      <span class="text-muted small mb-0">per page</span>
+      <input type="hidden" name="page" value="1">
+    </form>
   </div>
   <div class="card-body p-0">
     <table class="table table-sm mb-0 table-events">
@@ -57,29 +73,45 @@
       </tbody>
     </table>
   </div>
-  {{if gt .Events.LastPage 1}}
   <div class="card-footer d-flex justify-content-between align-items-center">
-    <span class="text-muted small">Showing {{.Events.PerPage}} per page</span>
+    <span class="text-muted small">Showing {{len .Events.Events}} of {{.Events.Total}}</span>
+    {{if gt .Events.LastPage 1}}
     <nav>
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item {{if not .Events.HasPrev}}disabled{{end}}">
-          <a class="page-link" href="?page={{.Events.PrevPage}}#events">‹ Prev</a>
+          <a class="page-link" href="?page={{.Events.PrevPage}}&epp={{.Events.PerPage}}#events">‹ Prev</a>
         </li>
         <li class="page-item active"><span class="page-link">{{.Events.Page}}</span></li>
         <li class="page-item disabled"><span class="page-link">/ {{.Events.LastPage}}</span></li>
         <li class="page-item {{if not .Events.HasNext}}disabled{{end}}">
-          <a class="page-link" href="?page={{.Events.NextPage}}#events">Next ›</a>
+          <a class="page-link" href="?page={{.Events.NextPage}}&epp={{.Events.PerPage}}#events">Next ›</a>
         </li>
       </ul>
     </nav>
+    {{end}}
   </div>
-  {{end}}
 </div>
 
-<div class="card admin-card">
+<div class="card admin-card" id="visitors">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <strong>Visitor summary</strong>
-    <span class="text-muted small">{{.Visitors.Total}} unique · page {{.Visitors.Page}} of {{.Visitors.LastPage}}</span>
+    <div>
+      <strong>Visitor summary</strong>
+      <span class="text-muted small ms-2">{{.Visitors.Total}} unique · page {{.Visitors.Page}} of {{.Visitors.LastPage}}</span>
+    </div>
+    <form id="vppForm" class="d-flex align-items-center gap-2 mb-0" method="get" action="/admin/visitors">
+      <label class="text-muted small mb-0" for="vpp">Show</label>
+      <select id="vpp" name="vpp" class="form-select form-select-sm" style="width:auto"
+              onchange="var f=this.form;f.action='/admin/visitors#visitors';f.submit();">
+        {{$pp := .Visitors.PerPage}}
+        <option value="10" {{if eq $pp 10}}selected{{end}}>10</option>
+        <option value="25" {{if eq $pp 25}}selected{{end}}>25</option>
+        <option value="50" {{if eq $pp 50}}selected{{end}}>50</option>
+        <option value="100" {{if eq $pp 100}}selected{{end}}>100</option>
+        <option value="200" {{if eq $pp 200}}selected{{end}}>200</option>
+      </select>
+      <span class="text-muted small mb-0">per page</span>
+      <input type="hidden" name="vpage" value="1">
+    </form>
   </div>
   <div class="card-body p-0">
     <table class="table table-sm mb-0 table-events">
@@ -124,22 +156,22 @@
       </tbody>
     </table>
   </div>
-  {{if gt .Visitors.LastPage 1}}
   <div class="card-footer d-flex justify-content-between align-items-center">
-    <span class="text-muted small">Sorted by most recent visit</span>
+    <span class="text-muted small">Showing {{len .Visitors.Visitors}} of {{.Visitors.Total}} · sorted by most recent visit</span>
+    {{if gt .Visitors.LastPage 1}}
     <nav>
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item {{if not .Visitors.HasPrev}}disabled{{end}}">
-          <a class="page-link" href="?vpage={{.Visitors.PrevPage}}#visitors">‹ Prev</a>
+          <a class="page-link" href="?vpage={{.Visitors.PrevPage}}&vpp={{.Visitors.PerPage}}#visitors">‹ Prev</a>
         </li>
         <li class="page-item active"><span class="page-link">{{.Visitors.Page}}</span></li>
         <li class="page-item disabled"><span class="page-link">/ {{.Visitors.LastPage}}</span></li>
         <li class="page-item {{if not .Visitors.HasNext}}disabled{{end}}">
-          <a class="page-link" href="?vpage={{.Visitors.NextPage}}#visitors">Next ›</a>
+          <a class="page-link" href="?vpage={{.Visitors.NextPage}}&vpp={{.Visitors.PerPage}}#visitors">Next ›</a>
         </li>
       </ul>
     </nav>
+    {{end}}
   </div>
-  {{end}}
 </div>
 {{end}}

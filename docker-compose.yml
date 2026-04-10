@@ -1,3 +1,13 @@
+# ─── pcsvoip.datalytique.com ────────────────────────────────────────────
+# DEPENDENCY: smartcrm.pcsvoip.com must be started FIRST so the
+# "smartcrmpcsvoipcom_default" network exists. That project's nginx-proxy
+# handles SSL termination and routes:
+#   /              → pcsvoip-web:9080   (website + admin)
+#   /ws/voice      → pcsvoip-voice:9081 (voice chat WebSocket)
+#   /api/chat      → pcsvoip-voice:9081 (text chat API)
+# Nginx config:  /home/production/DEPLOYED/smartcrm.pcsvoip.com/nginx.conf
+# ────────────────────────────────────────────────────────────────────────
+
 services:
   pcsvoip-web:
     build:
@@ -20,6 +30,9 @@ services:
       - admin-data:/app/data
       - ./assets/videos:/app/assets/videos:ro
       - ./assets/apivideos:/app/assets/apivideos:ro
+    networks:
+      - default
+      - nginx-proxy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:9080/"]
       interval: 30s
@@ -40,6 +53,9 @@ services:
     restart: unless-stopped
     ports:
       - "9081:9081"
+    networks:
+      - default
+      - nginx-proxy
     environment:
       - GROK_API_KEY=${GROK_API_KEY}
       - VOICE_PROXY_PORT=9081
@@ -60,6 +76,12 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+networks:
+  default:
+  nginx-proxy:
+    external: true
+    name: smartcrmpcsvoipcom_default
 
 volumes:
   cms-backups:

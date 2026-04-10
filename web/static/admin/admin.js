@@ -1,6 +1,61 @@
-// PCS VoIP Admin — small UX helpers (~80 lines)
+// PCS VoIP Admin — UX helpers
 
 (function () {
+  // ===================== Toast notifications =====================
+  // Usage: pcsToast('Document saved.', 'success')
+  //        pcsToast('Something went wrong.', 'error')
+  window.pcsToast = function (msg, type) {
+    type = type || 'success';
+    var icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+    var wrap = document.getElementById('pcs-toast-wrap');
+    if (!wrap) return;
+    var el = document.createElement('div');
+    el.className = 'pcs-toast ' + type;
+    el.innerHTML =
+      '<i class="fas ' + (icons[type] || icons.info) + '"></i>' +
+      '<span class="toast-msg">' + msg + '</span>' +
+      '<button class="toast-close" aria-label="Close">&times;</button>';
+    wrap.appendChild(el);
+    // trigger reflow, then animate in
+    el.offsetHeight;
+    el.classList.add('show');
+    var dismiss = function () {
+      el.classList.remove('show');
+      el.classList.add('hide');
+      setTimeout(function () { el.remove(); }, 400);
+    };
+    el.querySelector('.toast-close').addEventListener('click', dismiss);
+    setTimeout(dismiss, 4000);
+  };
+
+  // Auto-show toast from URL params (?toast=Message&ttype=success)
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var msg = params.get('toast');
+    if (msg) {
+      var type = params.get('ttype') || 'success';
+      // Clean URL without reloading
+      params.delete('toast');
+      params.delete('ttype');
+      var clean = window.location.pathname;
+      var remaining = params.toString();
+      if (remaining) clean += '?' + remaining;
+      clean += window.location.hash;
+      window.history.replaceState(null, '', clean);
+      setTimeout(function () { pcsToast(msg, type); }, 150);
+    }
+    // Legacy support: ?saved=1
+    if (params.get('saved') === '1') {
+      params.delete('saved');
+      var clean2 = window.location.pathname;
+      var remaining2 = params.toString();
+      if (remaining2) clean2 += '?' + remaining2;
+      clean2 += window.location.hash;
+      window.history.replaceState(null, '', clean2);
+      setTimeout(function () { pcsToast('Changes saved successfully.', 'success'); }, 150);
+    }
+  })();
+
   // Simple delete confirmation for forms with data-confirm.
   document.addEventListener('submit', function (e) {
     var form = e.target;
@@ -40,12 +95,15 @@
         if (data.error) {
           reply.classList.add('error');
           reply.textContent = 'Error: ' + data.error;
+          pcsToast('Bot test failed: ' + data.error, 'error');
         } else {
           reply.textContent = data.message || JSON.stringify(data);
+          pcsToast('Bot replied successfully.', 'success');
         }
       } catch (err) {
         reply.classList.add('error');
         reply.textContent = 'Request failed: ' + err.message;
+        pcsToast('Bot test request failed.', 'error');
       }
     });
   }
@@ -134,13 +192,16 @@
         if (data.error) {
           out.textContent = 'Failed: ' + data.error;
           out.style.color = '#b02334';
+          pcsToast('SMTP test failed: ' + data.error, 'error');
         } else {
           out.textContent = data.ok || 'OK';
           out.style.color = '#4a9633';
+          pcsToast('Test email sent successfully.', 'success');
         }
       } catch (err) {
         out.textContent = 'Request failed: ' + err.message;
         out.style.color = '#b02334';
+        pcsToast('SMTP test request failed.', 'error');
       }
     });
   }

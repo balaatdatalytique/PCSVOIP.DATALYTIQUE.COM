@@ -397,7 +397,7 @@ func (h *Handler) KBCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/admin/kb", http.StatusFound)
+	http.Redirect(w, r, "/admin/kb?toast=Document+created", http.StatusFound)
 }
 
 func (h *Handler) KBEdit(w http.ResponseWriter, r *http.Request) {
@@ -434,7 +434,7 @@ func (h *Handler) KBUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/admin/kb", http.StatusFound)
+	http.Redirect(w, r, "/admin/kb?toast=Document+updated", http.StatusFound)
 }
 
 func (h *Handler) KBDelete(w http.ResponseWriter, r *http.Request) {
@@ -447,7 +447,7 @@ func (h *Handler) KBDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/admin/kb", http.StatusFound)
+	http.Redirect(w, r, "/admin/kb?toast=Document+deleted", http.StatusFound)
 }
 
 func (h *Handler) KBToggle(w http.ResponseWriter, r *http.Request) {
@@ -460,7 +460,7 @@ func (h *Handler) KBToggle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/admin/kb", http.StatusFound)
+	http.Redirect(w, r, "/admin/kb?toast=Document+toggled", http.StatusFound)
 }
 
 // =====================================================================
@@ -470,14 +470,15 @@ func (h *Handler) KBToggle(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) VisitorsPage(w http.ResponseWriter, r *http.Request) {
 	page := parsePage(r.URL.Query().Get("page"))
 	vpage := parsePage(r.URL.Query().Get("vpage"))
-	const perPage = 50
+	epp := parsePerPage(r.URL.Query().Get("epp"))
+	vpp := parsePerPage(r.URL.Query().Get("vpp"))
 
-	eventsPage, err := h.Visitors.RecentEventsPaged(page, perPage)
+	eventsPage, err := h.Visitors.RecentEventsPaged(page, epp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	visitorsPage, err := h.Visitors.ListVisitorsPaged(vpage, perPage)
+	visitorsPage, err := h.Visitors.ListVisitorsPaged(vpage, vpp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -538,6 +539,23 @@ func parsePage(s string) int {
 		return 1
 	}
 	return n
+}
+
+func parsePerPage(s string) int {
+	if s == "" {
+		return 50
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil || n < 1 {
+		return 50
+	}
+	// Allow only specific sizes.
+	switch n {
+	case 10, 25, 50, 100, 200:
+		return n
+	default:
+		return 50
+	}
 }
 
 // =====================================================================

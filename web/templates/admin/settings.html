@@ -1,5 +1,4 @@
 {{define "page"}}
-{{if .Saved}}<div class="admin-flash success">Settings saved.</div>{{end}}
 <ul class="nav nav-tabs admin-tabs">
   <li class="nav-item"><a class="nav-link {{if eq .Tab "ai"}}active{{end}}" href="?tab=ai"><i class="fas fa-brain me-1"></i> AI Providers</a></li>
   <li class="nav-item"><a class="nav-link {{if eq .Tab "email"}}active{{end}}" href="?tab=email"><i class="fas fa-envelope me-1"></i> Email</a></li>
