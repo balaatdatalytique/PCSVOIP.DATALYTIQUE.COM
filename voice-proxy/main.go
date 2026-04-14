@@ -256,49 +256,13 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 		messages = append(messages, map[string]string{"role": m.Role, "content": m.Content})
 	}
 
-	// Call Grok REST API
-	grokReq := map[string]interface{}{
-		"model":       "grok-3-mini-fast",
-		"messages":    messages,
-		"max_tokens":  500,
-		"temperature": 0.7,
-	}
-	body, _ := json.Marshal(grokReq)
-
-	httpReq, _ := http.NewRequest("POST", "https://api.x.ai/v1/chat/completions", bytes.NewReader(body))
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("Authorization", "Bearer "+grokAPIKey)
-
-	resp, err := http.DefaultClient.Do(httpReq)
+	// Call Grok REST API with tool-calling support for CoreDial KB search.
+	reply, err := callGrokWithTools(messages)
 	if err != nil {
 		log.Printf("Grok API error: %v", err)
 		writeChat(w, req.SessionID, "Sorry, I'm having trouble connecting right now. Please try again or call us at 844-PCS-VOIP.")
 		return
 	}
-	defer resp.Body.Close()
-
-	respBody, _ := io.ReadAll(resp.Body)
-
-	if resp.StatusCode != 200 {
-		log.Printf("Grok API status %d: %s", resp.StatusCode, string(respBody))
-		writeChat(w, req.SessionID, "Sorry, I'm having trouble right now. Please call us at 844-PCS-VOIP for immediate help.")
-		return
-	}
-
-	var grokResp struct {
-		Choices []struct {
-			Message struct {
-				Content string `json:"content"`
-			} `json:"message"`
-		} `json:"choices"`
-	}
-	if err := json.Unmarshal(respBody, &grokResp); err != nil || len(grokResp.Choices) == 0 {
-		log.Printf("Grok response parse error: %v", err)
-		writeChat(w, req.SessionID, "Sorry, something went wrong. Please try again.")
-		return
-	}
-
-	reply := grokResp.Choices[0].Message.Content
 
 	// Store assistant reply in history
 	chatSessionsMu.Lock()
@@ -388,6 +352,7 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 			"input_audio_transcription": map[string]interface{}{
 				"model": "grok-4-1-fast-non-reasoning",
 			},
+			"tools": []interface{}{coreDialToolDef},
 		},
 	}
 	if err := grokConn.WriteJSON(sessionUpdate); err != nil {
@@ -472,6 +437,10 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Grok → Browser
+	// Track in-progress function calls (voice tool use).
+	voiceToolCalls := make(map[string]*voiceToolCall)
+	var voiceToolMu sync.Mutex
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -500,6 +469,42 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 					case t == "error":
 						log.Printf("Grok error: %s", string(msg))
 						clientConn.WriteMessage(websocket.TextMessage, msg)
+
+					// ---- Function call handling for voice tool use ----
+					case t == "response.function_call_arguments.delta":
+						callID, _ := envelope["call_id"].(string)
+						delta, _ := envelope["delta"].(string)
+						voiceToolMu.Lock()
+						tc, ok := voiceToolCalls[callID]
+						if !ok {
+							tc = &voiceToolCall{}
+							voiceToolCalls[callID] = tc
+						}
+						tc.argsJSON += delta
+						voiceToolMu.Unlock()
+
+					case t == "response.function_call_arguments.done":
+						callID, _ := envelope["call_id"].(string)
+						name, _ := envelope["name"].(string)
+						argsStr, _ := envelope["arguments"].(string)
+
+						voiceToolMu.Lock()
+						tc, ok := voiceToolCalls[callID]
+						if ok {
+							if argsStr == "" {
+								argsStr = tc.argsJSON
+							}
+						}
+						delete(voiceToolCalls, callID)
+						voiceToolMu.Unlock()
+
+						if name == "search_coredial_kb" || (ok && tc != nil) {
+							go handleVoiceToolCall(grokConn, callID, name, argsStr)
+						}
+
+						// Tell browser we're searching
+						clientConn.WriteMessage(websocket.TextMessage, []byte(`{"type":"response.created"}`))
+
 					case t == "conversation.created",
 						t == "response.output_audio.delta",
 						t == "response.output_audio.done",
@@ -522,6 +527,55 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Voice session ended")
 }
 
+// voiceToolCall tracks a streaming function call from the Grok Realtime API.
+type voiceToolCall struct {
+	argsJSON string
+}
+
+// handleVoiceToolCall executes a tool call during a voice session and sends
+// the result back to Grok so it can speak the answer.
+func handleVoiceToolCall(grokConn *websocket.Conn, callID, name, argsJSON string) {
+	log.Printf("coredial-voice: tool call %s(%s)", name, argsJSON)
+
+	var result string
+	if name == "search_coredial_kb" {
+		var args struct {
+			Query string `json:"query"`
+		}
+		json.Unmarshal([]byte(argsJSON), &args)
+		if args.Query == "" {
+			result = "No search query provided."
+		} else {
+			r, err := searchCoreDial(args.Query)
+			if err != nil {
+				result = fmt.Sprintf("Search failed: %v", err)
+			} else {
+				// Trim for voice context (keep it shorter than text chat)
+				if len(r) > 3000 {
+					r = r[:3000] + "\n... (truncated)"
+				}
+				result = r
+			}
+		}
+	} else {
+		result = fmt.Sprintf("Unknown tool: %s", name)
+	}
+
+	// Send function call output back to Grok
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "conversation.item.create",
+		"item": map[string]interface{}{
+			"type":    "function_call_output",
+			"call_id": callID,
+			"output":  result,
+		},
+	})
+	// Trigger Grok to generate a spoken response from the tool result
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "response.create",
+	})
+}
+
 // normalizeVoice converts an admin-friendly lowercase voice name into the
 // format the xAI realtime API expects: "human_Xxxx" (e.g., "baxter" → "human_Baxter").
 // If the voice already has the prefix or is empty, it is returned as-is.
@@ -533,6 +587,117 @@ func normalizeVoice(v string) string {
 		return v
 	}
 	return "human_" + strings.ToUpper(v[:1]) + v[1:]
+}
+
+// ===================== GROK TOOL-CALLING =====================
+
+// callGrokWithTools sends messages to Grok with the CoreDial KB search tool
+// defined. If Grok calls the tool, we execute the search and feed results
+// back for a final answer. Supports up to 2 rounds of tool use.
+func callGrokWithTools(messages []map[string]string) (string, error) {
+	// Convert to the richer message format needed for tool calls
+	type msgContent struct {
+		Role       string      `json:"role"`
+		Content    interface{} `json:"content,omitempty"`
+		ToolCalls  interface{} `json:"tool_calls,omitempty"`
+		ToolCallID string      `json:"tool_call_id,omitempty"`
+	}
+
+	var richMessages []msgContent
+	for _, m := range messages {
+		richMessages = append(richMessages, msgContent{Role: m["role"], Content: m["content"]})
+	}
+
+	for round := 0; round < 3; round++ {
+		grokReq := map[string]interface{}{
+			"model":       "grok-3-mini-fast",
+			"messages":    richMessages,
+			"max_tokens":  800,
+			"temperature": 0.7,
+			"tools":       []interface{}{coreDialToolDef},
+		}
+		body, _ := json.Marshal(grokReq)
+
+		httpReq, _ := http.NewRequest("POST", "https://api.x.ai/v1/chat/completions", bytes.NewReader(body))
+		httpReq.Header.Set("Content-Type", "application/json")
+		httpReq.Header.Set("Authorization", "Bearer "+grokAPIKey)
+
+		resp, err := http.DefaultClient.Do(httpReq)
+		if err != nil {
+			return "", fmt.Errorf("grok API: %w", err)
+		}
+		respBody, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return "", fmt.Errorf("grok API status %d: %s", resp.StatusCode, string(respBody))
+		}
+
+		var grokResp struct {
+			Choices []struct {
+				Message struct {
+					Content   *string `json:"content"`
+					ToolCalls []struct {
+						ID       string `json:"id"`
+						Function struct {
+							Name      string `json:"name"`
+							Arguments string `json:"arguments"`
+						} `json:"function"`
+					} `json:"tool_calls"`
+				} `json:"message"`
+				FinishReason string `json:"finish_reason"`
+			} `json:"choices"`
+		}
+		if err := json.Unmarshal(respBody, &grokResp); err != nil || len(grokResp.Choices) == 0 {
+			return "", fmt.Errorf("grok parse error: %v", err)
+		}
+
+		choice := grokResp.Choices[0]
+
+		// If no tool calls, return the text content
+		if len(choice.Message.ToolCalls) == 0 {
+			if choice.Message.Content != nil {
+				return *choice.Message.Content, nil
+			}
+			return "Sorry, I couldn't generate a response. Please try again.", nil
+		}
+
+		// Process tool calls
+		log.Printf("coredial: Grok requested %d tool call(s)", len(choice.Message.ToolCalls))
+
+		// Add the assistant message with tool calls to the conversation
+		richMessages = append(richMessages, msgContent{
+			Role:      "assistant",
+			ToolCalls: choice.Message.ToolCalls,
+		})
+
+		for _, tc := range choice.Message.ToolCalls {
+			if tc.Function.Name == "search_coredial_kb" {
+				// Parse the query argument
+				var args struct {
+					Query string `json:"query"`
+				}
+				json.Unmarshal([]byte(tc.Function.Arguments), &args)
+
+				log.Printf("coredial: searching for %q", args.Query)
+				result, err := searchCoreDial(args.Query)
+				if err != nil {
+					result = fmt.Sprintf("Search failed: %v", err)
+					log.Printf("coredial: search error: %v", err)
+				}
+
+				// Add tool result to conversation
+				richMessages = append(richMessages, msgContent{
+					Role:       "tool",
+					Content:    result,
+					ToolCallID: tc.ID,
+				})
+			}
+		}
+		// Loop back to get Grok's final answer incorporating the search results
+	}
+
+	return "Sorry, I wasn't able to complete the search. Please try again.", nil
 }
 
 func init() {
