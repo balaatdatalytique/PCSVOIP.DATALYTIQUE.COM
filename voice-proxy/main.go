@@ -341,9 +341,9 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 			"instructions": bc.text,
 			"turn_detection": map[string]interface{}{
 				"type":                "server_vad",
-				"threshold":           0.85,
-				"silence_duration_ms": 600,
-				"prefix_padding_ms":   333,
+				"threshold":           0.6,
+				"silence_duration_ms": 1200,
+				"prefix_padding_ms":   500,
 			},
 			"audio": map[string]interface{}{
 				"input":  map[string]interface{}{"format": map[string]interface{}{"type": "audio/pcm", "rate": 24000}},
@@ -437,6 +437,9 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Grok → Browser
+	// Adaptive VAD: track speaker cadence and tune silence threshold.
+	cadence := &cadenceTracker{}
+
 	// Track in-progress function calls (voice tool use).
 	voiceToolCalls := make(map[string]*voiceToolCall)
 	var voiceToolMu sync.Mutex
@@ -505,6 +508,27 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 						// Tell browser we're searching
 						clientConn.WriteMessage(websocket.TextMessage, []byte(`{"type":"response.created"}`))
 
+					case t == "input_audio_buffer.speech_started":
+						cadence.onSpeechStarted()
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+
+					case t == "input_audio_buffer.speech_stopped":
+						cadence.onSpeechStopped()
+						if newSilence := cadence.recommend(); newSilence > 0 {
+							grokConn.WriteJSON(map[string]interface{}{
+								"type": "session.update",
+								"session": map[string]interface{}{
+									"turn_detection": map[string]interface{}{
+										"type":                "server_vad",
+										"threshold":           0.6,
+										"silence_duration_ms": newSilence,
+										"prefix_padding_ms":   500,
+									},
+								},
+							})
+						}
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+
 					case t == "conversation.created",
 						t == "response.output_audio.delta",
 						t == "response.output_audio.done",
@@ -512,8 +536,6 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 						t == "response.text.delta",
 						t == "response.done",
 						t == "response.created",
-						t == "input_audio_buffer.speech_started",
-						t == "input_audio_buffer.speech_stopped",
 						t == "input_audio_buffer.committed",
 						t == "conversation.item.input_audio_transcription.completed":
 						clientConn.WriteMessage(websocket.TextMessage, msg)
@@ -525,6 +547,111 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("Voice session ended")
+}
+
+// ===================== ADAPTIVE CADENCE =====================
+
+// cadenceTracker monitors speech_started / speech_stopped events to learn
+// how the caller speaks. After enough samples it recommends a tuned
+// silence_duration_ms so the bot waits longer for slow/deliberate speakers
+// and responds faster for fluent ones.
+type cadenceTracker struct {
+	mu             sync.Mutex
+	speechStart    time.Time     // last speech_started timestamp
+	speechStop     time.Time     // last speech_stopped timestamp
+	segments       []time.Duration // durations of speech segments
+	gaps           []time.Duration // durations of pauses between segments
+	lastRecommend  int           // last silence_duration_ms we sent
+}
+
+const (
+	cadenceMinSamples = 3   // need this many gaps before adapting
+	cadenceMinSilence = 800 // never go below 800ms
+	cadenceMaxSilence = 2000 // never go above 2000ms
+)
+
+func (c *cadenceTracker) onSpeechStarted() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	now := time.Now()
+	// If we have a previous speech_stopped, record the gap (pause duration)
+	if !c.speechStop.IsZero() {
+		gap := now.Sub(c.speechStop)
+		// Only count realistic pauses (50ms–5s); ignore long silences
+		if gap > 50*time.Millisecond && gap < 5*time.Second {
+			c.gaps = append(c.gaps, gap)
+			// Keep a sliding window of the last 10 gaps
+			if len(c.gaps) > 10 {
+				c.gaps = c.gaps[len(c.gaps)-10:]
+			}
+		}
+	}
+	c.speechStart = now
+}
+
+func (c *cadenceTracker) onSpeechStopped() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	now := time.Now()
+	// Record speech segment duration
+	if !c.speechStart.IsZero() {
+		seg := now.Sub(c.speechStart)
+		if seg > 0 {
+			c.segments = append(c.segments, seg)
+			if len(c.segments) > 10 {
+				c.segments = c.segments[len(c.segments)-10:]
+			}
+		}
+	}
+	c.speechStop = now
+}
+
+// recommend returns a new silence_duration_ms if the tracker has enough data
+// and the value has changed meaningfully (>100ms). Returns 0 if no update needed.
+func (c *cadenceTracker) recommend() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if len(c.gaps) < cadenceMinSamples {
+		return 0
+	}
+
+	// Calculate average gap (natural pause duration for this speaker)
+	var total time.Duration
+	for _, g := range c.gaps {
+		total += g
+	}
+	avgGap := total / time.Duration(len(c.gaps))
+
+	// Set silence_duration to ~1.5x the speaker's average pause so the bot
+	// doesn't jump in during their natural rhythm, but responds reasonably
+	// quickly after they truly stop.
+	recommended := int(avgGap.Milliseconds() * 3 / 2)
+
+	// Clamp to safe range
+	if recommended < cadenceMinSilence {
+		recommended = cadenceMinSilence
+	}
+	if recommended > cadenceMaxSilence {
+		recommended = cadenceMaxSilence
+	}
+
+	// Only send an update if meaningfully different from last recommendation
+	if abs(recommended-c.lastRecommend) < 100 {
+		return 0
+	}
+
+	c.lastRecommend = recommended
+	log.Printf("cadence: adapted silence_duration_ms=%d (avg gap=%dms, %d samples)",
+		recommended, avgGap.Milliseconds(), len(c.gaps))
+	return recommended
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
 // voiceToolCall tracks a streaming function call from the Grok Realtime API.
