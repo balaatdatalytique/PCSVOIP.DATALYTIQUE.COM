@@ -127,7 +127,7 @@ a.ai-tile:hover p {
 
 .pegasi-hero-section {
     background: #ffffff;
-    padding: 110px 0 50px;
+    padding: 140px 0 50px;
     min-height: calc(100vh - 200px);
     display: flex;
     align-items: center;
@@ -278,12 +278,12 @@ a.ai-tile:hover p {
 @media (max-width: 1199px) {
     .pegasi-hero-section {
         min-height: auto;
-        padding: 50px 0;
+        padding: 120px 0 50px;
     }
 }
 
 @media (max-width: 575px) {
-    .pegasi-hero-section { padding: 40px 0; }
+    .pegasi-hero-section { padding: 110px 0 40px; }
     .pegasi-tagline { margin-bottom: 30px; }
     .pegasi-product-card { padding: 18px 16px; gap: 14px; }
     .pegasi-product-card .pp-icon { width: 48px; height: 48px; font-size: 19px; }
@@ -537,6 +537,36 @@ a.ai-tile:hover p {
     .pegasi-ai-btn-mobile:hover {
         border-color: rgba(127, 255, 212, 0.85);
         box-shadow: 0 2px 12px rgba(103, 189, 74, 0.45);
+        color: #ffffff;
+    }
+}
+
+/* Back button — shown on AI sub-pages next to menu toggle on mobile */
+.pegasi-back-btn-mobile {
+    display: none;
+}
+@media (max-width: 991px) {
+    .pegasi-back-btn-mobile {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        background-color: #000000;
+        border: 1.5px solid rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 20px;
+        text-decoration: none;
+        padding: 0;
+        line-height: 1;
+        vertical-align: middle;
+        margin-right: 10px;
+        box-sizing: border-box;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .pegasi-back-btn-mobile:hover {
+        background-color: #333333;
         color: #ffffff;
     }
 }
