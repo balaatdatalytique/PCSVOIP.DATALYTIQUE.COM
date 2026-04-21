@@ -25,6 +25,14 @@ services:
       - INTERNAL_API_TOKEN=${INTERNAL_API_TOKEN:-}
       - VOICE_PROXY_URL=http://pcsvoip-voice:9081
       - BOT_CONTEXT_FILE=/app/assets/data/pcsvoip-context.txt
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-465}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-}
+      - SMTP_USE_TLS=${SMTP_USE_TLS:-true}
+      - SMTP_ADMIN_EMAIL=${SMTP_ADMIN_EMAIL:-}
     volumes:
       - cms-backups:/app/.cms-backups
       - admin-data:/app/data

@@ -6,11 +6,13 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"pcsvoip-cms/internal/cryptox"
 	"pcsvoip-cms/internal/db"
 )
 
@@ -54,8 +56,34 @@ func Bootstrap(database *db.DB, adminUser, adminPassEnv, contextFilePath string)
 	}
 
 	settings := NewSettingsRepo(database)
-	if _, err := settings.Get(); err != nil {
+	s, err := settings.Get()
+	if err != nil {
 		return err
+	}
+	// Sync SMTP settings from env vars when SMTP_HOST is set.
+	if host := os.Getenv("SMTP_HOST"); host != "" {
+		s.SMTPHost = host
+		if port, _ := strconv.Atoi(os.Getenv("SMTP_PORT")); port > 0 {
+			s.SMTPPort = port
+		}
+		s.SMTPUser = os.Getenv("SMTP_USER")
+		if pw := os.Getenv("SMTP_PASS"); pw != "" {
+			enc, err := cryptox.NewSecret(pw)
+			if err != nil {
+				return err
+			}
+			s.SMTPPass = enc
+		}
+		s.SMTPFromEmail = os.Getenv("SMTP_FROM_EMAIL")
+		s.SMTPFromName = os.Getenv("SMTP_FROM_NAME")
+		s.SMTPUseTLS = os.Getenv("SMTP_USE_TLS") != "false"
+		if ae := os.Getenv("SMTP_ADMIN_EMAIL"); ae != "" {
+			s.AdminEmail = ae
+		}
+		if err := settings.Save(s); err != nil {
+			return err
+		}
+		log.Printf("admin: synced SMTP settings from environment")
 	}
 
 	// Sweep any pre-filter healthcheck / bot noise so the dashboard starts

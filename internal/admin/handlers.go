@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/smtp"
 	"os"
 	"path/filepath"
 	"sort"
@@ -643,8 +642,6 @@ func (h *Handler) SettingsTestSMTP(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "decrypt smtp pass: " + err.Error()})
 		return
 	}
-	auth := smtp.PlainAuth("", s.SMTPUser, pass, s.SMTPHost)
-	addr := fmt.Sprintf("%s:%d", s.SMTPHost, s.SMTPPort)
 	from := s.SMTPFromEmail
 	if from == "" {
 		from = s.SMTPUser
@@ -653,7 +650,7 @@ func (h *Handler) SettingsTestSMTP(w http.ResponseWriter, r *http.Request) {
 		"From: " + from + "\r\n" +
 		"Subject: PCS VoIP admin SMTP test\r\n" +
 		"\r\nThis is a test email from your PCS VoIP admin module. SMTP is working.\r\n")
-	if err := smtp.SendMail(addr, auth, from, []string{s.AdminEmail}, msg); err != nil {
+	if err := sendSMTP(s.SMTPHost, s.SMTPPort, s.SMTPUser, pass, from, []string{s.AdminEmail}, msg); err != nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
 	}

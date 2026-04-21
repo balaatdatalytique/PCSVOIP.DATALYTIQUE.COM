@@ -80,10 +80,12 @@ func Run(cfg *config.Config) error {
 	if err != nil {
 		return fmt.Errorf("admin init: %w", err)
 	}
+	settingsRepo := admin.NewSettingsRepo(database)
 	apiHandler := admin.NewAPI(
 		admin.NewBotRepo(database),
 		admin.NewKBRepo(database),
 		visitorRepo,
+		settingsRepo,
 		cfg.InternalAPIToken,
 	)
 
@@ -91,6 +93,7 @@ func Run(cfg *config.Config) error {
 	mux := http.NewServeMux()
 	registerAdminRoutes(mux, adminHandler, cmsHandler, authMgr)
 	registerInternalAPI(mux, apiHandler)
+	registerPublicAPI(mux, apiHandler)
 
 	// Static assets for admin UI live under /web/static/.
 	staticFS := http.FileServer(http.Dir(filepath.Join(cfg.ContentDir, "web", "static")))
@@ -194,4 +197,10 @@ func adminPostRouter(h *admin.Handler, base http.Handler) http.Handler {
 func registerInternalAPI(mux *http.ServeMux, api *admin.API) {
 	mux.HandleFunc("/api/bot/context", api.Context)
 	mux.HandleFunc("/api/visitors/log", api.VisitorLog)
+}
+
+// registerPublicAPI wires public-facing API endpoints (rate-limited).
+func registerPublicAPI(mux *http.ServeMux, api *admin.API) {
+	quoteRL := middleware.NewRateLimit(3, time.Minute)
+	mux.Handle("/api/quote", quoteRL.Middleware(http.HandlerFunc(api.QuoteSubmit)))
 }

@@ -341,7 +341,7 @@
 	<div class="spaceform">
 <div class="container">
 
-            <form action="#" class="woocommerce-checkout mt-40">
+            <form id="quoteForm" action="/api/quote" method="POST" class="woocommerce-checkout mt-40" novalidate>
                 <div class="row">
                     <div class="col-lg-12">
                         <h2
@@ -350,44 +350,44 @@
                         <div class="row">
 
                             <div class="col-md-6 form-group">
-    <input type="text" class="form-control" placeholder="First Name">
+    <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
 </div>
 <div class="col-md-6 form-group">
-    <input type="text" class="form-control" placeholder="Last Name">
+    <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
 </div>
 <div class="col-12 form-group">
-    <input type="email" class="form-control" placeholder="Email">
-    <input type="tel" class="form-control" placeholder="Phone Number">
+    <input type="email" name="email" class="form-control" placeholder="Email" required>
+    <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required>
 </div>
 <div class="col-12 form-group">
-    <input type="text" class="form-control" placeholder="Business Name">
+    <input type="text" name="business" class="form-control" placeholder="Business Name">
 </div>
 <div class="col-md-6 form-group">
-    <input type="number" class="form-control" placeholder="Number of Phones">
+    <input type="number" name="num_phones" class="form-control" placeholder="Number of Phones">
 </div>
 <div class="col-md-6 form-group">
-    <input type="number" class="form-control" placeholder="Number of Locations">
+    <input type="number" name="num_locations" class="form-control" placeholder="Number of Locations">
 </div>
 
 
                             <div class="col-12 form-group">
-    <input type="checkbox" id="voip">
+    <input type="checkbox" id="voip" name="products" value="VoIP Phone Systems">
     <label for="voip">VoIP Phone Systems</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="e-fax">
+    <input type="checkbox" id="e-fax" name="products" value="E-Fax">
     <label for="e-fax">E-Fax</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="video">
+    <input type="checkbox" id="video" name="products" value="Video Conferencing">
     <label for="video">Video Conferencing</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="call">
+    <input type="checkbox" id="call" name="products" value="Call Recording">
     <label for="call">Call Recording</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="DID">
+    <input type="checkbox" id="DID" name="products" value="New DID">
     <label for="DID">New DID</label>
 </div>
 
@@ -395,31 +395,32 @@
     <label style="font-weight: 600; font-size: 16px; color: #141D38;">Pegasi AI Products</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="ai-autoattender">
+    <input type="checkbox" id="ai-autoattender" name="products" value="Pegasi AI Auto Attendant">
     <label for="ai-autoattender">Pegasi AI Auto Attendant</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="ai-chatbot">
+    <input type="checkbox" id="ai-chatbot" name="products" value="Pegasi AI Chatbot">
     <label for="ai-chatbot">Pegasi AI Chatbot</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="ai-audiobot">
+    <input type="checkbox" id="ai-audiobot" name="products" value="Pegasi AI Audiobot">
     <label for="ai-audiobot">Pegasi AI Audiobot</label>
 </div>
 <div class="col-12 form-group">
-    <input type="checkbox" id="ai-crm">
+    <input type="checkbox" id="ai-crm" name="products" value="Pegasi AI CRM">
     <label for="ai-crm">Pegasi AI CRM</label>
 </div>
 
 
          <div class="spacebutton form-btn text-xl-start text-center col-12">
-        <button type="submit" class="th-btn">Submit</button>
+        <button type="submit" class="th-btn" id="quoteSubmitBtn">Submit</button>
     </div>
+    <div id="quoteMessage" style="display:none; margin-top:15px; padding:15px; border-radius:8px; font-size:16px;"></div>
                         </div>
                     </div>
 
                 </div>
-				
+
             </form>
             
         </div>	
@@ -511,7 +512,66 @@
         <script src="assets/js/particles.min.js"></script>
         <script src="assets/js/particles-config.js"></script>
         <script src="assets/js/main.js"></script>
-		<script src="assets/js/mail.js"></script>
+		<script>
+document.getElementById('quoteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var form = this;
+    var btn = document.getElementById('quoteSubmitBtn');
+    var msg = document.getElementById('quoteMessage');
+
+    // Client-side validation for required fields only
+    var firstName = form.querySelector('[name="first_name"]').value.trim();
+    var lastName = form.querySelector('[name="last_name"]').value.trim();
+    var email = form.querySelector('[name="email"]').value.trim();
+    var phone = form.querySelector('[name="phone"]').value.trim();
+    if (!firstName || !lastName || !email || !phone) {
+        msg.style.display = 'block';
+        msg.style.background = '#f8d7da';
+        msg.style.color = '#721c24';
+        msg.style.border = '1px solid #f5c6cb';
+        msg.textContent = 'Please fill in First Name, Last Name, Email, and Phone Number.';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msg.style.display = 'none';
+
+    fetch('/api/quote', {
+        method: 'POST',
+        body: new FormData(form)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            msg.style.display = 'block';
+            msg.style.background = '#d4edda';
+            msg.style.color = '#155724';
+            msg.style.border = '1px solid #c3e6cb';
+            msg.textContent = data.ok;
+            form.reset();
+        } else {
+            msg.style.display = 'block';
+            msg.style.background = '#f8d7da';
+            msg.style.color = '#721c24';
+            msg.style.border = '1px solid #f5c6cb';
+            msg.textContent = data.error || 'Something went wrong. Please try again.';
+        }
+    })
+    .catch(function() {
+        msg.style.display = 'block';
+        msg.style.background = '#f8d7da';
+        msg.style.color = '#721c24';
+        msg.style.border = '1px solid #f5c6cb';
+        msg.textContent = 'Network error. Please try again or call us at 844-PCS-VOIP.';
+    })
+    .finally(function() {
+        btn.disabled = false;
+        btn.textContent = 'Submit';
+    });
+});
+</script>
 
     <div id="chatbot-icon" onclick="toggleChatbot()">
         <i class="fas fa-comments"></i>
