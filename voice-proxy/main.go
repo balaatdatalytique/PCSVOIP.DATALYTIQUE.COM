@@ -93,6 +93,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws/voice", handleVoiceProxy)
 	mux.HandleFunc("/api/chat", handleTextChat)
+	mux.HandleFunc("/api/callback", handleCallbackRequest)
+	mux.HandleFunc("/ws/audiofork/", handleAudioFork)
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(200)

@@ -261,18 +261,12 @@ function submitCallRequest() {
     var inputs = form.querySelectorAll('input');
     btns.forEach(function(b) { b.disabled = true; });
     inputs.forEach(function(i) { i.disabled = true; });
-    btns[0].innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    btns[0].innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calling you now...';
 
-    var formData = new FormData();
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('phone', phone);
-    formData.append('email', 'callback-request@pcsvoip.com');
-    formData.append('products', 'Callback Request');
-
-    fetch('/api/quote', {
+    fetch('/api/callback', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: phone })
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
@@ -282,12 +276,11 @@ function submitCallRequest() {
         var reply = document.createElement('div');
         reply.className = 'message bot-message';
         if (data.ok) {
-            reply.innerHTML = '<i class="fas fa-check-circle" style="color:#25D366;margin-right:6px;"></i>' +
-                'Thank you, <strong>' + firstName + '</strong>! Our team will call you at <strong>' + phone +
-                '</strong> shortly. Is there anything else I can help with?';
+            reply.innerHTML = '<i class="fas fa-phone" style="color:#25D366;margin-right:6px;"></i>' +
+                data.ok;
         } else {
             reply.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#dc3545;margin-right:6px;"></i>' +
-                'Sorry, something went wrong. Please call us directly at <strong>844-PCS-VOIP</strong>.';
+                (data.error || 'Sorry, something went wrong. Please call us directly at <strong>844-PCS-VOIP</strong>.');
         }
         chatMessages.appendChild(reply);
         chatBody.scrollTop = chatBody.scrollHeight;
