@@ -55,6 +55,16 @@ func Bootstrap(database *db.DB, adminUser, adminPassEnv, contextFilePath string)
 		}
 	}
 
+	// Seed outbound callback persona if not yet created.
+	const outboundKey = "outbound_aria"
+	if ob, _ := bot.GetByKey(outboundKey); ob == nil {
+		obCfg := DefaultOutboundConfig()
+		if err := bot.SaveByKey(outboundKey, &obCfg); err != nil {
+			return err
+		}
+		log.Printf("admin: seeded outbound persona %q", outboundKey)
+	}
+
 	settings := NewSettingsRepo(database)
 	s, err := settings.Get()
 	if err != nil {

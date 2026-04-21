@@ -72,6 +72,38 @@ func (a *API) Context(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(ctx))
 }
 
+// OutboundContext returns the outbound callback persona + KB as text/plain.
+// GET /api/bot/outbound
+func (a *API) OutboundContext(w http.ResponseWriter, r *http.Request) {
+	if !a.requireToken(w, r) {
+		return
+	}
+	cfg, err := a.Bot.GetByKey("outbound_aria")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if cfg == nil || !cfg.Enabled {
+		// Fall back to the default bot
+		a.Context(w, r)
+		return
+	}
+	ctx, err := ComposeContext(cfg, a.KB)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Bot-Enabled", "true")
+	if cfg.Greeting != "" {
+		w.Header().Set("X-Bot-Greeting", cfg.Greeting)
+	}
+	if cfg.Voice != "" {
+		w.Header().Set("X-Bot-Voice", cfg.Voice)
+	}
+	w.Write([]byte(ctx))
+}
+
 // VisitorLog records a visitor event posted by voice-proxy.
 // POST /api/visitors/log
 func (a *API) VisitorLog(w http.ResponseWriter, r *http.Request) {

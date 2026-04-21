@@ -196,6 +196,7 @@ func adminPostRouter(h *admin.Handler, base http.Handler) http.Handler {
 // auth-by-token, not session-based.
 func registerInternalAPI(mux *http.ServeMux, api *admin.API) {
 	mux.HandleFunc("/api/bot/context", api.Context)
+	mux.HandleFunc("/api/bot/outbound", api.OutboundContext)
 	mux.HandleFunc("/api/visitors/log", api.VisitorLog)
 }
 

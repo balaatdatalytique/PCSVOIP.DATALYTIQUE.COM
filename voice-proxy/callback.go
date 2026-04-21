@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -246,26 +247,16 @@ func handleCallbackRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Build the audio fork WebSocket URL that FreeSWITCH will connect to
 	if fsAudioForkBase == "" {
-		// Internal URL from FreeSWITCH → voice-proxy container
-		fsAudioForkBase = envOr("AUDIO_FORK_WS_URL", "ws://pcsvoip-voice:9081/ws/audiofork")
+		fsAudioForkBase = envOr("AUDIO_FORK_WS_URL", "ws://localhost:9081/ws/audiofork")
 	}
 	wsURL := fmt.Sprintf("%s/%s", fsAudioForkBase, sessionID)
 
-	// Originate the call
-	callerID := envOr("CALLBACK_CALLER_ID", "+18447278647")
-	gateway := envOr("FREESWITCH_GATEWAY", "twilio")
+	// Originate the call — simple playback, audio_fork attached separately after answer
+	callerID := strings.TrimPrefix(envOr("CALLBACK_CALLER_ID", "18447278647"), "+")
+	gateway := envOr("FREESWITCH_GATEWAY", "coredial_east")
 	cmd := fmt.Sprintf(
-		"originate {origination_caller_id_number=%s,origination_caller_id_name=PCS VoIP,audio_fork_playback_direction=write,session_id=%s,ignore_early_media=true}sofia/gateway/%s/%s &socket(%s async full)",
-		callerID, sessionID, gateway, phone,
-		// Use the dialplan to answer + silence_stream + audio_fork
-		fmt.Sprintf("'%s' inline", buildDialplan(wsURL)),
-	)
-
-	// Actually, simpler approach: originate to an extension that does answer+audio_fork
-	// But FreeSWITCH dialplan needs the extension. Use inline dialplan instead.
-	cmd = fmt.Sprintf(
-		"originate {origination_caller_id_number=%s,origination_caller_id_name=PCS VoIP,ignore_early_media=true,execute_on_answer='uuid_audio_fork ${uuid} start %s mono 8k'}sofia/gateway/%s/%s &playback(silence_stream://-1)",
-		callerID, wsURL, gateway, phone,
+		"originate {origination_caller_id_number=%s,origination_caller_id_name=PCSVoIP,ignore_early_media=true,audio_fork_playback_direction=write}sofia/gateway/%s/%s &playback(silence_stream://-1)",
+		callerID, gateway, phone,
 	)
 
 	log.Printf("callback: originating call to %s (session %s)", phone, sessionID)
@@ -278,36 +269,116 @@ func handleCallbackRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("callback: originate response: %s", resp)
 
+	// Background: poll for the channel to appear and attach audio_fork once answered
+	go func() {
+		// Wait for the call to be answered (poll every 500ms for up to 60s)
+		var uuid string
+		for i := 0; i < 120; i++ {
+			time.Sleep(500 * time.Millisecond)
+			channels, err := client.api("show channels as json")
+			if err != nil {
+				continue
+			}
+			// Parse JSON to find our call by destination number
+			var result struct {
+				Rows []struct {
+					UUID      string `json:"uuid"`
+					Dest      string `json:"dest"`
+					Callstate string `json:"callstate"`
+				} `json:"rows"`
+			}
+			// The response has headers + body, extract the JSON part
+			jsonStart := strings.Index(channels, "{")
+			if jsonStart < 0 {
+				continue
+			}
+			if err := json.Unmarshal([]byte(channels[jsonStart:]), &result); err != nil {
+				continue
+			}
+			for _, row := range result.Rows {
+				if row.Dest == phone && (row.Callstate == "ACTIVE" || row.Callstate == "EARLY") {
+					uuid = row.UUID
+					break
+				}
+			}
+			if uuid != "" {
+				break
+			}
+		}
+		if uuid == "" {
+			log.Printf("callback: call to %s never answered or not found", phone)
+			return
+		}
+		log.Printf("callback: call answered, uuid=%s — attaching audio_fork to %s", uuid, wsURL)
+
+		// Set playback direction so mod_audio_fork injects AI audio into the WRITE path
+		client.api(fmt.Sprintf("uuid_setvar %s audio_fork_playback_direction write", uuid))
+
+		// Small delay to let the call stabilize
+		time.Sleep(500 * time.Millisecond)
+
+		// Attach mod_audio_fork
+		forkCmd := fmt.Sprintf("uuid_audio_fork %s start %s mono 8000", uuid, wsURL)
+		forkResp, err := client.api(forkCmd)
+		if err != nil {
+			log.Printf("callback: audio_fork error: %v", err)
+			return
+		}
+		log.Printf("callback: audio_fork response: %s", forkResp)
+	}()
+
 	json.NewEncoder(w).Encode(map[string]string{
-		"ok":         "Calling you now! Pegasi will be on the line shortly.",
+		"ok":         "Calling you now! Aria will be on the line shortly.",
 		"session_id": sessionID,
 	})
 }
 
-func buildDialplan(wsURL string) string {
-	return fmt.Sprintf("answer,uuid_audio_fork ${uuid} start %s mono 8k,playback silence_stream://-1", wsURL)
-}
-
 func normalizePhone(phone string) string {
-	// Strip non-digits except leading +
+	// Strip everything except digits
 	var b strings.Builder
-	for i, c := range phone {
-		if c == '+' && i == 0 {
-			b.WriteRune(c)
-		} else if c >= '0' && c <= '9' {
+	for _, c := range phone {
+		if c >= '0' && c <= '9' {
 			b.WriteRune(c)
 		}
 	}
 	p := b.String()
-	// Add +1 for US numbers
-	if !strings.HasPrefix(p, "+") {
-		if len(p) == 10 {
-			p = "+1" + p
-		} else if len(p) == 11 && p[0] == '1' {
-			p = "+" + p
-		}
+	// Ensure 11-digit US format: 1XXXXXXXXXX (no + prefix for CoreDial)
+	if len(p) == 10 {
+		p = "1" + p
 	}
 	return p
+}
+
+// fetchOutboundContext fetches the outbound callback persona from the admin module.
+func fetchOutboundContext() botCtx {
+	url := strings.TrimSpace(os.Getenv("BOT_CONTEXT_URL"))
+	if url == "" {
+		return fetchBotContext() // fallback
+	}
+	// Replace /api/bot/context with /api/bot/outbound
+	url = strings.Replace(url, "/api/bot/context", "/api/bot/outbound", 1)
+
+	req, _ := http.NewRequest("GET", url, nil)
+	if internalAPIToken != "" {
+		req.Header.Set("X-Internal-Token", internalAPIToken)
+	}
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("callback: fetch outbound context failed: %v", err)
+		return fetchBotContext()
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		log.Printf("callback: outbound context status %d", resp.StatusCode)
+		return fetchBotContext()
+	}
+	return botCtx{
+		text:     string(body),
+		voice:    resp.Header.Get("X-Bot-Voice"),
+		greeting: resp.Header.Get("X-Bot-Greeting"),
+	}
 }
 
 // ===================== AUDIO FORK WEBSOCKET BRIDGE =====================
@@ -344,11 +415,15 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 	defer fsConn.Close()
 	log.Printf("audiofork: FreeSWITCH connected (session %s, caller %s)", sessionID, callerName)
 
-	// Connect to Grok Realtime API
-	bc := fetchBotContext()
-	voice := bc.voice
+	// Connect to Grok Realtime API — use outbound persona's voice
+	bc := fetchBotContext() // fallback
+	ob := fetchOutboundContext()
+	voice := ob.voice
 	if voice == "" {
-		voice = "ara"
+		voice = bc.voice
+	}
+	if voice == "" {
+		voice = "kore"
 	}
 	grokVoice := normalizeVoice(voice)
 	grokURL := "wss://api.x.ai/v1/realtime?model=grok-4-1-fast-non-reasoning&voice=" + grokVoice
@@ -363,13 +438,8 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 	defer grokConn.Close()
 	log.Printf("audiofork: Grok connected (voice=%s)", grokVoice)
 
-	// Build callback-specific system prompt
-	callbackPrompt := bc.text + fmt.Sprintf(`
-
-IMPORTANT CONTEXT: You are calling %s back. They requested a callback from the PCS VoIP website.
-Greet them warmly by name, introduce yourself as Pegasi from PCS VoIP, and ask how you can help them today.
-You are acting as a receptionist and can help with scheduling appointments, answering questions about VoIP services, and taking messages.
-Keep the conversation professional and helpful.`, callerName)
+	// Build callback prompt from the outbound persona (already fetched above for voice).
+	callbackPrompt := ob.text + fmt.Sprintf("\n\nIMPORTANT: You are calling %s back. They requested this callback from the PCS VoIP website. Greet them by name.", callerName)
 
 	// Configure Grok session
 	sessionUpdate := map[string]interface{}{
@@ -395,8 +465,15 @@ Keep the conversation professional and helpful.`, callerName)
 	}
 	grokConn.WriteJSON(sessionUpdate)
 
-	// Trigger greeting
-	greeting := fmt.Sprintf("Hi %s! This is Pegasi from PCS VoIP returning your call. How can I help you today?", sess.FirstName)
+	// Trigger greeting from persona config, personalized with caller name
+	greeting := ob.greeting
+	if greeting == "" {
+		greeting = "Hi! This is Aria from PCS VoIP returning your call. How can I help you today?"
+	}
+	// Inject caller's first name
+	if sess != nil && sess.FirstName != "" {
+		greeting = strings.Replace(greeting, "Hi!", "Hi "+sess.FirstName+"!", 1)
+	}
 	grokConn.WriteJSON(map[string]interface{}{
 		"type": "conversation.item.create",
 		"item": map[string]interface{}{
