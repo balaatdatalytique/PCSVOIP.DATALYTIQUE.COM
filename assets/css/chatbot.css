@@ -451,6 +451,71 @@
 }
 
 /* ============================================
+   Call Request Form (inside chat)
+   ============================================ */
+
+.call-request-form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 8px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid #25D366;
+    max-width: 90%;
+}
+
+.call-request-form input {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 5px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.call-request-form input:focus {
+    border-color: #25D366;
+    outline: none;
+}
+
+.call-request-form button {
+    width: 100%;
+    padding: 10px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.2s;
+}
+
+.call-request-form button:hover {
+    background: #128C7E;
+}
+
+.call-request-form button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.call-request-form .call-cancel-btn {
+    background: transparent;
+    color: #888;
+    font-weight: 400;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.call-request-form .call-cancel-btn:hover {
+    color: #dc3545;
+    background: transparent;
+}
+
+/* ============================================
    Pegasi Voice Mode Styles
    ============================================ */
 

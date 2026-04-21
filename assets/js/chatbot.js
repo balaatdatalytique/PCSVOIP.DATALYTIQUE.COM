@@ -195,9 +195,124 @@ function resetChat() {
     document.getElementById('chatbot-input').value = '';
 }
 
-// --- Call initiation --- direct dial
+// --- Call request form inside chat ---
 function initiateCall() {
-    window.open('tel:+18447278647', '_self');
+    var chatMessages = document.getElementById('chat-messages');
+    var chatBody = document.getElementById('chatbot-body');
+    var chatFooter = document.getElementById('chatbot-footer');
+
+    // Make sure chat window is visible
+    var chatbotWindow = document.getElementById('chatbot-window');
+    var overlay = document.getElementById('chatbot-overlay');
+    if (chatbotWindow.style.display !== 'flex') {
+        chatbotWindow.style.display = 'flex';
+        overlay.style.display = 'block';
+        var icon = document.getElementById('chatbot-icon');
+        if (icon) icon.style.display = 'none';
+    }
+
+    chatBody.style.display = 'block';
+    chatMessages.style.display = 'block';
+    chatFooter.style.display = 'none';
+
+    // Remove any existing call form
+    var existing = document.getElementById('call-request-form');
+    if (existing) existing.remove();
+
+    // Add bot message
+    var msg = document.createElement('div');
+    msg.className = 'message bot-message';
+    msg.innerHTML = '<i class="fas fa-phone" style="color:#25D366;margin-right:6px;"></i>' +
+        'I\'d love to have our team call you! Please fill in your details below and we\'ll reach out shortly.';
+    chatMessages.appendChild(msg);
+
+    // Add inline form
+    var formDiv = document.createElement('div');
+    formDiv.id = 'call-request-form';
+    formDiv.className = 'call-request-form';
+    formDiv.innerHTML =
+        '<input type="text" id="call-first-name" placeholder="First Name *" required>' +
+        '<input type="text" id="call-last-name" placeholder="Last Name *" required>' +
+        '<input type="tel" id="call-phone" placeholder="Phone Number *" required>' +
+        '<div id="call-form-msg" style="display:none;font-size:13px;margin:4px 0;"></div>' +
+        '<button onclick="submitCallRequest()"><i class="fas fa-phone"></i> Request Callback</button>' +
+        '<button class="call-cancel-btn" onclick="cancelCallRequest()">Cancel</button>';
+    chatMessages.appendChild(formDiv);
+
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function submitCallRequest() {
+    var firstName = document.getElementById('call-first-name').value.trim();
+    var lastName = document.getElementById('call-last-name').value.trim();
+    var phone = document.getElementById('call-phone').value.trim();
+    var msgEl = document.getElementById('call-form-msg');
+
+    if (!firstName || !lastName || !phone) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#dc3545';
+        msgEl.textContent = 'Please fill in all fields.';
+        return;
+    }
+
+    // Disable the form
+    var form = document.getElementById('call-request-form');
+    var btns = form.querySelectorAll('button');
+    var inputs = form.querySelectorAll('input');
+    btns.forEach(function(b) { b.disabled = true; });
+    inputs.forEach(function(i) { i.disabled = true; });
+    btns[0].innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    var formData = new FormData();
+    formData.append('first_name', firstName);
+    formData.append('last_name', lastName);
+    formData.append('phone', phone);
+    formData.append('email', 'callback-request@pcsvoip.com');
+    formData.append('products', 'Callback Request');
+
+    fetch('/api/quote', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        form.remove();
+        var chatMessages = document.getElementById('chat-messages');
+        var chatBody = document.getElementById('chatbot-body');
+        var reply = document.createElement('div');
+        reply.className = 'message bot-message';
+        if (data.ok) {
+            reply.innerHTML = '<i class="fas fa-check-circle" style="color:#25D366;margin-right:6px;"></i>' +
+                'Thank you, <strong>' + firstName + '</strong>! Our team will call you at <strong>' + phone +
+                '</strong> shortly. Is there anything else I can help with?';
+        } else {
+            reply.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#dc3545;margin-right:6px;"></i>' +
+                'Sorry, something went wrong. Please call us directly at <strong>844-PCS-VOIP</strong>.';
+        }
+        chatMessages.appendChild(reply);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Restore chat footer
+        document.getElementById('chatbot-footer').style.display = 'flex';
+        document.getElementById('chatbot-input').focus();
+    })
+    .catch(function() {
+        form.remove();
+        var chatMessages = document.getElementById('chat-messages');
+        var reply = document.createElement('div');
+        reply.className = 'message bot-message';
+        reply.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#dc3545;margin-right:6px;"></i>' +
+            'Network error. Please call us directly at <strong>844-PCS-VOIP</strong>.';
+        chatMessages.appendChild(reply);
+        document.getElementById('chatbot-footer').style.display = 'flex';
+    });
+}
+
+function cancelCallRequest() {
+    var form = document.getElementById('call-request-form');
+    if (form) form.remove();
+    document.getElementById('chatbot-footer').style.display = 'flex';
+    document.getElementById('chatbot-input').focus();
 }
 
 // --- Time slot handling ---
