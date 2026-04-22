@@ -696,7 +696,15 @@ APPOINTMENT BOOKING: You have the ability to book appointments directly into the
 
 	// Email transcript in background
 	if len(finalTranscript) > 0 && sess != nil {
-		go emailTranscript(sess, finalTranscript)
+		// Check if an appointment was booked (scan transcript for confirmation)
+		apptBooked := false
+		for _, l := range finalTranscript {
+			if l.Speaker == "Aria" && (strings.Contains(strings.ToLower(l.Text), "appointment") || strings.Contains(strings.ToLower(l.Text), "scheduled") || strings.Contains(strings.ToLower(l.Text), "booked")) {
+				apptBooked = true
+				break
+			}
+		}
+		go emailTranscript(sess, finalTranscript, apptBooked)
 	}
 
 	// Clean up session
@@ -771,13 +779,21 @@ type transcriptLine struct {
 }
 
 // emailTranscript sends the call transcript to Sales via the web server's /api/quote endpoint.
-func emailTranscript(sess *callbackSession, lines []transcriptLine) {
+func emailTranscript(sess *callbackSession, lines []transcriptLine, apptBooked bool) {
 	var body strings.Builder
-	body.WriteString(fmt.Sprintf("AI Callback Transcript\n"))
-	body.WriteString(fmt.Sprintf("======================\n\n"))
+	body.WriteString("AI Callback Transcript\n")
+	body.WriteString("======================\n\n")
 	body.WriteString(fmt.Sprintf("Caller: %s %s\n", sess.FirstName, sess.LastName))
 	body.WriteString(fmt.Sprintf("Phone:  %s\n", sess.Phone))
 	body.WriteString(fmt.Sprintf("Time:   %s\n\n", sess.CreatedAt.Format("2006-01-02 15:04:05 MST")))
+
+	if apptBooked {
+		body.WriteString("*** APPOINTMENT BOOKED ***\n")
+		body.WriteString("An appointment was scheduled during this call.\n")
+		body.WriteString("Please check the CRM for details: https://crm.pegasiai.com\n")
+		body.WriteString("Go to Calendar to view and manage the appointment.\n\n")
+	}
+
 	body.WriteString("Conversation:\n")
 	body.WriteString("─────────────\n\n")
 	for _, l := range lines {
