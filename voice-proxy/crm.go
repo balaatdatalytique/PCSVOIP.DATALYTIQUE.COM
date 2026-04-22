@@ -171,6 +171,65 @@ var bookAppointmentToolDef = map[string]interface{}{
 	},
 }
 
+// bookAppointmentToolDefFull includes contact_name and phone fields for use in
+// inbound voice/text chat where the caller identity is not known in advance.
+var bookAppointmentToolDefFull = map[string]interface{}{
+	"type": "function",
+	"function": map[string]interface{}{
+		"name":        "book_appointment",
+		"description": "Book a follow-up appointment or demo for the caller in the PCS VoIP CRM. Use this when the caller wants to schedule a meeting, demo, consultation, or callback. Ask the caller for their name, phone number, preferred date and time before calling this tool. Confirm the booking details with the caller after the appointment is created.",
+		"parameters": map[string]interface{}{
+			"type": "object",
+			"properties": map[string]interface{}{
+				"contact_name": map[string]interface{}{
+					"type":        "string",
+					"description": "Full name of the person requesting the appointment.",
+				},
+				"phone": map[string]interface{}{
+					"type":        "string",
+					"description": "Phone number of the person. Include area code.",
+				},
+				"date": map[string]interface{}{
+					"type":        "string",
+					"description": "Appointment date in YYYY-MM-DD format. Convert natural language like 'next Tuesday' or 'tomorrow' to the actual date.",
+				},
+				"start_time": map[string]interface{}{
+					"type":        "string",
+					"description": "Start time in HH:mm (24-hour) format. Convert '2pm' to '14:00', '10:30am' to '10:30', etc.",
+				},
+				"end_time": map[string]interface{}{
+					"type":        "string",
+					"description": "End time in HH:mm (24-hour) format. If not specified, default to 30 minutes after start_time.",
+				},
+				"notes": map[string]interface{}{
+					"type":        "string",
+					"description": "Brief notes about what the appointment is for (e.g., 'VoIP demo for 25 phones', 'SIP trunking consultation').",
+				},
+			},
+			"required": []string{"contact_name", "phone", "date", "start_time"},
+		},
+	},
+}
+
+// handleBookAppointmentFull handles the tool call when contact_name and phone come from the tool args.
+func handleBookAppointmentFull(argsJSON string) string {
+	var args struct {
+		ContactName string `json:"contact_name"`
+		Phone       string `json:"phone"`
+		Date        string `json:"date"`
+		StartTime   string `json:"start_time"`
+		EndTime     string `json:"end_time"`
+		Notes       string `json:"notes"`
+	}
+	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
+		return fmt.Sprintf("Failed to parse appointment details: %v", err)
+	}
+	if args.ContactName == "" || args.Phone == "" || args.Date == "" || args.StartTime == "" {
+		return "Missing required fields: contact_name, phone, date, and start_time are all required. Please ask the caller for any missing information."
+	}
+	return handleBookAppointment(args.ContactName, args.Phone, argsJSON)
+}
+
 // handleBookAppointment executes the book_appointment tool call.
 func handleBookAppointment(callerName, callerPhone, argsJSON string) string {
 	var args struct {

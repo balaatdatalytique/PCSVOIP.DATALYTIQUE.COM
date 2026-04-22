@@ -247,7 +247,7 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 	// Build messages array for Grok using the latest dynamic context.
 	bc := fetchBotContext()
 	messages := []map[string]string{
-		{"role": "system", "content": bc.text},
+		{"role": "system", "content": bc.text + "\n\nYou can book appointments for visitors using the book_appointment tool. Ask for their name, phone number, preferred date and time. Today's date is " + time.Now().Format("2006-01-02") + "."},
 	}
 	// Add user name context if provided
 	if req.FirstName != "" {
@@ -340,7 +340,7 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 		"type": "session.update",
 		"session": map[string]interface{}{
 			"voice":        grokVoice,
-			"instructions": bc.text,
+			"instructions": bc.text + "\n\nYou can book appointments for callers using the book_appointment tool. Ask for their name, phone number, preferred date and time. Today's date is " + time.Now().Format("2006-01-02") + ".",
 			"turn_detection": map[string]interface{}{
 				"type":                "server_vad",
 				"threshold":           0.6,
@@ -354,7 +354,7 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 			"input_audio_transcription": map[string]interface{}{
 				"model": "grok-4-1-fast-non-reasoning",
 			},
-			"tools": []interface{}{coreDialToolDef},
+			"tools": []interface{}{coreDialToolDef, bookAppointmentToolDefFull},
 		},
 	}
 	if err := grokConn.WriteJSON(sessionUpdate); err != nil {
@@ -503,11 +503,14 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 						delete(voiceToolCalls, callID)
 						voiceToolMu.Unlock()
 
-						if name == "search_coredial_kb" || (ok && tc != nil) {
+						switch name {
+						case "search_coredial_kb":
 							go handleVoiceToolCall(grokConn, callID, name, argsStr)
+						case "book_appointment":
+							go handleVoiceBookingFromChat(grokConn, callID, argsStr)
 						}
 
-						// Tell browser we're searching
+						// Tell browser we're processing
 						clientConn.WriteMessage(websocket.TextMessage, []byte(`{"type":"response.created"}`))
 
 					case t == "input_audio_buffer.speech_started":
@@ -705,6 +708,26 @@ func handleVoiceToolCall(grokConn *websocket.Conn, callID, name, argsJSON string
 	})
 }
 
+// handleVoiceBookingFromChat handles the book_appointment tool call during an
+// inbound voice chat session (browser). Contact name and phone come from the
+// tool arguments since the visitor identity is not known in advance.
+func handleVoiceBookingFromChat(grokConn *websocket.Conn, callID, argsJSON string) {
+	log.Printf("crm: voice chat appointment booking, args: %s", argsJSON)
+	result := handleBookAppointmentFull(argsJSON)
+
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "conversation.item.create",
+		"item": map[string]interface{}{
+			"type":    "function_call_output",
+			"call_id": callID,
+			"output":  result,
+		},
+	})
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "response.create",
+	})
+}
+
 // normalizeVoice converts an admin-friendly lowercase voice name into the
 // format the xAI realtime API expects: "human_Xxxx" (e.g., "baxter" → "human_Baxter").
 // If the voice already has the prefix or is empty, it is returned as-is.
@@ -743,7 +766,7 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 			"messages":    richMessages,
 			"max_tokens":  800,
 			"temperature": 0.7,
-			"tools":       []interface{}{coreDialToolDef},
+			"tools":       []interface{}{coreDialToolDef, bookAppointmentToolDefFull},
 		}
 		body, _ := json.Marshal(grokReq)
 
@@ -801,27 +824,31 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 		})
 
 		for _, tc := range choice.Message.ToolCalls {
-			if tc.Function.Name == "search_coredial_kb" {
-				// Parse the query argument
+			var result string
+			switch tc.Function.Name {
+			case "search_coredial_kb":
 				var args struct {
 					Query string `json:"query"`
 				}
 				json.Unmarshal([]byte(tc.Function.Arguments), &args)
-
 				log.Printf("coredial: searching for %q", args.Query)
-				result, err := searchCoreDial(args.Query)
+				result, err = searchCoreDial(args.Query)
 				if err != nil {
 					result = fmt.Sprintf("Search failed: %v", err)
 					log.Printf("coredial: search error: %v", err)
 				}
-
-				// Add tool result to conversation
-				richMessages = append(richMessages, msgContent{
-					Role:       "tool",
-					Content:    result,
-					ToolCallID: tc.ID,
-				})
+			case "book_appointment":
+				log.Printf("crm: text chat appointment booking, args: %s", tc.Function.Arguments)
+				result = handleBookAppointmentFull(tc.Function.Arguments)
+			default:
+				result = fmt.Sprintf("Unknown tool: %s", tc.Function.Name)
 			}
+
+			richMessages = append(richMessages, msgContent{
+				Role:       "tool",
+				Content:    result,
+				ToolCallID: tc.ID,
+			})
 		}
 		// Loop back to get Grok's final answer incorporating the search results
 	}
