@@ -23,7 +23,8 @@ func Bootstrap(database *db.DB, adminUser, adminPassEnv, contextFilePath string)
 		adminUser = "admin"
 	}
 	users := NewUserRepo(database)
-	if _, err := users.Get(adminUser); errors.Is(err, db.ErrNotFound) {
+	existing, err := users.Get(adminUser)
+	if errors.Is(err, db.ErrNotFound) {
 		hash, err := normaliseHash(adminPassEnv)
 		if err != nil {
 			return err
@@ -38,6 +39,19 @@ func Bootstrap(database *db.DB, adminUser, adminPassEnv, contextFilePath string)
 		log.Printf("admin: bootstrapped admin user %q", adminUser)
 	} else if err != nil {
 		return err
+	} else if adminPassEnv != "" && !strings.HasPrefix(adminPassEnv, "$2") {
+		// Plaintext password supplied via env — update the hash if it changed.
+		if bcrypt.CompareHashAndPassword([]byte(existing.PasswordHash), []byte(adminPassEnv)) != nil {
+			hash, err := normaliseHash(adminPassEnv)
+			if err != nil {
+				return err
+			}
+			existing.PasswordHash = hash
+			if err := users.Create(existing); err != nil {
+				return err
+			}
+			log.Printf("admin: updated password for %q", adminUser)
+		}
 	}
 
 	bot := NewBotRepo(database)
