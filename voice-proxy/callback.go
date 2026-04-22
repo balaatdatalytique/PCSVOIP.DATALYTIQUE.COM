@@ -440,7 +440,15 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 	log.Printf("audiofork: Grok connected (voice=%s)", grokVoice)
 
 	// Build callback prompt from the outbound persona (already fetched above for voice).
-	callbackPrompt := ob.text + fmt.Sprintf("\n\nIMPORTANT: You are calling %s back. They requested this callback from the PCS VoIP website. Greet them by name.", callerName)
+	callbackPrompt := ob.text + fmt.Sprintf(`
+
+IMPORTANT: You are calling %s back. They requested this callback from the PCS VoIP website. Greet them by name.
+
+APPOINTMENT BOOKING: You have the ability to book appointments directly into the PCS VoIP CRM using the book_appointment tool. When a caller wants to schedule a demo, consultation, or follow-up:
+1. Ask for their preferred date and time.
+2. Use the book_appointment tool to create the appointment.
+3. Confirm the booking details with the caller after it's created.
+4. Today's date is %s. Use this to convert relative dates like "tomorrow", "next Tuesday", etc.`, callerName, time.Now().Format("2006-01-02"))
 
 	// Configure Grok session
 	sessionUpdate := map[string]interface{}{
@@ -461,7 +469,7 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 			"input_audio_transcription": map[string]interface{}{
 				"model": "grok-4-1-fast-non-reasoning",
 			},
-			"tools": []interface{}{coreDialToolDef},
+			"tools": []interface{}{coreDialToolDef, bookAppointmentToolDef},
 		},
 	}
 	grokConn.WriteJSON(sessionUpdate)
@@ -500,6 +508,9 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 		transcript    []transcriptLine
 		transcriptMu  sync.Mutex
 		aiPartial     strings.Builder // accumulates AI transcript deltas
+		// Tool call argument streaming
+		toolCalls   = make(map[string]*strings.Builder)
+		toolCallsMu sync.Mutex
 	)
 	closeAll := func() {
 		closeOnce.Do(func() {
@@ -632,13 +643,37 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 				audioBufferMu.Unlock()
 				fsConn.WriteJSON(map[string]interface{}{"type": "killAudio"})
 
+			case "response.function_call_arguments.delta":
+				// Stream tool call arguments
+				callID, _ := envelope["call_id"].(string)
+				delta, _ := envelope["delta"].(string)
+				toolCallsMu.Lock()
+				if _, ok := toolCalls[callID]; !ok {
+					toolCalls[callID] = &strings.Builder{}
+				}
+				toolCalls[callID].WriteString(delta)
+				toolCallsMu.Unlock()
+
 			case "response.function_call_arguments.done":
-				// Handle tool calls (CoreDial KB search)
 				callID, _ := envelope["call_id"].(string)
 				name, _ := envelope["name"].(string)
 				argsStr, _ := envelope["arguments"].(string)
-				if name == "search_coredial_kb" {
+
+				// Use streamed args if direct args empty
+				toolCallsMu.Lock()
+				if argsStr == "" {
+					if b, ok := toolCalls[callID]; ok {
+						argsStr = b.String()
+					}
+				}
+				delete(toolCalls, callID)
+				toolCallsMu.Unlock()
+
+				switch name {
+				case "search_coredial_kb":
 					go handleVoiceToolCall(grokConn, callID, name, argsStr)
+				case "book_appointment":
+					go handleVoiceAppointment(grokConn, callID, callerName, sess.Phone, argsStr)
 				}
 
 			case "error":
@@ -707,6 +742,25 @@ func resample8kTo24k(input []byte) []byte {
 		output[(outIdx+2)*2+1] = byte(s2 >> 8)
 	}
 	return output
+}
+
+// handleVoiceAppointment executes the book_appointment tool during a voice session
+// and sends the result back to Grok so it can speak the confirmation.
+func handleVoiceAppointment(grokConn *websocket.Conn, callID, callerName, callerPhone, argsJSON string) {
+	log.Printf("crm: booking appointment for %s, args: %s", callerName, argsJSON)
+	result := handleBookAppointment(callerName, callerPhone, argsJSON)
+
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "conversation.item.create",
+		"item": map[string]interface{}{
+			"type":    "function_call_output",
+			"call_id": callID,
+			"output":  result,
+		},
+	})
+	grokConn.WriteJSON(map[string]interface{}{
+		"type": "response.create",
+	})
 }
 
 // ===================== TRANSCRIPT + EMAIL =====================

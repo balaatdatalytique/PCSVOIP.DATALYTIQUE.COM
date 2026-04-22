@@ -84,6 +84,9 @@ services:
       - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
       - SMTP_FROM_NAME=${SMTP_FROM_NAME:-PCS VoIP Aria}
       - SMTP_ADMIN_EMAIL=${SMTP_ADMIN_EMAIL:-}
+      - CRM_API_URL=${CRM_API_URL:-http://smartcrm:9005}
+      - CRM_USERNAME=${CRM_USERNAME:-admin@pegasiai.com}
+      - CRM_PASSWORD=${CRM_PASSWORD:-Admin@2026}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
