@@ -97,6 +97,11 @@ func Run(cfg *config.Config) error {
 
 	// Static assets for admin UI live under /web/static/.
 	staticFS := http.FileServer(http.Dir(filepath.Join(cfg.ContentDir, "web", "static")))
+	// Admin static assets require authentication.
+	adminStaticFS := http.StripPrefix("/web/static/admin/",
+		http.FileServer(http.Dir(filepath.Join(cfg.ContentDir, "web", "static", "admin"))))
+	mux.Handle("/web/static/admin/", middleware.Auth(authMgr, adminStaticFS))
+	// Public static assets (non-admin).
 	mux.Handle("/web/static/", http.StripPrefix("/web/static/", staticFS))
 
 	// Public site (must be last).
@@ -113,8 +118,9 @@ func Run(cfg *config.Config) error {
 	}
 	mux.Handle("/", middleware.VisitorTrack(track, site))
 
-	// Global middleware (logging, recovery).
+	// Global middleware (security headers, logging, recovery).
 	var h http.Handler = mux
+	h = middleware.SecurityHeaders(h)
 	h = middleware.Logging(h)
 	h = middleware.Recovery(h)
 
