@@ -16,6 +16,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/smtp"
 	"net/textproto"
 	"os"
 	"strings"
@@ -495,6 +496,10 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 		audioBuffer   []byte
 		audioBufferMu sync.Mutex
 		lastSend      time.Time
+		// Transcript collection
+		transcript    []transcriptLine
+		transcriptMu  sync.Mutex
+		aiPartial     strings.Builder // accumulates AI transcript deltas
 	)
 	closeAll := func() {
 		closeOnce.Do(func() {
@@ -590,6 +595,36 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 					audioBufferMu.Unlock()
 				}
 
+			case "response.output_audio_transcript.delta":
+				// Accumulate AI speech transcript
+				if delta, _ := envelope["delta"].(string); delta != "" {
+					transcriptMu.Lock()
+					aiPartial.WriteString(delta)
+					transcriptMu.Unlock()
+				}
+
+			case "response.done":
+				// Flush AI transcript
+				transcriptMu.Lock()
+				if aiPartial.Len() > 0 {
+					transcript = append(transcript, transcriptLine{Speaker: "Aria", Text: aiPartial.String()})
+					aiPartial.Reset()
+				}
+				transcriptMu.Unlock()
+
+			case "conversation.item.input_audio_transcription.completed":
+				// Caller speech transcript
+				if text, _ := envelope["transcript"].(string); text != "" {
+					transcriptMu.Lock()
+					// Flush any pending AI partial first
+					if aiPartial.Len() > 0 {
+						transcript = append(transcript, transcriptLine{Speaker: "Aria", Text: aiPartial.String()})
+						aiPartial.Reset()
+					}
+					transcript = append(transcript, transcriptLine{Speaker: callerName, Text: text})
+					transcriptMu.Unlock()
+				}
+
 			case "input_audio_buffer.speech_started":
 				// Barge-in: clear audio buffer and tell FS to stop playback
 				audioBufferMu.Lock()
@@ -614,6 +649,20 @@ func handleAudioFork(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("audiofork: session %s ended", sessionID)
+
+	// Flush any remaining AI partial transcript
+	transcriptMu.Lock()
+	if aiPartial.Len() > 0 {
+		transcript = append(transcript, transcriptLine{Speaker: "Aria", Text: aiPartial.String()})
+	}
+	finalTranscript := make([]transcriptLine, len(transcript))
+	copy(finalTranscript, transcript)
+	transcriptMu.Unlock()
+
+	// Email transcript in background
+	if len(finalTranscript) > 0 && sess != nil {
+		go emailTranscript(sess, finalTranscript)
+	}
 
 	// Clean up session
 	pendingMu.Lock()
@@ -658,6 +707,95 @@ func resample8kTo24k(input []byte) []byte {
 		output[(outIdx+2)*2+1] = byte(s2 >> 8)
 	}
 	return output
+}
+
+// ===================== TRANSCRIPT + EMAIL =====================
+
+type transcriptLine struct {
+	Speaker string
+	Text    string
+}
+
+// emailTranscript sends the call transcript to Sales via the web server's /api/quote endpoint.
+func emailTranscript(sess *callbackSession, lines []transcriptLine) {
+	var body strings.Builder
+	body.WriteString(fmt.Sprintf("AI Callback Transcript\n"))
+	body.WriteString(fmt.Sprintf("======================\n\n"))
+	body.WriteString(fmt.Sprintf("Caller: %s %s\n", sess.FirstName, sess.LastName))
+	body.WriteString(fmt.Sprintf("Phone:  %s\n", sess.Phone))
+	body.WriteString(fmt.Sprintf("Time:   %s\n\n", sess.CreatedAt.Format("2006-01-02 15:04:05 MST")))
+	body.WriteString("Conversation:\n")
+	body.WriteString("─────────────\n\n")
+	for _, l := range lines {
+		body.WriteString(fmt.Sprintf("%s: %s\n\n", l.Speaker, strings.TrimSpace(l.Text)))
+	}
+
+	// Send via the web server's quote endpoint (reuses SMTP config)
+	formData := fmt.Sprintf(
+		"first_name=%s&last_name=%s&phone=%s&email=callback-transcript@pcsvoip.com&products=AI+Callback+Transcript&business=Transcript+below&num_phones=&num_locations=",
+		sess.FirstName, sess.LastName, sess.Phone,
+	)
+
+	// Actually, better to use a dedicated internal endpoint. But for now,
+	// we'll POST the transcript directly to the web server's SMTP-backed endpoint.
+	// Use a simple approach: POST to /api/quote with the transcript in the business field.
+	// This is a workaround — the real fix would be a dedicated /api/email endpoint.
+
+	// Instead, let's send the email directly using SMTP env vars available to voice-proxy.
+	smtpHost := envOr("SMTP_HOST", "")
+	smtpPort := envOr("SMTP_PORT", "587")
+	smtpUser := envOr("SMTP_USER", "")
+	smtpPass := envOr("SMTP_PASS", "")
+	smtpTo := envOr("SMTP_ADMIN_EMAIL", smtpUser)
+
+	if smtpHost == "" || smtpUser == "" {
+		// Fall back: POST to web server's quote endpoint
+		log.Printf("transcript: no SMTP config, using /api/quote fallback")
+		url := strings.TrimSpace(os.Getenv("BOT_CONTEXT_URL"))
+		if url == "" {
+			log.Printf("transcript: no BOT_CONTEXT_URL, cannot send transcript")
+			return
+		}
+		url = strings.Replace(url, "/api/bot/context", "/api/quote", 1)
+		resp, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader(formData))
+		if err != nil {
+			log.Printf("transcript: fallback email error: %v", err)
+			return
+		}
+		resp.Body.Close()
+		log.Printf("transcript: sent via fallback /api/quote")
+		return
+	}
+
+	// Direct SMTP send
+	from := envOr("SMTP_FROM_EMAIL", smtpUser)
+	fromName := envOr("SMTP_FROM_NAME", "PCS VoIP Aria")
+	subject := fmt.Sprintf("AI Callback Transcript: %s %s (%s)", sess.FirstName, sess.LastName, sess.Phone)
+
+	msg := []byte("To: " + smtpTo + "\r\n" +
+		"From: " + fromName + " <" + from + ">\r\n" +
+		"Subject: " + subject + "\r\n" +
+		"MIME-Version: 1.0\r\n" +
+		"Content-Type: text/plain; charset=utf-8\r\n" +
+		"\r\n" + body.String())
+
+	var port int
+	fmt.Sscanf(smtpPort, "%d", &port)
+	if port == 0 {
+		port = 587
+	}
+
+	if err := sendTranscriptEmail(smtpHost, port, smtpUser, smtpPass, from, smtpTo, msg); err != nil {
+		log.Printf("transcript: email error: %v", err)
+	} else {
+		log.Printf("transcript: emailed %d lines to %s", len(lines), smtpTo)
+	}
+}
+
+func sendTranscriptEmail(host string, port int, user, pass, from, to string, msg []byte) error {
+	addr := fmt.Sprintf("%s:%d", host, port)
+	auth := smtp.PlainAuth("", user, pass, host)
+	return smtp.SendMail(addr, auth, from, []string{to}, msg)
 }
 
 // resample24kTo8k downsamples PCM16 mono from 24kHz to 8kHz via decimation with averaging.

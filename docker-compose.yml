@@ -77,6 +77,13 @@ services:
       - FREESWITCH_GATEWAY=${FREESWITCH_GATEWAY:-twilio}
       - CALLBACK_CALLER_ID=${CALLBACK_CALLER_ID:-+18447278647}
       - AUDIO_FORK_WS_URL=${AUDIO_FORK_WS_URL:-ws://pcsvoip-voice:9081/ws/audiofork}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-PCS VoIP Aria}
+      - SMTP_ADMIN_EMAIL=${SMTP_ADMIN_EMAIL:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
