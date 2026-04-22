@@ -770,7 +770,7 @@ func emailTranscript(sess *callbackSession, lines []transcriptLine) {
 	// Direct SMTP send
 	from := envOr("SMTP_FROM_EMAIL", smtpUser)
 	fromName := envOr("SMTP_FROM_NAME", "PCS VoIP Aria")
-	subject := fmt.Sprintf("AI Callback Transcript: %s %s (%s)", sess.FirstName, sess.LastName, sess.Phone)
+	subject := fmt.Sprintf("[Website Lead - AI Voice Callback] %s %s — %s", sess.FirstName, sess.LastName, sess.Phone)
 
 	msg := []byte("To: " + smtpTo + "\r\n" +
 		"From: " + fromName + " <" + from + ">\r\n" +
