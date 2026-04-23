@@ -5,19 +5,90 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign in · PCS VoIP Admin</title>
 <link rel="icon" type="image/png" href="/assets/img/favicon-pcs.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="/web/static/admin/admin.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #141d38 0%, #0a3a5a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.login-card {
+  width: 380px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 40px 34px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+}
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.login-brand img { width: 52px; height: 52px; border-radius: 10px; }
+.login-brand strong { display: block; color: #141d38; font-size: 20px; }
+.login-brand span { display: block; color: #6c7689; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.login-card label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c7689;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+.login-card input[type="text"],
+.login-card input[type="password"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d8dde6;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login-card input:focus {
+  outline: none;
+  border-color: #67bd4a;
+  box-shadow: 0 0 0 3px rgba(103,189,74,0.18);
+}
+.login-card button {
+  width: 100%;
+  background: #67bd4a;
+  color: #fff;
+  border: 0;
+  padding: 13px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-card button:hover { background: #4a9633; }
+.login-alert {
+  background: #ffe1e3;
+  color: #a51a26;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+</style>
 </head>
-<body class="admin-login-body">
-<div class="admin-login-card">
-  <div class="admin-login-brand">
+<body>
+<div class="login-card">
+  <div class="login-brand">
     <img src="/assets/img/favicon-pcs.png" alt="PCS VoIP">
     <div>
       <strong>PCS VoIP</strong>
       <span>Administration</span>
     </div>
   </div>
-  {{if .Error}}<div class="admin-alert">{{.Error}}</div>{{end}}
+  {{if .Error}}<div class="login-alert">{{.Error}}</div>{{end}}
   <form method="POST" action="/admin/login" autocomplete="off">
     <input type="hidden" name="_csrf" value="{{.CSRFToken}}">
     <label>Username</label>
