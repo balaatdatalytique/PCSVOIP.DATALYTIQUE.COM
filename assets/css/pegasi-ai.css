@@ -1,6 +1,95 @@
 /* Pegasi AI Solutions — AAIRC-inspired tile design */
 
 /* =============================================
+   AI Product Sub-Navigation Bar
+   ============================================= */
+
+.ai-product-nav {
+    background: #141D38;
+    padding: 12px 0;
+    border-bottom: 3px solid #25D366;
+}
+
+.ai-product-nav .container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ai-product-nav .ai-nav-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    background: #25D366;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.ai-product-nav .ai-nav-back:hover {
+    background: #128C7E;
+    color: #fff;
+}
+
+.ai-product-nav .ai-nav-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.2);
+    margin: 0 4px;
+}
+
+.ai-product-nav .ai-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ai-product-nav .ai-nav-link {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.ai-product-nav .ai-nav-link:hover {
+    color: #fff;
+    border-color: #25D366;
+    background: rgba(37, 211, 102, 0.1);
+}
+
+.ai-product-nav .ai-nav-link.active {
+    color: #25D366;
+    border-color: #25D366;
+    background: rgba(37, 211, 102, 0.15);
+    font-weight: 600;
+}
+
+@media (max-width: 575px) {
+    .ai-product-nav .container {
+        justify-content: center;
+    }
+    .ai-product-nav .ai-nav-divider {
+        display: none;
+    }
+    .ai-product-nav .ai-nav-links {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* =============================================
    AAIRC-Style Product Tiles
    Sharp corners, dark cards, accent-fill hover
    ============================================= */

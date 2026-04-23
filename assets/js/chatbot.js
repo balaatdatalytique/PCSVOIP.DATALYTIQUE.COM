@@ -371,9 +371,34 @@ function addMessage(message, isUser) {
 
     var messageDiv = document.createElement('div');
     messageDiv.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
-    messageDiv.textContent = message;
+    if (isUser) {
+        messageDiv.textContent = message;
+    } else {
+        messageDiv.innerHTML = linkify(message);
+    }
     chatMessages.appendChild(messageDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// Convert phone numbers and emails in bot messages to clickable links
+function linkify(text) {
+    // Escape HTML first to prevent XSS
+    var div = document.createElement('div');
+    div.textContent = text;
+    var escaped = div.innerHTML;
+
+    // Email addresses → mailto links
+    escaped = escaped.replace(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/g,
+        '<a href="mailto:$1" style="color:#25D366;text-decoration:underline;">$1</a>');
+
+    // Phone numbers: 844-PCS-VOIP, (844) 727-8647, 844-727-8647, +1-844-727-8647, etc.
+    escaped = escaped.replace(/(\+?1?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})/g,
+        '<a href="tel:$1" style="color:#25D366;text-decoration:underline;">$1</a>');
+    // Also match vanity numbers like 844-PCS-VOIP
+    escaped = escaped.replace(/(\d{3}[-.\s][A-Z]{3}[-.\s][A-Z]{4})/g,
+        '<a href="tel:+18447278647" style="color:#25D366;text-decoration:underline;">$1</a>');
+
+    return escaped;
 }
 
 // --- Load topic (no-op, context is handled by the Grok proxy) ---

@@ -181,6 +181,7 @@ func (a *API) QuoteSubmit(w http.ResponseWriter, r *http.Request) {
 	lastName := strings.TrimSpace(r.PostFormValue("last_name"))
 	email := strings.TrimSpace(r.PostFormValue("email"))
 	phone := strings.TrimSpace(r.PostFormValue("phone"))
+	businessPhone := strings.TrimSpace(r.PostFormValue("business_phone"))
 	business := strings.TrimSpace(r.PostFormValue("business"))
 	numPhones := strings.TrimSpace(r.PostFormValue("num_phones"))
 	numLocations := strings.TrimSpace(r.PostFormValue("num_locations"))
@@ -239,7 +240,8 @@ func (a *API) QuoteSubmit(w http.ResponseWriter, r *http.Request) {
 
 Name: %s %s
 Email: %s
-Phone: %s
+Cell Phone: %s
+Business Phone: %s
 Business: %s
 Number of Phones: %s
 Number of Locations: %s
@@ -247,7 +249,7 @@ Number of Locations: %s
 Products/Services Interested In:
 %s
 `,
-		firstName, lastName, email, phone, business, numPhones, numLocations, productList)
+		firstName, lastName, email, phone, businessPhone, business, numPhones, numLocations, productList)
 
 	msg := []byte("To: " + to + "\r\n" +
 		"From: " + fromName + " <" + from + ">\r\n" +
