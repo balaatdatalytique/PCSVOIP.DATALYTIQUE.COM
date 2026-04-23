@@ -442,6 +442,15 @@ func computeSummary(evs []VisitorEvent) VisitorPageSummary {
 // GetVisitorDetail returns everything needed for the per-visitor drill-down
 // page: the Visitor record, all page visits with dwell times, per-path stats,
 // and the visitor's bot interactions.
+// GetVisitor returns the Visitor summary record by ID.
+func (r *VisitorRepo) GetVisitor(visitorID string) (*Visitor, error) {
+	var v Visitor
+	if err := r.DB.Get(db.BucketVisitors, visitorID, &v); err != nil {
+		return nil, err
+	}
+	return &v, nil
+}
+
 func (r *VisitorRepo) GetVisitorDetail(visitorID string) (*VisitorDetail, error) {
 	var v Visitor
 	if err := r.DB.Get(db.BucketVisitors, visitorID, &v); err != nil {

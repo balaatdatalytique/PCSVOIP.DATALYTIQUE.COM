@@ -59,7 +59,7 @@
           <td class="text-muted text-nowrap">{{fmtTime .Timestamp}}</td>
           <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
           <td class="mono small">{{.IP}}</td>
-          <td class="mono small">{{truncate 12 .VisitorID}}</td>
+          <td class="small">{{index $.GeoLabels .VisitorID}}</td>
           <td class="text-truncate" style="max-width:340px">
             {{if eq .Type "page_view"}}{{.Path}}{{if .Referrer}}<div class="text-muted small">← {{truncate 60 .Referrer}}</div>{{end}}
             {{else}}<span class="text-dark">{{truncate 80 .Message}}</span>

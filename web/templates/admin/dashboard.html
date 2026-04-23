@@ -51,7 +51,7 @@
         <tr>
           <td class="text-muted">{{fmtTime .Timestamp}}</td>
           <td><span class="pill pill-{{.Type}}">{{eventLabel .Type}}</span></td>
-          <td class="mono">{{truncate 12 .VisitorID}}</td>
+          <td class="small">{{index $.GeoLabels .VisitorID}}</td>
           <td class="text-truncate" style="max-width:480px">
             {{if eq .Type "page_view"}}{{.Path}}{{else}}{{truncate 120 .Message}}{{end}}
           </td>

@@ -184,6 +184,33 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	botCfg, _ := h.Bot.Get()
 	recent, _ := h.Visitors.RecentEvents(15)
 
+	// Build geo labels for dashboard recent events
+	dashGeo := make(map[string]string, len(recent))
+	for _, ev := range recent {
+		if _, ok := dashGeo[ev.VisitorID]; ok {
+			continue
+		}
+		if v, err := h.Visitors.GetVisitor(ev.VisitorID); err == nil && v != nil {
+			parts := []string{}
+			if v.City != "" {
+				parts = append(parts, v.City)
+			}
+			if v.Region != "" {
+				parts = append(parts, v.Region)
+			}
+			if v.CountryCode != "" {
+				parts = append(parts, v.CountryCode)
+			}
+			if len(parts) > 0 {
+				dashGeo[ev.VisitorID] = strings.Join(parts, ", ")
+			} else {
+				dashGeo[ev.VisitorID] = ev.VisitorID[:min(12, len(ev.VisitorID))]
+			}
+		} else {
+			dashGeo[ev.VisitorID] = ev.VisitorID[:min(12, len(ev.VisitorID))]
+		}
+	}
+
 	h.render(w, r, "dashboard.html", map[string]any{
 		"Title":         "Overview",
 		"NavActive":     "dashboard",
@@ -194,6 +221,7 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		"BotEnabled":    botCfg != nil && botCfg.Enabled,
 		"BotUpdatedAt":  botCfg.UpdatedAt,
 		"Recent":        recent,
+		"GeoLabels":     dashGeo,
 	})
 }
 
@@ -495,12 +523,40 @@ func (h *Handler) VisitorsPage(w http.ResponseWriter, r *http.Request) {
 	since := time.Now().Add(-24 * time.Hour)
 	pageViews24h, chats24h, voices24h := h.Visitors.CountByTypeSince(since)
 
+	// Build visitor-ID → geo label map for the events table.
+	geoLabels := make(map[string]string, len(eventsPage.Events))
+	for _, ev := range eventsPage.Events {
+		if _, ok := geoLabels[ev.VisitorID]; ok {
+			continue
+		}
+		if v, err := h.Visitors.GetVisitor(ev.VisitorID); err == nil && v != nil {
+			parts := []string{}
+			if v.City != "" {
+				parts = append(parts, v.City)
+			}
+			if v.Region != "" {
+				parts = append(parts, v.Region)
+			}
+			if v.CountryCode != "" {
+				parts = append(parts, v.CountryCode)
+			}
+			if len(parts) > 0 {
+				geoLabels[ev.VisitorID] = strings.Join(parts, ", ")
+			} else {
+				geoLabels[ev.VisitorID] = ev.VisitorID[:min(12, len(ev.VisitorID))]
+			}
+		} else {
+			geoLabels[ev.VisitorID] = ev.VisitorID[:min(12, len(ev.VisitorID))]
+		}
+	}
+
 	h.render(w, r, "visitors.html", map[string]any{
 		"Title":     "Visitors",
 		"NavActive": "visitors",
 		"Events":    eventsPage,
 		"Visitors":  visitorsPage,
 		"PageStats": pageSummaries,
+		"GeoLabels": geoLabels,
 		"Counts": map[string]int{
 			"page_view": pageViews24h,
 			"bot_chat":  chats24h,
