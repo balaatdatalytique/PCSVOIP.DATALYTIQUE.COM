@@ -1,57 +1,111 @@
-/* pagetable.css */
+/* pagetable.css — API Integration table */
 
-/* Container for the custom table */
 .pt-container {
-  margin: 20px;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Custom Table Styling */
 #pt-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  table-layout: fixed;
 }
 
 #pt-table th,
 #pt-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  border: 1px solid #e0e0e0;
+  padding: 12px 14px;
   text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+  word-wrap: break-word;
 }
 
 #pt-table th {
-  background-color: #f2f2f2;
+  background: #141D38;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Application Logo Styling */
+#pt-table tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+#pt-table tbody tr:hover {
+  background: #e8f5e9;
+}
+
+/* Column widths */
+#pt-table th:nth-child(1),
+#pt-table td:nth-child(1) { width: 15%; }
+#pt-table th:nth-child(2),
+#pt-table td:nth-child(2) { width: 45%; text-align: left; }
+#pt-table th:nth-child(3),
+#pt-table td:nth-child(3) { width: 15%; }
+#pt-table th:nth-child(4),
+#pt-table td:nth-child(4) { width: 25%; }
+
+/* Application Logo */
 .pt-logo-link img.pt-app-logo {
+  max-width: 100px;
+  max-height: 40px;
+  height: auto;
+  object-fit: contain;
   vertical-align: middle;
-  /*height: 30px;*/
-  max-width: 30%;
 }
 
-/* OS Logo Styling */
+/* OS Logo */
 .pt-os-img {
   height: 20px !important;
-  margin: 0 5px;
+  width: auto;
+  margin: 0 3px;
 }
 
-/* Pagination Styling */
+/* Pagination */
 .pt-pagination {
   text-align: center;
-  margin: 20px 0;
+  margin: 20px 0 0;
 }
 
 .pt-pagination .pt-page {
   display: inline-block;
-  margin: 0 5px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
+  margin: 0 3px;
+  padding: 6px 12px;
+  border: 1px solid #d8dde6;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.pt-pagination .pt-page:hover {
+  border-color: #25D366;
+  color: #25D366;
 }
 
 .pt-pagination .pt-page.active {
-  background-color: #67bd4a;
+  background: #25D366;
   color: #fff;
-  border-color: #67bd4a;
+  border-color: #25D366;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #pt-table {
+    table-layout: auto;
+  }
+  #pt-table th,
+  #pt-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+  .pt-logo-link img.pt-app-logo {
+    max-width: 60px;
+    max-height: 30px;
+  }
 }
