@@ -187,12 +187,25 @@ async function closeChatbot() {
 }
 
 function resetChat() {
+    notifySessionEnd(currentSessionId);
     currentSessionId = null;
     selectedTopic = null;
 
     document.getElementById('user-form').style.display = 'none';
     document.getElementById('chat-messages').innerHTML = '';
     document.getElementById('chatbot-input').value = '';
+}
+
+// Notify server that the chat session ended so it can email the transcript.
+function notifySessionEnd(sessionId) {
+    if (!sessionId) return;
+    var url = window.location.origin + '/api/chat/end';
+    var body = JSON.stringify({ session_id: sessionId });
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+    } else {
+        fetch(url, { method: 'POST', body: body, headers: { 'Content-Type': 'application/json' }, keepalive: true });
+    }
 }
 
 // --- Call request form inside chat ---
@@ -532,9 +545,14 @@ async function startVoiceSession() {
     // Create audio context at 24kHz for Grok
     voiceAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
 
-    // Connect to voice proxy
+    // Connect to voice proxy (pass visitor name if known)
     try {
-        voiceWs = new WebSocket(getVoiceProxyUrl());
+        var wsUrl = getVoiceProxyUrl();
+        if (currentUserInfo && currentUserInfo.firstName) {
+            wsUrl += '?first_name=' + encodeURIComponent(currentUserInfo.firstName) +
+                     '&last_name=' + encodeURIComponent(currentUserInfo.lastName || '');
+        }
+        voiceWs = new WebSocket(wsUrl);
     } catch (err) {
         updateVoiceStatus('Connection failed');
         console.error('WebSocket error:', err);

@@ -778,18 +778,24 @@ type transcriptLine struct {
 	Text    string
 }
 
-// emailTranscript sends the call transcript to Sales via the web server's /api/quote endpoint.
+// emailTranscript sends the callback transcript (backward-compatible wrapper).
 func emailTranscript(sess *callbackSession, lines []transcriptLine, apptBooked bool) {
+	emailInteractionTranscript("AI Voice Callback", sess.FirstName, sess.LastName, sess.Phone, lines, apptBooked, sess.CreatedAt)
+}
+
+// emailInteractionTranscript sends a conversation transcript to Sales via SMTP.
+// channel identifies the source (e.g. "AI Voice Callback", "Text Chat", "Voice Chat").
+func emailInteractionTranscript(channel, firstName, lastName, contactInfo string, lines []transcriptLine, apptBooked bool, startTime time.Time) {
 	var body strings.Builder
-	body.WriteString("AI Callback Transcript\n")
+	body.WriteString(channel + " Transcript\n")
 	body.WriteString("======================\n\n")
-	body.WriteString(fmt.Sprintf("Caller: %s %s\n", sess.FirstName, sess.LastName))
-	body.WriteString(fmt.Sprintf("Phone:  %s\n", sess.Phone))
-	body.WriteString(fmt.Sprintf("Time:   %s\n\n", sess.CreatedAt.Format("2006-01-02 15:04:05 MST")))
+	body.WriteString(fmt.Sprintf("Visitor: %s %s\n", firstName, lastName))
+	body.WriteString(fmt.Sprintf("Contact: %s\n", contactInfo))
+	body.WriteString(fmt.Sprintf("Time:    %s\n\n", startTime.Format("2006-01-02 15:04:05 MST")))
 
 	if apptBooked {
 		body.WriteString("*** APPOINTMENT BOOKED ***\n")
-		body.WriteString("An appointment was scheduled during this call.\n")
+		body.WriteString("An appointment was scheduled during this interaction.\n")
 		body.WriteString("Please check the CRM for details: https://crm.pegasiai.com\n")
 		body.WriteString("Go to Calendar to view and manage the appointment.\n\n")
 	}
@@ -800,18 +806,6 @@ func emailTranscript(sess *callbackSession, lines []transcriptLine, apptBooked b
 		body.WriteString(fmt.Sprintf("%s: %s\n\n", l.Speaker, strings.TrimSpace(l.Text)))
 	}
 
-	// Send via the web server's quote endpoint (reuses SMTP config)
-	formData := fmt.Sprintf(
-		"first_name=%s&last_name=%s&phone=%s&email=callback-transcript@pcsvoip.com&products=AI+Callback+Transcript&business=Transcript+below&num_phones=&num_locations=",
-		sess.FirstName, sess.LastName, sess.Phone,
-	)
-
-	// Actually, better to use a dedicated internal endpoint. But for now,
-	// we'll POST the transcript directly to the web server's SMTP-backed endpoint.
-	// Use a simple approach: POST to /api/quote with the transcript in the business field.
-	// This is a workaround — the real fix would be a dedicated /api/email endpoint.
-
-	// Instead, let's send the email directly using SMTP env vars available to voice-proxy.
 	smtpHost := envOr("SMTP_HOST", "")
 	smtpPort := envOr("SMTP_PORT", "587")
 	smtpUser := envOr("SMTP_USER", "")
@@ -819,28 +813,13 @@ func emailTranscript(sess *callbackSession, lines []transcriptLine, apptBooked b
 	smtpTo := envOr("SMTP_ADMIN_EMAIL", smtpUser)
 
 	if smtpHost == "" || smtpUser == "" {
-		// Fall back: POST to web server's quote endpoint
-		log.Printf("transcript: no SMTP config, using /api/quote fallback")
-		url := strings.TrimSpace(os.Getenv("BOT_CONTEXT_URL"))
-		if url == "" {
-			log.Printf("transcript: no BOT_CONTEXT_URL, cannot send transcript")
-			return
-		}
-		url = strings.Replace(url, "/api/bot/context", "/api/quote", 1)
-		resp, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader(formData))
-		if err != nil {
-			log.Printf("transcript: fallback email error: %v", err)
-			return
-		}
-		resp.Body.Close()
-		log.Printf("transcript: sent via fallback /api/quote")
+		log.Printf("transcript[%s]: no SMTP config, skipping email", channel)
 		return
 	}
 
-	// Direct SMTP send
 	from := envOr("SMTP_FROM_EMAIL", smtpUser)
 	fromName := envOr("SMTP_FROM_NAME", "PCS VoIP Aria")
-	subject := fmt.Sprintf("[Website Lead - AI Voice Callback] %s %s — %s", sess.FirstName, sess.LastName, sess.Phone)
+	subject := fmt.Sprintf("[Website Lead - %s] %s %s — %s", channel, firstName, lastName, contactInfo)
 
 	msg := []byte("To: " + smtpTo + "\r\n" +
 		"From: " + fromName + " <" + from + ">\r\n" +
@@ -856,9 +835,9 @@ func emailTranscript(sess *callbackSession, lines []transcriptLine, apptBooked b
 	}
 
 	if err := sendTranscriptEmail(smtpHost, port, smtpUser, smtpPass, from, smtpTo, msg); err != nil {
-		log.Printf("transcript: email error: %v", err)
+		log.Printf("transcript[%s]: email error: %v", channel, err)
 	} else {
-		log.Printf("transcript: emailed %d lines to %s", len(lines), smtpTo)
+		log.Printf("transcript[%s]: emailed %d lines to %s", channel, len(lines), smtpTo)
 	}
 }
 

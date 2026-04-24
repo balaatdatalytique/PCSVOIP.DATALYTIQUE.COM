@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -15,6 +16,91 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// ===================== PER-IP RATE LIMITER =====================
+
+type rateLimiter struct {
+	max     int
+	window  time.Duration
+	mu      sync.Mutex
+	buckets map[string]*rlBucket
+}
+
+type rlBucket struct {
+	count int
+	reset time.Time
+}
+
+func newRateLimiter(max int, window time.Duration) *rateLimiter {
+	rl := &rateLimiter{
+		max:     max,
+		window:  window,
+		buckets: make(map[string]*rlBucket),
+	}
+	// Evict stale entries every 10 minutes to prevent memory leak
+	go func() {
+		ticker := time.NewTicker(10 * time.Minute)
+		for range ticker.C {
+			rl.mu.Lock()
+			now := time.Now()
+			for ip, b := range rl.buckets {
+				if now.After(b.reset) {
+					delete(rl.buckets, ip)
+				}
+			}
+			rl.mu.Unlock()
+		}
+	}()
+	return rl
+}
+
+func (rl *rateLimiter) allow(ip string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	now := time.Now()
+	b, ok := rl.buckets[ip]
+	if !ok || now.After(b.reset) {
+		rl.buckets[ip] = &rlBucket{count: 1, reset: now.Add(rl.window)}
+		return true
+	}
+	if b.count >= rl.max {
+		return false
+	}
+	b.count++
+	return true
+}
+
+func rateLimitWrap(rl *rateLimiter, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			next(w, r)
+			return
+		}
+		ip := requestIP(r)
+		if !rl.allow(ip) {
+			http.Error(w, "Too many requests. Please try again later.", http.StatusTooManyRequests)
+			return
+		}
+		next(w, r)
+	}
+}
+
+func requestIP(r *http.Request) string {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		if i := strings.Index(xff, ","); i > 0 {
+			return strings.TrimSpace(xff[:i])
+		}
+		return strings.TrimSpace(xff)
+	}
+	if rip := r.Header.Get("X-Real-IP"); rip != "" {
+		return strings.TrimSpace(rip)
+	}
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+	return host
+}
+
 var (
 	grokAPIKey    string
 	contextPrompt string
@@ -23,6 +109,7 @@ var (
 	}
 	// Per-session chat history (keyed by session_id)
 	chatSessions   = make(map[string][]chatMsg)
+	chatSessionMeta = make(map[string]*chatSessionInfo)
 	chatSessionsMu sync.Mutex
 
 	// Dynamic context fetched from main webserver (BOT_CONTEXT_URL).
@@ -50,6 +137,14 @@ const ctxCacheTTL = 5 * time.Second
 type chatMsg struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+}
+
+type chatSessionInfo struct {
+	FirstName  string
+	LastName   string
+	CreatedAt  time.Time
+	LastActive time.Time
+	ApptBooked bool
 }
 
 func main() {
@@ -90,16 +185,44 @@ func main() {
 		port = "9081"
 	}
 
+	// Rate limiters: per-IP, per-minute
+	chatRL := newRateLimiter(20, time.Minute)     // 20 chat messages/min
+	chatEndRL := newRateLimiter(10, time.Minute)   // 10 session ends/min
+	callbackRL := newRateLimiter(3, time.Minute)   // 3 callback requests/min
+	voiceRL := newRateLimiter(5, time.Minute)      // 5 voice sessions/min
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/ws/voice", handleVoiceProxy)
-	mux.HandleFunc("/api/chat", handleTextChat)
-	mux.HandleFunc("/api/callback", handleCallbackRequest)
+	mux.HandleFunc("/ws/voice", rateLimitWrap(voiceRL, handleVoiceProxy))
+	mux.HandleFunc("/api/chat", rateLimitWrap(chatRL, handleTextChat))
+	mux.HandleFunc("/api/chat/end", rateLimitWrap(chatEndRL, handleTextChatEnd))
+	mux.HandleFunc("/api/callback", rateLimitWrap(callbackRL, handleCallbackRequest))
 	mux.HandleFunc("/ws/audiofork/", handleAudioFork)
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(200)
 		w.Write([]byte("ok"))
 	})
+
+	// Clean up stale text chat sessions and email their transcripts.
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		for range ticker.C {
+			chatSessionsMu.Lock()
+			now := time.Now()
+			for sid, meta := range chatSessionMeta {
+				if now.Sub(meta.LastActive) > 5*time.Minute {
+					history := chatSessions[sid]
+					delete(chatSessions, sid)
+					delete(chatSessionMeta, sid)
+					if len(history) > 1 {
+						lines := chatHistoryToTranscript(history)
+						go emailInteractionTranscript("Text Chat", meta.FirstName, meta.LastName, "website visitor", lines, meta.ApptBooked, meta.CreatedAt)
+					}
+				}
+			}
+			chatSessionsMu.Unlock()
+		}
+	}()
 
 	log.Printf("Voice proxy listening on :%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
@@ -234,6 +357,24 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 		history = []chatMsg{}
 	}
 
+	// Track session metadata
+	meta, metaExists := chatSessionMeta[req.SessionID]
+	if !metaExists {
+		meta = &chatSessionInfo{
+			FirstName: req.FirstName,
+			LastName:  req.LastName,
+			CreatedAt: time.Now(),
+		}
+		chatSessionMeta[req.SessionID] = meta
+	}
+	meta.LastActive = time.Now()
+	if req.FirstName != "" && meta.FirstName == "" {
+		meta.FirstName = req.FirstName
+	}
+	if req.LastName != "" && meta.LastName == "" {
+		meta.LastName = req.LastName
+	}
+
 	// Append user message
 	history = append(history, chatMsg{Role: "user", Content: req.Message})
 
@@ -259,16 +400,21 @@ func handleTextChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call Grok REST API with tool-calling support for CoreDial KB search.
-	reply, err := callGrokWithTools(messages)
+	reply, apptBooked, err := callGrokWithTools(messages)
 	if err != nil {
 		log.Printf("Grok API error: %v", err)
 		writeChat(w, req.SessionID, "Sorry, I'm having trouble connecting right now. Please try again or call us at 844-PCS-VOIP.")
 		return
 	}
 
-	// Store assistant reply in history
+	// Store assistant reply in history and track appointments
 	chatSessionsMu.Lock()
 	chatSessions[req.SessionID] = append(chatSessions[req.SessionID], chatMsg{Role: "assistant", Content: reply})
+	if apptBooked {
+		if m, ok := chatSessionMeta[req.SessionID]; ok {
+			m.ApptBooked = true
+		}
+	}
 	chatSessionsMu.Unlock()
 
 	// Log to admin module (best effort).
@@ -283,6 +429,60 @@ func writeChat(w http.ResponseWriter, sessionID, message string) {
 		"session_id": sessionID,
 		"message":    message,
 	})
+}
+
+// handleTextChatEnd is called when the browser closes the chat session.
+// It emails the conversation transcript and cleans up the session.
+func handleTextChatEnd(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(204)
+		return
+	}
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", 405)
+		return
+	}
+
+	var req struct {
+		SessionID string `json:"session_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.SessionID == "" {
+		w.WriteHeader(200)
+		return
+	}
+
+	chatSessionsMu.Lock()
+	history := chatSessions[req.SessionID]
+	meta := chatSessionMeta[req.SessionID]
+	delete(chatSessions, req.SessionID)
+	delete(chatSessionMeta, req.SessionID)
+	chatSessionsMu.Unlock()
+
+	// Need at least 2 messages (one user + one assistant) for a real conversation
+	if len(history) > 1 && meta != nil {
+		lines := chatHistoryToTranscript(history)
+		go emailInteractionTranscript("Text Chat", meta.FirstName, meta.LastName, "website visitor", lines, meta.ApptBooked, meta.CreatedAt)
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"ok":true}`))
+}
+
+// chatHistoryToTranscript converts chatMsg history to transcriptLine slice.
+func chatHistoryToTranscript(history []chatMsg) []transcriptLine {
+	var lines []transcriptLine
+	for _, m := range history {
+		speaker := "Visitor"
+		if m.Role == "assistant" {
+			speaker = "Pegasi"
+		}
+		lines = append(lines, transcriptLine{Speaker: speaker, Text: m.Content})
+	}
+	return lines
 }
 
 var idCounter int64
@@ -386,6 +586,15 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 	// Record the visitor interaction at session START so the count is captured
 	// even if the connection later hangs, drops, or never sends a transcript.
 	logVisitorEvent("bot_voice", clientIP(r), r.UserAgent(), "voice session started", "")
+
+	// Transcript collection for email notification
+	var voiceTranscript []transcriptLine
+	var voiceTranscriptMu sync.Mutex
+	var currentBotUtterance strings.Builder
+	var voiceApptBooked bool
+	sessionStart := time.Now()
+	visitorFirstName := r.URL.Query().Get("first_name")
+	visitorLastName := r.URL.Query().Get("last_name")
 
 	var wg sync.WaitGroup
 	var closeOnce sync.Once
@@ -507,6 +716,7 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 						case "search_coredial_kb":
 							go handleVoiceToolCall(grokConn, callID, name, argsStr)
 						case "book_appointment":
+							voiceApptBooked = true
 							go handleVoiceBookingFromChat(grokConn, callID, argsStr)
 						}
 
@@ -534,15 +744,37 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 						}
 						clientConn.WriteMessage(websocket.TextMessage, msg)
 
+					case t == "conversation.item.input_audio_transcription.completed":
+						if transcript, ok := envelope["transcript"].(string); ok && strings.TrimSpace(transcript) != "" {
+							voiceTranscriptMu.Lock()
+							voiceTranscript = append(voiceTranscript, transcriptLine{Speaker: "Visitor", Text: transcript})
+							voiceTranscriptMu.Unlock()
+						}
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+
+					case t == "response.output_audio_transcript.delta":
+						if delta, ok := envelope["delta"].(string); ok {
+							voiceTranscriptMu.Lock()
+							currentBotUtterance.WriteString(delta)
+							voiceTranscriptMu.Unlock()
+						}
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+
+					case t == "response.done":
+						voiceTranscriptMu.Lock()
+						if currentBotUtterance.Len() > 0 {
+							voiceTranscript = append(voiceTranscript, transcriptLine{Speaker: "Pegasi", Text: currentBotUtterance.String()})
+							currentBotUtterance.Reset()
+						}
+						voiceTranscriptMu.Unlock()
+						clientConn.WriteMessage(websocket.TextMessage, msg)
+
 					case t == "conversation.created",
 						t == "response.output_audio.delta",
 						t == "response.output_audio.done",
-						t == "response.output_audio_transcript.delta",
 						t == "response.text.delta",
-						t == "response.done",
 						t == "response.created",
-						t == "input_audio_buffer.committed",
-						t == "conversation.item.input_audio_transcription.completed":
+						t == "input_audio_buffer.committed":
 						clientConn.WriteMessage(websocket.TextMessage, msg)
 					}
 				}
@@ -552,6 +784,24 @@ func handleVoiceProxy(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	log.Printf("Voice session ended")
+
+	// Flush any remaining bot utterance
+	if currentBotUtterance.Len() > 0 {
+		voiceTranscript = append(voiceTranscript, transcriptLine{Speaker: "Pegasi", Text: currentBotUtterance.String()})
+	}
+
+	// Email transcript if there was a real conversation
+	if len(voiceTranscript) > 0 {
+		firstName := visitorFirstName
+		lastName := visitorLastName
+		if firstName == "" {
+			firstName = "Website"
+		}
+		if lastName == "" {
+			lastName = "Visitor"
+		}
+		go emailInteractionTranscript("Voice Chat", firstName, lastName, "website visitor", voiceTranscript, voiceApptBooked, sessionStart)
+	}
 }
 
 // ===================== ADAPTIVE CADENCE =====================
@@ -746,7 +996,8 @@ func normalizeVoice(v string) string {
 // callGrokWithTools sends messages to Grok with the CoreDial KB search tool
 // defined. If Grok calls the tool, we execute the search and feed results
 // back for a final answer. Supports up to 2 rounds of tool use.
-func callGrokWithTools(messages []map[string]string) (string, error) {
+func callGrokWithTools(messages []map[string]string) (string, bool, error) {
+	apptBooked := false
 	// Convert to the richer message format needed for tool calls
 	type msgContent struct {
 		Role       string      `json:"role"`
@@ -776,13 +1027,13 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 
 		resp, err := http.DefaultClient.Do(httpReq)
 		if err != nil {
-			return "", fmt.Errorf("grok API: %w", err)
+			return "", false, fmt.Errorf("grok API: %w", err)
 		}
 		respBody, _ := io.ReadAll(resp.Body)
 		resp.Body.Close()
 
 		if resp.StatusCode != 200 {
-			return "", fmt.Errorf("grok API status %d: %s", resp.StatusCode, string(respBody))
+			return "", false, fmt.Errorf("grok API status %d: %s", resp.StatusCode, string(respBody))
 		}
 
 		var grokResp struct {
@@ -801,7 +1052,7 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 			} `json:"choices"`
 		}
 		if err := json.Unmarshal(respBody, &grokResp); err != nil || len(grokResp.Choices) == 0 {
-			return "", fmt.Errorf("grok parse error: %v", err)
+			return "", false, fmt.Errorf("grok parse error: %v", err)
 		}
 
 		choice := grokResp.Choices[0]
@@ -809,9 +1060,9 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 		// If no tool calls, return the text content
 		if len(choice.Message.ToolCalls) == 0 {
 			if choice.Message.Content != nil {
-				return *choice.Message.Content, nil
+				return *choice.Message.Content, apptBooked, nil
 			}
-			return "Sorry, I couldn't generate a response. Please try again.", nil
+			return "Sorry, I couldn't generate a response. Please try again.", apptBooked, nil
 		}
 
 		// Process tool calls
@@ -840,6 +1091,7 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 			case "book_appointment":
 				log.Printf("crm: text chat appointment booking, args: %s", tc.Function.Arguments)
 				result = handleBookAppointmentFull(tc.Function.Arguments)
+				apptBooked = true
 			default:
 				result = fmt.Sprintf("Unknown tool: %s", tc.Function.Name)
 			}
@@ -853,7 +1105,7 @@ func callGrokWithTools(messages []map[string]string) (string, error) {
 		// Loop back to get Grok's final answer incorporating the search results
 	}
 
-	return "Sorry, I wasn't able to complete the search. Please try again.", nil
+	return "Sorry, I wasn't able to complete the search. Please try again.", apptBooked, nil
 }
 
 func init() {
